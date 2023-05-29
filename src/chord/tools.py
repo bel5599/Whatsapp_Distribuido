@@ -13,11 +13,11 @@ class FingerEntry:
         return ft
 
     #Revisarrrrrrrrrrrrrrrrrrrr
-def fingerEntry(id_list, node):
-    return FingerEntry(id, node)
+# def fingerEntry(id_list, node):
+#     return FingerEntry(id, node)
 
-def fingerID(n_list, i, m):
-    idInt = 
+# def fingerID(n_list, i, m):
+#     idInt = 
 
 #Node n contains m entries in its finger table.
 # successor → next node on the identifier circle
@@ -28,36 +28,42 @@ def fingerID(n_list, i, m):
 # finger[i].node = successor(finger[i].start)
 
 class Finger:
-    def __init__(self, n, i, m):
-        self.start = (n + 2) # 2^(i-1) mod 2^m
-        self.end = (n + 2) #2^i -1 mod 2^m
-        #finger[i].node = successor(finger[i].start)
+    def __init__(self, m, k, node = None):
+        self.start = (2**k) % (2**m) # 2^(k) mod 2^m
+        self.end =  (2**(k+1)) % (2**m) #2^(k+1) mod 2^m
+        self.node = node
+        # finger[i].node = suc cessor(finger[i].start)
+
 
 
 class Node:
-    def __init__(self, keys, fingerTable, storage, transport, bit_identifier):
+    def __init__(self, dir, port, keys, storage, transport, m):
         
+        self.dir = dir
+        self.port = port
+
         self.keys = keys
 
-        self.predecessor = findPredecessor(id)
-        self.succesor = findSuccessor(id)
+        self.predecessor = find_predecessor(id)
+        self.succesor = find_successor(id)
 
-        self.fingerTable = fingerTable
+        self.finger_table = [Finger(m, k) for k in range(m)]
+
         self.storage = storage
-        self.transport = transport
-        self.bit_identifier = bit_identifier
+        self.transport = transport 
+        self.m = m
 
-    def findSuccessor(self, id):
+    def find_successor(self, id):
         n = findPredecessor(id)
         return n.succesor(id)
 
-    def findPredecessor(self, id):
+    def find_predecessor(self, id):
         n = self
         while not id in (n, n.successor()):
             n = n.closestPrecedingFinger(id)
     
-    def closestPrecedingFinger(self, id):
-        for i in range(self.bit_identifier, 1):
+    def closest_preceding_finger(self, id):
+        for i in range(self.m, 1):
             if self.fingerTable[i].node in (self, id):
                 return self.fingerTable[i].node
         return self
@@ -66,7 +72,7 @@ class Node:
         self.initFingerTable(node)
         self.updateOthers()
 
-    def initFingerTable(self, node):
+    def init_finger_table(self, node):
         self.fingerTable[1].node = node.findSuccessor(self.fingerTable[1].start)
         successor = self.fingerTable[1].node
         predecessor = successor.predecessor
@@ -79,11 +85,11 @@ class Node:
                 self.fingerTable[i+1].node = node.findSuccessor(self.fingerTable[i+1].start)
 
     def updateOthers(self):
-        for i in range(1, self.bit_identifier):
-            pred = self.findPredecessor(self)# n - 2^(i-1)
+        for i in range(1, self.m):
+            pred = self.findPredecessor(2**m - 2**(i-1))# n - 2^(i-1)
             pred.updateFingerTable(self, i)
 
-    def updateFingerTable(self, node, i):
+    def update_finger_table(self, node, i):
         if node in (self, self.fingerTable[i].node):
             self.fingerTable[i].node = node
             p = self.predecessor
@@ -102,3 +108,9 @@ class Node:
     def fix_fingers(self):
         i = random.Random()
         self.fingerTable[i].node = self.findSuccessor(self.fingerTable[i].start)
+
+class NodeInfo:
+    def __init__(self, id, dir, port):
+        self.id = id
+        self.dir = dir
+        self.port = port
