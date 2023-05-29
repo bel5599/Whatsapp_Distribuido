@@ -1,32 +1,5 @@
 import random
 
-class FingerEntry:
-    def __init__(self, id, node):
-        self.id = id
-        self.node = node
-
-    #Revisarrrrrrrrrrrrrrrrrrrr
-    def fingerTable(self, node, m):
-        ft = make()
-        for i in range(ft):
-            ft[i] = FingerEntry(fingerId(node.id, i, m), node)
-        return ft
-
-    #Revisarrrrrrrrrrrrrrrrrrrr
-# def fingerEntry(id_list, node):
-#     return FingerEntry(id, node)
-
-# def fingerID(n_list, i, m):
-#     idInt = 
-
-#Node n contains m entries in its finger table.
-# successor → next node on the identifier circle
-# predecessor → node on the identifier circle
-# The ith finger contains:
-# finger[i].start = (n + 2i−1) mod 2m,(1 ≤ i ≤ m)
-# finger[i].end = (n + 2i − 1) mod 2m
-# finger[i].node = successor(finger[i].start)
-
 class Finger:
     def __init__(self, m, k, node = None):
         self.start = (2**k) % (2**m) # 2^(k) mod 2^m
@@ -35,17 +8,16 @@ class Finger:
         # finger[i].node = suc cessor(finger[i].start)
 
 
-
 class Node:
-    def __init__(self, dir, port, keys, storage, transport, m):
+    def __init__(self, id: int, dir, port, keys, storage, transport, m):
         
         self.dir = dir
         self.port = port
+        self.id = id
 
         self.keys = keys
 
-        self.predecessor = find_predecessor(id)
-        self.succesor = find_successor(id)
+        self._predecessor = find_predecessor(id)
 
         self.finger_table = [Finger(m, k) for k in range(m)]
 
@@ -53,19 +25,35 @@ class Node:
         self.transport = transport 
         self.m = m
 
-    def closest_preceding_finger(self, id):
+    @property
+    def succesor(self):
+        return self.finger_table[0].node
+
+    @property.setter
+    def succesor(self, node_info):
+        pass
+
+    @property
+    def predecessor(self):
+        return self._predecessor
+
+    @property.setter
+    def predecessor(self, node_info):
+        pass
+
+    def closest_preceding_finger(self, id: int):
         for finger in self.finger_table[::-1]:
             if finger.node and self.id < finger.node.id < id:
                 return finger.node.id
         return self.id
 
-    def find_predecessor(self, id):
+    def find_predecessor(self, id: int):
         n = self.id
         while n.id > id > n.succesor.id:
             n = n.closest_preceding_finger(id)
         return n.id
 
-    def find_successor(self, id):
+    def find_successor(self, id: int):
         n = find_predecessor(id)
         return n.succesor
 
@@ -103,22 +91,48 @@ class Node:
             p = self.predecessor
             p.updateFingerTable(node, i)
 
-    def stabilize(self):
-        x = self.succesor.predecessor
-        if x in (self, self.succesor):
-            self.succesor = x
-        self.succesor.notify(self)
+    # def stabilize(self):
+    #     x = self.succesor.predecessor
+    #     if x in (self, self.succesor):
+    #         self.succesor = x
+    #     self.succesor.notify(self)
 
-    def notify(self, node):
-        if (self.predecessor is None) or (node in (self.predecessor, self)):
-            self.predecessor = node
+    # def notify(self, node):
+    #     if (self.predecessor is None) or (node in (self.predecessor, self)):
+    #         self.predecessor = node
 
-    def fix_fingers(self):
-        i = random.Random()
-        self.fingerTable[i].node = self.findSuccessor(self.fingerTable[i].start)
+    # def fix_fingers(self):
+    #     i = random.Random()
+    #     self.fingerTable[i].node = self.findSuccessor(self.fingerTable[i].start)
 
 class NodeInfo:
-    def __init__(self, id, dir, port):
+    def __init__(self, id: int, dir, port):
         self.id = id
         self.dir = dir
         self.port = port
+
+    property
+    def succesor(self):
+        pass
+
+    @property.setter
+    def succesor(self, node_info):
+        pass
+
+    @property
+    def predecessor(self):
+        pass
+
+    @property.setter
+    def predecessor(self, node_info):
+        pass
+
+    def update_finger_table(self, node_info, i: int):
+        #comunicacion por la red
+        pass
+
+    def find_successor(self, id):
+        #comunicacion por la red
+        pass
+
+    
