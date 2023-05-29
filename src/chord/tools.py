@@ -53,27 +53,35 @@ class Node:
         self.transport = transport 
         self.m = m
 
-    def find_successor(self, id):
-        n = findPredecessor(id)
-        return n.succesor(id)
+    def closest_preceding_finger(self, id):
+        for finger in self.finger_table[::-1]:
+            if finger.node and self.id < finger.node.id < id:
+                return finger.node.id
+        return self.id
 
     def find_predecessor(self, id):
-        n = self
-        while not id in (n, n.successor()):
-            n = n.closestPrecedingFinger(id)
-    
-    def closest_preceding_finger(self, id):
-        for i in range(self.m, 1):
-            if self.fingerTable[i].node in (self, id):
-                return self.fingerTable[i].node
-        return self
-    
-    def join(self, node):
-        self.initFingerTable(node)
-        self.updateOthers()
+        n = self.id
+        while n.id > id > n.succesor.id:
+            n = n.closest_preceding_finger(id)
+        return n.id
+
+    def find_successor(self, id):
+        n = find_predecessor(id)
+        return n.succesor
+
+    @classmethod
+    def join(cls, node):
+        pass
+        # if node:
+        #     self.init_finger_table(node)
+        #     self.update_others()
+        # else:
+        #     for finger in self.finger_table[::-1]:
+        #         finger.node.id = self.id
+            
 
     def init_finger_table(self, node):
-        self.fingerTable[1].node = node.findSuccessor(self.fingerTable[1].start)
+        self.fingerTable[1].node = node.find_successor(self.fingerTable[1].start)
         successor = self.fingerTable[1].node
         predecessor = successor.predecessor
         successor.predecessor = node
@@ -84,7 +92,7 @@ class Node:
             else:
                 self.fingerTable[i+1].node = node.findSuccessor(self.fingerTable[i+1].start)
 
-    def updateOthers(self):
+    def update_others(self):
         for i in range(1, self.m):
             pred = self.findPredecessor(2**m - 2**(i-1))# n - 2^(i-1)
             pred.updateFingerTable(self, i)
