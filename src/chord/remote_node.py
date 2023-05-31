@@ -33,13 +33,13 @@ class RemoteNode:
     GET_PREDECESSOR = GetRemoteNodeMessage("get_predecessor")
     SET_PREDECESSOR = SetRemoteNodeMessage("set_predecessor")
 
-    def __init__(self, id: int, address: str, port: str):
+    def __init__(self, id: int, ip: str, port: str):
         self.id = id
-        self.address = address
+        self.ip = ip
         self.port = port
 
     def _remote_call(self, payload, message: Message, timeout=2500, retries=3):
-        endpoint = f"tcp://{self.address}:{self.port}"
+        endpoint = f"tcp://{self.ip}:{self.port}"
 
         data = message.write(payload)
 
@@ -84,13 +84,13 @@ class RemoteNode:
         pass
 
     def to_dict(self):
-        return {"id": self.id, "address": self.address, "port": self.port}
+        return {"id": self.id, "ip": self.ip, "port": self.port}
 
     @classmethod
     def from_dict(cls, d: dict):
         id = d.get("id", None)
-        address = d.get("address", None)
+        ip = d.get("ip", None)
         port = d.get("port", None)
 
-        if id != None and address != None and port != None:
-            return cls(id, address, port)
+        if id != None and ip != None and port != None:
+            return cls(id, ip, port)
