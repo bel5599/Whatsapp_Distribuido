@@ -1,4 +1,4 @@
-from function_db import search_user_nickname,create_database
+from function_db import*
 
 
 
@@ -6,6 +6,7 @@ from function_db import search_user_nickname,create_database
 
 if __name__ == '__main__':
     create_database()
-    search_user_nickname(2)
-    #add_user('Ale')
-    
+    add_user('Ale')
+    add_user('Fernanda')
+    add_messenger('Fernanda','Ale','Hola')
+    add_messenger('Ale','Fernanda','Hola')
