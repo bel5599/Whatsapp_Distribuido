@@ -5,17 +5,17 @@ class BaseNode:
         self.port = port
 
     def to_dict(self):
-        raise NotImplementedError()
-        
+        return {"id": self.id, "ip": self.ip, "port": self.port}
+
     def successor(self):
         raise NotImplementedError()
 
     def predecessor(self):
         raise NotImplementedError()
-    
+
     def set_predecessor(self, node: "BaseNode"):
         raise NotImplementedError()
-    
+
     def closest_preceding_finger(self, id: int):
         raise NotImplementedError()
 
