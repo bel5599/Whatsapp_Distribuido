@@ -2,11 +2,12 @@ import zmq
 
 from chord.base_node import BaseNode
 from chord.zmq_context import CONTEXT
+from chord.utils import get_requester
 from src.router import Request, RequestWriter, ResponseReader
 
 
 class RemoteNode(BaseNode):
-    def _remote_call(self, request: Request, timeout=2500, retries=3):
+    def _remote_call(self, type: str, data, writer: RequestWriter, timeout=2500, retries=3):
         raise NotImplementedError()
 
     def successor(self):
