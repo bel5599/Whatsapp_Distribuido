@@ -1,6 +1,5 @@
-
 class BaseNode:
-    def __init__(id, ip, port):
+    def __init__(self, id: int, ip: str, port: str):
         self.id = id
         self.ip = ip
         self.port = port
@@ -14,11 +13,14 @@ class BaseNode:
     def predecessor(self):
         raise NotImplementedError()
     
-    def closest_preceding_finger(self, id):
+    def set_predecessor(self, node: "BaseNode"):
+        raise NotImplementedError()
+    
+    def closest_preceding_finger(self, id: int):
         raise NotImplementedError()
 
-    def find_successor(self, id):
+    def find_successor(self, id: int):
         raise NotImplementedError()
 
-    def update_finger_table(self, node: BaseNode, i: int):
+    def update_finger_table(self, node: "BaseNode", i: int):
         raise NotImplementedError()
