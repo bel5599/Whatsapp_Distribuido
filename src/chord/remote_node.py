@@ -11,28 +11,78 @@ class RemoteNode(BaseNode):
         raise NotImplementedError()
 
     def successor(self):
-        # comunicacion por la red
-        pass
+        type = "successor"
+        data = {}
+        payload_writer = lambda data: data
+        writer = RequestWriter(payload_writer)
+        response_data = self._remote_call(type, data, writer)
+
+        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
+        reader = ResponseReader(response_data_reader)
+
+        return reader.read(response_data)
+        
 
     def predecessor(self):
-        # comunicacion por la red
-        pass
+        type ="predecessor"
+        data = {}
+        def payload_writer(): return {}
+        writer = RequestWriter(payload_writer)
+        response_data = self._remote_call(type, data, writer)
+
+        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
+        reader = ResponseReader(response_data_reader)
+
+        return reader.read(response_data)
 
     def set_predecessor(self, node: BaseNode):
-        # comunicacion por la red
-        pass
+        type = "set_predecessor"
+        data = node
+        def payload_writer(node: BaseNode): return {"node": node}
+        writer = RequestWriter(payload_writer)
+        response_data = self._remote_call(type, data, writer)
+
+        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
+        reader = ResponseReader(response_data_reader)
+
+        return reader.read(response_data)
 
     def closest_preceding_finger(self, id: int):
-        # comunicacion por la red
-        pass
+        type = "closest_preceding_finger"
+        data = id
+        def payload_writer(x : int): return {"id" : x}
+        writer = RequestWriter(payload_writer)
+        response_data = self._remote_call(type, data, writer)
+
+        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
+        reader = ResponseReader(response_data_reader)
+
+        return reader.read(response_data)
 
     def find_successor(self, id: int):
-        # comunicacion por la red
-        pass
+        type = "find_successor"
+        data = id
+        def payload_writer(x : int): return {"id" : x}
+        writer = RequestWriter(payload_writer)
+        response_data = self._remote_call(type, data, writer)
 
-    def update_finger_table(self, node: "BaseNode", i: int):
-        # comunicacion por la red
-        pass
+        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
+        reader = ResponseReader(response_data_reader)
+
+        return reader.read(response_data)
+
+    def update_finger_table(self, node: BaseNode, i: int):
+        type = "update_finger_table"
+        data = [node, i]
+        def payload_writer(node : BaseNode, i: int): return {"node": node, "i": i}
+        writer = RequestWriter(payload_writer)
+        response_data = self._remote_call(type, data, writer)
+
+        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
+        reader = ResponseReader(response_data_reader)
+
+        return reader.read(response_data)
+
 
     @classmethod
     def from_dict(cls, d: dict):
