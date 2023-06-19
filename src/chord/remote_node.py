@@ -64,7 +64,7 @@ class RemoteNode:
             client.send_json(data)
 
     @property
-    def succesor(self):
+    def successor(self):
         return self._remote_call({}, self.GET_SUCCESSOR)
 
     @property
@@ -74,6 +74,9 @@ class RemoteNode:
     @property.setter
     def predecessor(self, remote_node):
         return self._remote_call(remote_node.to_dict(), self.SET_PREDECESSOR)
+
+    def closest_preceding_finger(self, id: int):
+        pass
 
     def update_finger_table(self, remote_node, index: int):
         # comunicacion por la red
