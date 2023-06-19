@@ -1,21 +1,14 @@
-
 class Router:
     def __init__(self):
         self.handlers = {}
 
     def add_handler(self, handler, payload_reader, payload_writer):
-
         if not handler in self.handlers:
             self.handlers[handler] = (payload_reader, payload_writer)
 
         return self
 
-    # def remove_handler(self, handler):
-    #     self.handler.pop(handler, None)
-    #     return self
-
-    def route(self, request_data:dict):
-
+    def route(self, request_data: dict):
         type = request_data.get("type", None)
 
         if type is not None:
@@ -26,4 +19,3 @@ class Router:
                 if request.is_valid():
                     response_data = writer.write(request.data)
                     return (request.ip, request.port, response_data)
-                        
