@@ -1,11 +1,10 @@
 class Request:
-    def __init__(self, type: str, requester: dict, data):
-        self.type = type
+    def __init__(self, requester: dict, data):
         self.requester = requester
         self.data = data
 
     def is_valid(self):
-        if self.type != "" and self.data:
+        if self.data:
             ip = self.requester.get("ip", "")
             port = self.requester.get("port", "")
             return ip != "" and port != ""
@@ -35,7 +34,6 @@ class RequestReader:
         self.payload_reader = payload_reader
 
     def read(self, request_data: dict):
-        type = request_data.get("type", "")
         requester = request_data.get("requester", {})
         payload = request_data.get("payload", {})
 
@@ -44,4 +42,4 @@ class RequestReader:
         except:
             data = None
 
-        return Request(type, requester, data)
+        return Request(requester, data)
