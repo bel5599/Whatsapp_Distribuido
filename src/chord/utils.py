@@ -13,4 +13,4 @@ def get_requester():
     # si no hay internet, obtener el port de otra forma
     ip = environ.get(IP_KEY)
     port = environ.get(PORT_KEY)
-    return {"ip": ip, "port": port}
+    return [ip, port]
