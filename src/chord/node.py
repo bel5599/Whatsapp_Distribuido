@@ -1,25 +1,24 @@
 from typing import Union
 
+from chord.base_node import BaseNode
 from chord.remote_node import RemoteNode
 from chord.utils import generate_id
 
 
 class Finger:
-    def __init__(self, m, k, node: Union[RemoteNode, "Node", None] = None):
+    def __init__(self, m, k, node: Union[BaseNode, None] = None):
         self.start = (2**k) % (2**m)  # 2^(k) mod 2^m
         self.end = (2**(k+1)) % (2**m)  # 2^(k+1) mod 2^m
         self.node = node
         # finger[i].node = suc cessor(finger[i].start)
 
 
-class Node:
+class Node(BaseNode):
     def __init__(self, id: int, ip: str, port: str):
-        self.id = id
-        self.ip = ip
-        self.port = port
+        super().__init__(id, ip, port)
 
         self.finger_table = []
-        self._predecessor: Union[RemoteNode, Node, None] = None
+        self._predecessor: Union[BaseNode, None] = None
 
     @classmethod
     def create_network(cls, port: str, network_capacity: int):
@@ -30,7 +29,7 @@ class Node:
         # node is the only node in network, so:
         node.finger_table = [Finger(network_capacity, k, node)
                              for k in range(network_capacity)]
-        node.predecessor = node
+        node.set_predecessor(node)
 
         return node
 
@@ -51,16 +50,13 @@ class Node:
 
         return node
 
-    @property
     def successor(self):
         return self.finger_table[0].node
 
-    @property
     def predecessor(self):
         return self._predecessor
 
-    @property.setter
-    def predecessor(self, node: Union[RemoteNode, "Node"]):
+    def set_predecessor(self, node: BaseNode):
         self._predecessor = node
 
     def closest_preceding_finger(self, id: int):
@@ -72,32 +68,32 @@ class Node:
     def find_predecessor(self, id: int):
         node = self
 
-        while id <= node.id or id > node.successor.id:
+        while id <= node.id or id > node.successor().id:
             node = node.closest_preceding_finger(id)
 
         return node
 
     def find_successor(self, id: int):
         node = self.find_predecessor(id)
-        return node.successor
+        return node.successor()
 
-    def update_finger_table(self, node: RemoteNode, i: int):
+    def update_finger_table(self, node: BaseNode, i: int):
         finger_node = self.finger_table[i].node
 
         if finger_node and self.id <= node.id < finger_node.id:
             self.finger_table[i] = node
-            self.predecessor.update_finger_table(node, i)
+            self.predecessor().update_finger_table(node, i)
 
     def update_others(self):
         for i in range(len(self.finger_table)):
             node = self.find_predecessor(self.id - 2**i)
             node.update_finger_table(self, i)
 
-    def init_finger_table(self, node: RemoteNode):
+    def init_finger_table(self, node: BaseNode):
         self.finger_table[0].node = node.find_successor(
             self.finger_table[0].start)
-        self.predecessor = self.successor.predecessor
-        self.successor.predecessor = self
+        self.set_predecessor(self.successor().predecessor())
+        self.successor().set_predecessor(self)
 
         for i in range(1, len(self.finger_table)):
             if self.id <= self.finger_table[i].start < self.finger_table[i-1].node.id:
@@ -106,6 +102,6 @@ class Node:
                 self.finger_table[i].node = node.find_successor(
                     self.finger_table[i].start)
 
-    def join(self, node: RemoteNode):
+    def join(self, node: BaseNode):
         self.init_finger_table(node)
         self.update_others()
