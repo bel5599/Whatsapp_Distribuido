@@ -1,8 +1,13 @@
 
 class BaseNode:
-    def __init__():
-        pass
+    def __init__(id, ip, port):
+        self.id = id
+        self.ip = ip
+        self.port = port
 
+    def to_dict(self):
+        raise NotImplementedError()
+        
     def successor(self):
         raise NotImplementedError()
 
