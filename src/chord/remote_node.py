@@ -1,44 +1,11 @@
 import zmq
 
+from chord.base_node import BaseNode
 from chord.zmq_context import CONTEXT
-from message import Message, is_valid_response
 
 
-class GetRemoteNodeMessage(Message):
-    def __init__(self, type):
-        super().__init__(type)
-
-    def read(self, json_dict: dict):
-        response_type = json_dict.get("type", "")
-        success = json_dict.get("success", False)
-
-        if is_valid_response(response_type, self._type) and success:
-            payload = json_dict.get("payload", {})
-            return RemoteNode.from_dict(payload)
-
-
-class SetRemoteNodeMessage(Message):
-    def __init__(self, type: str):
-        super().__init__(type)
-
-    def read(self, json_dict: dict):
-        response_type = json_dict.get("type", "")
-        success = json_dict.get("success", False)
-
-        return is_valid_response(response_type, self._type) and success
-
-
-class RemoteNode:
-    GET_SUCCESSOR = GetRemoteNodeMessage("get_successor")
-    GET_PREDECESSOR = GetRemoteNodeMessage("get_predecessor")
-    SET_PREDECESSOR = SetRemoteNodeMessage("set_predecessor")
-
-    def __init__(self, id: int, ip: str, port: str):
-        self.id = id
-        self.ip = ip
-        self.port = port
-
-    def _remote_call(self, payload, message: Message, timeout=2500, retries=3):
+class RemoteNode(BaseNode):
+    def _remote_call(self, payload, message, timeout=2500, retries=3):
         endpoint = f"tcp://{self.ip}:{self.port}"
 
         data = message.write(payload)
@@ -63,31 +30,29 @@ class RemoteNode:
             client.connect(endpoint)
             client.send_json(data)
 
-    @property
     def successor(self):
-        return self._remote_call({}, self.GET_SUCCESSOR)
+        # comunicacion por la red
+        pass
 
-    @property
     def predecessor(self):
-        return self._remote_call({}, self.GET_PREDECESSOR)
+        # comunicacion por la red
+        pass
 
-    @property.setter
-    def predecessor(self, remote_node):
-        return self._remote_call(remote_node.to_dict(), self.SET_PREDECESSOR)
+    def set_predecessor(self, node: BaseNode):
+        # comunicacion por la red
+        pass
 
     def closest_preceding_finger(self, id: int):
-        pass
-
-    def update_finger_table(self, remote_node, index: int):
         # comunicacion por la red
         pass
 
-    def find_successor(self, id):
+    def find_successor(self, id: int):
         # comunicacion por la red
         pass
 
-    def to_dict(self):
-        return {"id": self.id, "ip": self.ip, "port": self.port}
+    def update_finger_table(self, node: "BaseNode", i: int):
+        # comunicacion por la red
+        pass
 
     @classmethod
     def from_dict(cls, d: dict):
