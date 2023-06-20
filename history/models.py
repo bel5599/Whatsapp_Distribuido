@@ -13,13 +13,10 @@ from sqlalchemy import Column, Integer, String, Float
 
 class User(Base):
     __tablename__ = "user_account"
-    #id:        Mapped[int] = mapped_column(primary_key=True)
-    nickname:  Mapped[str] = mapped_column(String(30),primary_key=True,nullable=False)
-    # addresses: Mapped[List["Address"]] = relationship(
-    #     back_populates="user", cascade="all, delete-orphan"
-    # )
+    
+    nickname:  Mapped[str] = mapped_column(String(30),unique=True,primary_key=True,nullable=False)
+    
     def __repr__(self) -> str:
-        #return f"User(id={self.id!r}, nickname={self.nickname!r})"
         return f"User(nickname={self.nickname!r})"
 
 class Messenger(Base):
@@ -46,17 +43,4 @@ class Chat(Base):
     def __repr__(self) -> str:
         return f"Chat(id={self.chat_id!r}, user_id_1={self.user_id_1!r}, user_id_2={self.user_id_2!r})"
 
-    
-    
-        
-# class Address(Base):
-#     __tablename__ = "address"
-    
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     email_address: Mapped[str]
-#     user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id"))
-#     user: Mapped["User"] = relationship(back_populates="addresses")
-    
-#     def __repr__(self) -> str:
-#         return f"Address(id={self.id!r}, email_address={self.email_address!r})"
     

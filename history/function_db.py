@@ -24,8 +24,8 @@ def contain_user(nickname_):
     contain = session.query(User).get(nickname_)
     return contain is not None 
                            
-def delete_user(nickname_):
-    contain = session.query(User).get(nickname_)
+def delete_user(nickname):
+    contain = session.query(User).get(nickname)
     if contain is not None:
         session.delete(contain) 
         session.commit()
