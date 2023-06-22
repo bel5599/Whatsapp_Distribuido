@@ -1,16 +1,16 @@
 from typing import Union
-
-from chord.base_node import BaseNode
-from chord.remote_node import RemoteNode
-from chord.utils import generate_id
-from ..router import Router
-from request_types import *
-from ..router import RequestReader, ResponseWriter
-from readers import *
-from writers import *
-
 import zmq
-from zmq_context import CONTEXT
+
+from ..router import Router, RequestReader, ResponseWriter
+
+from .base_node import BaseNode
+from .remote_node import RemoteNode
+from .utils import generate_id
+from .request_types import *
+from .readers import *
+from .writers import *
+from .zmq_context import CONTEXT
+
 
 class Finger:
     def __init__(self, m, k, node: Union[BaseNode, None] = None):
@@ -26,15 +26,20 @@ class Node(BaseNode):
 
         self.finger_table = []
         self._predecessor: Union[BaseNode, None] = None
-        self.router = Router() 
+        self.router = Router()
 
-        self.router.add_handler(SUCCESSOR, RequestReader(empty_reader), ResponseWriter(remote_node_writer))
-        self.router.add_handler(PREDECESSOR, RequestReader(empty_reader), ResponseWriter(remote_node_writer))
-        self.router.add_handler(SET_PREDECESSOR, RequestReader(node_reader), ResponseWriter(none_writer))
-        self.router.add_handler(CLOSEST_PRECEDING_FINGER, RequestReader(id_reader), ResponseWriter(remote_node_writer))
-        self.router.add_handler(FIND_SUCCESSOR, RequestReader(id_reader), ResponseWriter(remote_node_writer))
-        self.router.add_handler(UPDATE_FINGER_TABLE, RequestReader(node_reader), ResponseWriter(none_writer))
-
+        self.router.add_handler(SUCCESSOR, RequestReader(
+            empty_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(PREDECESSOR, RequestReader(
+            empty_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(SET_PREDECESSOR, RequestReader(
+            node_reader), ResponseWriter(none_writer))
+        self.router.add_handler(CLOSEST_PRECEDING_FINGER, RequestReader(
+            id_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(FIND_SUCCESSOR, RequestReader(
+            id_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(UPDATE_FINGER_TABLE, RequestReader(
+            node_reader), ResponseWriter(none_writer))
 
     @classmethod
     def create_network(cls, port: str, network_capacity: int):
@@ -121,21 +126,19 @@ class Node(BaseNode):
     def join(self, node: BaseNode):
         self.init_finger_table(node)
         self.update_others()
-    
+
     def serve(self):
-    
+
         server = CONTEXT.socket(zmq.REP)
         server.bind("tcp://*:"+self.port)
-        
+
         while True:
             request_data = server.recv_json()
-            request_reader,response_writer,method = self.router.route(request_data)
+            request_reader, response_writer, method = self.router.route(
+                request_data)
             request = request_reader.read(request_data)
-            
 
             if request.is_valid():
                 result = method(request.data)
                 response_data = response_writer.write(result)
                 server.send(response_data)
-                
-            

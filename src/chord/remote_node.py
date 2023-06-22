@@ -1,11 +1,12 @@
 import zmq
 
-from chord.base_node import BaseNode
-from chord.zmq_context import CONTEXT
-from chord.utils import get_requester
 from ..router import RequestWriter, ResponseReader
-from chord.readers import remote_node_reader, none_reader
-from chord.writers import empty_writer, node_writer, id_writer, i_writer
+
+from .base_node import BaseNode
+from .zmq_context import CONTEXT
+from .utils import get_requester
+from .readers import remote_node_reader, none_reader
+from .writers import empty_writer, node_writer, id_writer, i_writer
 
 
 class RemoteNode(BaseNode):
