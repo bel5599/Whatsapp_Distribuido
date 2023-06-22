@@ -3,8 +3,9 @@ import zmq
 from chord.base_node import BaseNode
 from chord.zmq_context import CONTEXT
 from chord.utils import get_requester
-from src.router import Request, RequestWriter, ResponseReader
-from readers import remote_node_reader, none_reader
+from src.router import RequestWriter, ResponseReader
+from chord.readers import remote_node_reader, none_reader
+from chord.writers import empty_writer, node_writer, id_writer, i_writer
 
 
 class RemoteNode(BaseNode):
@@ -35,68 +36,65 @@ class RemoteNode(BaseNode):
     def successor(self):
         type = "successor"
         data = {}
-        def payload_writer(data): return data
-        writer = RequestWriter(payload_writer)
+        writer = RequestWriter(empty_writer)
+
         response_data = self._remote_call(type, data, writer)
 
         reader = ResponseReader(remote_node_reader)
-
         return reader.read(response_data)
 
     def predecessor(self):
         type = "predecessor"
         data = {}
-        def payload_writer(): return {}
-        writer = RequestWriter(payload_writer)
+        writer = RequestWriter(empty_writer)
+
         response_data = self._remote_call(type, data, writer)
 
         reader = ResponseReader(remote_node_reader)
-
         return reader.read(response_data)
 
     def set_predecessor(self, node: BaseNode):
         type = "set_predecessor"
         data = node
-        def payload_writer(node: BaseNode): return {"node": node}
-        writer = RequestWriter(payload_writer)
+        writer = RequestWriter(node_writer)
+
         response_data = self._remote_call(type, data, writer)
 
         reader = ResponseReader(none_reader)
-
         return reader.read(response_data)
 
     def closest_preceding_finger(self, id: int):
         type = "closest_preceding_finger"
         data = id
-        def payload_writer(x: int): return {"id": x}
-        writer = RequestWriter(payload_writer)
+        writer = RequestWriter(id_writer)
+
         response_data = self._remote_call(type, data, writer)
 
         reader = ResponseReader(remote_node_reader)
-
         return reader.read(response_data)
 
     def find_successor(self, id: int):
         type = "find_successor"
         data = id
-        def payload_writer(x: int): return {"id": x}
-        writer = RequestWriter(payload_writer)
+        writer = RequestWriter(id_writer)
         response_data = self._remote_call(type, data, writer)
 
         reader = ResponseReader(remote_node_reader)
-
         return reader.read(response_data)
 
     def update_finger_table(self, node: BaseNode, i: int):
         type = "update_finger_table"
         data = [node, i]
-        def payload_writer(node: BaseNode, i: int): return {
-            "node": node, "i": i}
+
+        def payload_writer(data: list):
+            node_dict = node_writer(data[0])
+            i_dict = i_writer(data[1])
+            return {**i_dict, "node": node_dict}
         writer = RequestWriter(payload_writer)
+
         response_data = self._remote_call(type, data, writer)
 
         reader = ResponseReader(none_reader)
-
         return reader.read(response_data)
 
     @classmethod
