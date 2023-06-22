@@ -4,6 +4,10 @@ from chord.base_node import BaseNode
 from chord.remote_node import RemoteNode
 from chord.utils import generate_id
 from ..router import Router
+from request_types import *
+from ..router import RequestReader, ResponseWriter
+from readers import *
+from writers import *
 
 import zmq
 from zmq_context import CONTEXT
@@ -23,6 +27,14 @@ class Node(BaseNode):
         self.finger_table = []
         self._predecessor: Union[BaseNode, None] = None
         self.router = Router() 
+
+        self.router.add_handler(SUCCESSOR, RequestReader(empty_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(PREDECESSOR, RequestReader(empty_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(SET_PREDECESSOR, RequestReader(node_reader), ResponseWriter(none_writer))
+        self.router.add_handler(CLOSEST_PRECEDING_FINGER, RequestReader(id_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(FIND_SUCCESSOR, RequestReader(id_reader), ResponseWriter(remote_node_writer))
+        self.router.add_handler(UPDATE_FINGER_TABLE, RequestReader(node_reader), ResponseWriter(none_writer))
+
 
     @classmethod
     def create_network(cls, port: str, network_capacity: int):

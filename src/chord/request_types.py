@@ -1,0 +1,6 @@
+SUCCESSOR = "successor"
+PREDECESSOR = "predecessor"
+SET_PREDECESSOR = "set_predecessor"
+CLOSEST_PRECEDING_FINGER = "closest_preceding_finger"
+FIND_SUCCESSOR = "find_successor"
+UPDATE_FINGER_TABLE = "update_finger_table"

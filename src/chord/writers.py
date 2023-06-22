@@ -1,4 +1,5 @@
 from chord.base_node import BaseNode
+from remote_node import RemoteNode
 
 
 def get_number_writer(key: str):
@@ -20,3 +21,8 @@ def node_writer(data: BaseNode):
 
 
 i_writer = get_number_writer("i")
+
+
+def remote_node_writer(d: dict): return RemoteNode.from_dict(d)
+
+def none_writer(d: dict): return None
