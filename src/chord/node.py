@@ -3,7 +3,7 @@ from typing import Union
 from chord.base_node import BaseNode
 from chord.remote_node import RemoteNode
 from chord.utils import generate_id
-
+from ..router import Router
 
 class Finger:
     def __init__(self, m, k, node: Union[BaseNode, None] = None):
@@ -14,11 +14,12 @@ class Finger:
 
 
 class Node(BaseNode):
-    def __init__(self, id: int, ip: str, port: str):
+    def __init__(self, id: int, ip: str, port: str, router):
         super().__init__(id, ip, port)
 
         self.finger_table = []
         self._predecessor: Union[BaseNode, None] = None
+        self.router = Router() 
 
     @classmethod
     def create_network(cls, port: str, network_capacity: int):
