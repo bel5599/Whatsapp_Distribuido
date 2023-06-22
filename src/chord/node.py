@@ -128,17 +128,20 @@ class Node(BaseNode):
         self.update_others()
 
     def serve(self):
-
         server = CONTEXT.socket(zmq.REP)
         server.bind("tcp://*:"+self.port)
 
         while True:
             request_data = server.recv_json()
-            request_reader, response_writer, method = self.router.route(
-                request_data)
-            request = request_reader.read(request_data)
 
-            if request.is_valid():
-                result = method(request.data)
-                response_data = response_writer.write(result)
-                server.send(response_data)
+            t = self.router.route(request_data)
+            if t is not None:
+                method_name, request_reader, response_writer = t
+
+                request = request_reader.read(request_data)
+                if request.is_valid():
+                    method = getattr(self, method_name)
+
+                    result = method(request.data)
+                    response_data = response_writer.write(result)
+                    server.send(response_data)
