@@ -8,7 +8,6 @@ class Response:
 
 
 class ResponseWriter:
-
     def __init__(self, payload_writer):
         self.payload_writer = payload_writer
 
@@ -29,7 +28,6 @@ class ResponseWriter:
 
 
 class ResponseReader:
-
     def __init__(self, payload_reader):
         self.payload_reader = payload_reader
 
