@@ -4,6 +4,7 @@ from chord.base_node import BaseNode
 from chord.zmq_context import CONTEXT
 from chord.utils import get_requester
 from src.router import Request, RequestWriter, ResponseReader
+from readers import remote_node_reader, none_reader
 
 
 class RemoteNode(BaseNode):
@@ -38,8 +39,7 @@ class RemoteNode(BaseNode):
         writer = RequestWriter(payload_writer)
         response_data = self._remote_call(type, data, writer)
 
-        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
-        reader = ResponseReader(response_data_reader)
+        reader = ResponseReader(remote_node_reader)
 
         return reader.read(response_data)
 
@@ -50,8 +50,7 @@ class RemoteNode(BaseNode):
         writer = RequestWriter(payload_writer)
         response_data = self._remote_call(type, data, writer)
 
-        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
-        reader = ResponseReader(response_data_reader)
+        reader = ResponseReader(remote_node_reader)
 
         return reader.read(response_data)
 
@@ -62,8 +61,7 @@ class RemoteNode(BaseNode):
         writer = RequestWriter(payload_writer)
         response_data = self._remote_call(type, data, writer)
 
-        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
-        reader = ResponseReader(response_data_reader)
+        reader = ResponseReader(none_reader)
 
         return reader.read(response_data)
 
@@ -74,8 +72,7 @@ class RemoteNode(BaseNode):
         writer = RequestWriter(payload_writer)
         response_data = self._remote_call(type, data, writer)
 
-        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
-        reader = ResponseReader(response_data_reader)
+        reader = ResponseReader(remote_node_reader)
 
         return reader.read(response_data)
 
@@ -86,8 +83,7 @@ class RemoteNode(BaseNode):
         writer = RequestWriter(payload_writer)
         response_data = self._remote_call(type, data, writer)
 
-        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
-        reader = ResponseReader(response_data_reader)
+        reader = ResponseReader(remote_node_reader)
 
         return reader.read(response_data)
 
@@ -99,8 +95,7 @@ class RemoteNode(BaseNode):
         writer = RequestWriter(payload_writer)
         response_data = self._remote_call(type, data, writer)
 
-        def response_data_reader(d: dict): return RemoteNode.from_dict(d)
-        reader = ResponseReader(response_data_reader)
+        reader = ResponseReader(none_reader)
 
         return reader.read(response_data)
 
