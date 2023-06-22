@@ -1,10 +1,14 @@
+from .request import RequestReader
+from .response import ResponseWriter
+
+
 class Router:
     def __init__(self):
         self.handlers = {}
 
-    def add_handler(self, handler, payload_reader, payload_writer):
+    def add_handler(self, handler: str, request_reader: RequestReader, response_writer: ResponseWriter):
         if not handler in self.handlers:
-            self.handlers[handler] = (payload_reader, payload_writer)
+            self.handlers[handler] = (request_reader, response_writer)
 
         return self
 
@@ -15,7 +19,4 @@ class Router:
             t = self.handlers.get(type, None)
             if t is not None:
                 reader, writer = t
-                request = reader.read(request_data)
-                if request.is_valid():
-                    response_data = writer.write(request.data)
-                    return (request.ip, request.port, response_data)
+                return (type, reader, writer)
