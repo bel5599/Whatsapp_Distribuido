@@ -5,6 +5,9 @@ from chord.remote_node import RemoteNode
 from chord.utils import generate_id
 from ..router import Router
 
+import zmq
+from zmq_context import CONTEXT
+
 class Finger:
     def __init__(self, m, k, node: Union[BaseNode, None] = None):
         self.start = (2**k) % (2**m)  # 2^(k) mod 2^m
@@ -106,3 +109,21 @@ class Node(BaseNode):
     def join(self, node: BaseNode):
         self.init_finger_table(node)
         self.update_others()
+    
+    def serve(self):
+    
+        server = CONTEXT.socket(zmq.REP)
+        server.bind("tcp://*:"+self.port)
+        
+        while True:
+            request_data = server.recv_json()
+            request_reader,response_writer,method = self.router.route(request_data)
+            request = request_reader.read(request_data)
+            
+
+            if request.is_valid():
+                result = method(request.data)
+                response_data = response_writer.write(result)
+                server.send(response_data)
+                
+            
