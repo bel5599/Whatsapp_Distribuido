@@ -1,13 +1,16 @@
+from datetime import*
+
 from db import  Base
 from typing import List
 from typing import Optional
+
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, DATETIME, Date
 
 
 
@@ -27,7 +30,7 @@ class Messenger(Base):
     user_id_to:   Mapped[int] = mapped_column(ForeignKey("user_account.nickname"))
     chat_id:      Mapped[int] = mapped_column(ForeignKey("chat.chat_id"))
     value:        Mapped[str] = mapped_column(String)
-    #date:         Mapped[]   = mapped_column()
+    date:         Mapped[datetime] = mapped_column(DATETIME)
 
     def __repr__(self) -> str:
         return f"Messenger(id={self.messenger_id!r}, user_id_from={self.user_id_from!r}, user_id_to={self.user_id_to!r},chat_id={self.chat_id!r})"
