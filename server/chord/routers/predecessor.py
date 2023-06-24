@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request
 
-
 from ..base_node import BaseNode, BaseNodeModel
 
 
