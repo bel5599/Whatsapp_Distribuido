@@ -1,8 +1,21 @@
+from pydantic import BaseModel
+
+
+class BaseNodeModel(BaseModel):
+    id: int
+    ip: str
+    port: str
+
+
 class BaseNode:
     def __init__(self, id: int, ip: str, port: str):
         self.id = id
         self.ip = ip
         self.port = port
+
+    @classmethod
+    def from_base_model(cls, model: BaseNodeModel):
+        return cls(model.id, model.ip, model.port)
 
     @classmethod
     def from_serialized(cls, d: dict):
