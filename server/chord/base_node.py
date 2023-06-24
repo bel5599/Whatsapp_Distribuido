@@ -5,7 +5,7 @@ class BaseNode:
         self.port = port
 
     @classmethod
-    def from_dict(cls, d: dict):
+    def from_serialized(cls, d: dict):
         id = d.get("id", None)
         ip = d.get("ip", None)
         port = d.get("port", None)
@@ -13,23 +13,23 @@ class BaseNode:
         if id is not None and ip is not None and port is not None:
             return cls(id, ip, port)
 
-    def to_dict(self):
+    def serialize(self):
         return {"id": self.id, "ip": self.ip, "port": self.port}
 
-    def successor(self):
+    async def successor(self) -> "BaseNode":
         raise NotImplementedError()
 
-    def predecessor(self):
+    async def predecessor(self) -> "BaseNode":
         raise NotImplementedError()
 
-    def set_predecessor(self, node: "BaseNode"):
+    async def set_predecessor(self, node: "BaseNode"):
         raise NotImplementedError()
 
-    def closest_preceding_finger(self, id: int):
+    async def closest_preceding_finger(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    def find_successor(self, id: int):
+    async def find_successor(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    def update_finger_table(self, node: "BaseNode", index: int):
+    async def update_finger_table(self, node: "BaseNode", index: int):
         raise NotImplementedError()
