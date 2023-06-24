@@ -17,5 +17,5 @@ class RemoteNode(BaseNode):
     def find_successor(self, id: int):
         pass
 
-    def update_finger_table(self, node: BaseNode, index: int):
+    def update_fingers(self, node: BaseNode, index: int):
         pass

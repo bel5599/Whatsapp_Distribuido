@@ -44,5 +44,5 @@ class BaseNode:
     async def find_successor(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    async def update_finger_table(self, node: "BaseNode", index: int):
+    async def update_fingers(self, node: "BaseNode", index: int):
         raise NotImplementedError()
