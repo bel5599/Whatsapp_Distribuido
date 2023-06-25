@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class BaseNodeModel(BaseModel):
@@ -30,23 +29,23 @@ class BaseNode:
     def serialize(self):
         return {"id": self.id, "ip": self.ip, "port": self.port}
 
-    def network_capacity(self) -> Optional[int]:
+    def network_capacity(self) -> int:
         raise NotImplementedError()
 
-    def successor(self) -> Optional["BaseNode"]:
+    def successor(self) -> "BaseNode":
         raise NotImplementedError()
 
-    def predecessor(self) -> Optional["BaseNode"]:
+    def predecessor(self) -> "BaseNode":
         raise NotImplementedError()
 
-    def set_predecessor(self, node: "BaseNode") -> bool:
+    def set_predecessor(self, node: "BaseNode") -> None:
         raise NotImplementedError()
 
-    def closest_preceding_finger(self, id: int) -> Optional["BaseNode"]:
+    def closest_preceding_finger(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    def find_successor(self, id: int) -> Optional["BaseNode"]:
+    def find_successor(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    def update_fingers(self, node: "BaseNode", index: int) -> bool:
+    def update_fingers(self, node: "BaseNode", index: int) -> None:
         raise NotImplementedError()
