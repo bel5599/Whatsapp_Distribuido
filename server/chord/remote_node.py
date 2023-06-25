@@ -8,45 +8,69 @@ class RemoteNode(BaseNode):
         super().__init__(id, ip, port)
         self.url = f"http://{self.ip}:{self.port}"
 
-    def network_capacity(self) -> int:
-        response = get(f"{self.url}/fingers/capacity/")
-        response.raise_for_status()
-
-        return response.json()["capacity"]
+    def network_capacity(self):
+        try:
+            response = get(f"{self.url}/fingers/capacity/")
+        except:
+            pass
+        else:
+            if response.status_code == 200:
+                capacity: int = response.json()["capacity"]
+                return capacity
 
     def successor(self):
-        response = get(f"{self.url}/successor/")
-        response.raise_for_status()
-
-        model = BaseNodeModel(**response.json())
-        return RemoteNode.from_base_model(model)
+        try:
+            response = get(f"{self.url}/successor/")
+        except:
+            pass
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return RemoteNode.from_base_model(model)
 
     def predecessor(self):
-        response = get(f"{self.url}/predecessor/")
-        response.raise_for_status()
-
-        model = BaseNodeModel(**response.json())
-        return RemoteNode.from_base_model(model)
+        try:
+            response = get(f"{self.url}/predecessor/")
+        except:
+            pass
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return RemoteNode.from_base_model(model)
 
     def set_predecessor(self, node: BaseNode):
-        response = put(f"{self.url}/predecessor/", data=node.serialize())
-        response.raise_for_status()
+        try:
+            response = put(f"{self.url}/predecessor/", data=node.serialize())
+        except:
+            return False
+        else:
+            return response.status_code == 200
 
     def closest_preceding_finger(self, id: int):
-        response = get(f"{self.url}/fingers/closest_preceding/{id}")
-        response.raise_for_status()
-
-        model = BaseNodeModel(**response.json())
-        return RemoteNode.from_base_model(model)
+        try:
+            response = get(f"{self.url}/fingers/closest_preceding/{id}")
+        except:
+            pass
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return RemoteNode.from_base_model(model)
 
     def find_successor(self, id: int):
-        response = get(f"{self.url}/successor/{id}")
-        response.raise_for_status()
-
-        model = BaseNodeModel(**response.json())
-        return RemoteNode.from_base_model(model)
+        try:
+            response = get(f"{self.url}/successor/{id}")
+        except:
+            pass
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return RemoteNode.from_base_model(model)
 
     def update_fingers(self, node: BaseNode, index: int):
-        response = put(f"{self.url}/fingers/update/{index}",
-                       data=node.serialize())
-        response.raise_for_status()
+        try:
+            response = put(f"{self.url}/fingers/update/{index}",
+                           data=node.serialize())
+        except:
+            return False
+        else:
+            return response.status_code == 200
