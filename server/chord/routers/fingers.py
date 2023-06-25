@@ -6,6 +6,13 @@ from ..base_node import BaseNode, BaseNodeModel
 router = APIRouter(prefix="/fingers", tags=["fingers"])
 
 
+@router.get("/capacity")
+def get_network_capacity(request: Request):
+    node: BaseNode = request.state.node
+
+    return {"capacity": node.network_capacity()}
+
+
 @router.get("/closest_preceding/{id}")
 def get_closest_preceding_finger(id: int, request: Request):
     node: BaseNode = request.state.node
