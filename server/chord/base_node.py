@@ -29,20 +29,20 @@ class BaseNode:
     def serialize(self):
         return {"id": self.id, "ip": self.ip, "port": self.port}
 
-    async def successor(self) -> "BaseNode":
+    def successor(self) -> "BaseNode":
         raise NotImplementedError()
 
-    async def predecessor(self) -> "BaseNode":
+    def predecessor(self) -> "BaseNode":
         raise NotImplementedError()
 
-    async def set_predecessor(self, node: "BaseNode"):
+    def set_predecessor(self, node: "BaseNode"):
         raise NotImplementedError()
 
-    async def closest_preceding_finger(self, id: int) -> "BaseNode":
+    def closest_preceding_finger(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    async def find_successor(self, id: int) -> "BaseNode":
+    def find_successor(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    async def update_fingers(self, node: "BaseNode", index: int):
+    def update_fingers(self, node: "BaseNode", index: int):
         raise NotImplementedError()

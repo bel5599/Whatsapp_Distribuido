@@ -7,16 +7,14 @@ router = APIRouter(prefix="/successor", tags=["successor"])
 
 
 @router.get("/")
-async def get_successor(request: Request):
+def get_successor(request: Request):
     node: BaseNode = request.state.node
 
-    result_node = await node.successor()
-    return result_node.serialize()
+    return node.successor().serialize()
 
 
 @router.get("/{id}")
-async def find_successor(id: int, request: Request):
+def find_successor(id: int, request: Request):
     node: BaseNode = request.state.node
 
-    result_node = await node.find_successor(id)
-    return result_node.serialize()
+    return node.find_successor(id).serialize()
