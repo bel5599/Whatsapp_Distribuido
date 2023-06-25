@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, HTTPException
 
 from ..base_node import BaseNode, BaseNodeModel
 
@@ -10,7 +10,11 @@ router = APIRouter(prefix="/predecessor", tags=["predecessor"])
 def get_predecessor(request: Request):
     node: BaseNode = request.state.node
 
-    return node.predecessor().serialize()
+    predecessor = node.predecessor()
+    if predecessor:
+        return predecessor.serialize()
+
+    raise HTTPException(status_code=403, detail="predecessor not found!")
 
 
 @router.put("/")
@@ -18,6 +22,8 @@ def set_predecessor(model: BaseNodeModel, request: Request):
     node: BaseNode = request.state.node
     new_node = BaseNode.from_base_model(model)
 
-    node.set_predecessor(new_node)
+    success = node.set_predecessor(new_node)
+    if success:
+        return node.serialize()
 
-    return new_node.serialize()
+    raise HTTPException(status_code=403, detail="setting predecessor failed!")
