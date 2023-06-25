@@ -8,6 +8,12 @@ class RemoteNode(BaseNode):
         super().__init__(id, ip, port)
         self.url = f"http://{self.ip}:{self.port}"
 
+    def network_capacity(self) -> int:
+        response = get(f"{self.url}/fingers/capacity/")
+        response.raise_for_status()
+
+        return response.json()["capacity"]
+
     def successor(self):
         response = get(f"{self.url}/successor/")
         response.raise_for_status()

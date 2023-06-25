@@ -29,6 +29,9 @@ class BaseNode:
     def serialize(self):
         return {"id": self.id, "ip": self.ip, "port": self.port}
 
+    def network_capacity(self) -> int:
+        raise NotImplementedError()
+
     def successor(self) -> "BaseNode":
         raise NotImplementedError()
 
