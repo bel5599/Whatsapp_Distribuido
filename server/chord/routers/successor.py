@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..base_node import BaseNode
+from ..node import Node
 
 
 router = APIRouter(prefix="/successor", tags=["successor"])
@@ -8,22 +8,24 @@ router = APIRouter(prefix="/successor", tags=["successor"])
 
 @router.get("/")
 def get_successor(request: Request):
-    node: BaseNode = request.state.node
+    node: Node = request.state.node
 
-    successor = node.successor()
-    if successor:
+    try:
+        successor = node.successor()
+    except:
+        raise HTTPException(status_code=404, detail="successor not found!")
+    else:
         return successor.serialize()
-
-    raise HTTPException(status_code=403, detail="successor not found!")
 
 
 @router.get("/{id}")
 def find_successor(id: int, request: Request):
-    node: BaseNode = request.state.node
+    node: Node = request.state.node
 
-    id_successor = node.find_successor(id)
-    if id_successor:
+    try:
+        id_successor = node.find_successor(id)
+    except:
+        raise HTTPException(
+            status_code=404, detail=f"successor of '{id}' not found!")
+    else:
         return id_successor.serialize()
-
-    raise HTTPException(
-        status_code=403, detail=f"successor of '{id}' not found!")
