@@ -17,7 +17,7 @@ class Node(BaseNode):
     def __init__(self, id: int, ip: str, port: str):
         super().__init__(id, ip, port)
 
-        self.fingers = []
+        self.fingers: list[Finger] = []
         self._predecessor: Union[BaseNode, None] = None
 
     @classmethod
@@ -52,14 +52,21 @@ class Node(BaseNode):
 
         return node
 
-    def network_capacity(self) -> int:
+    def network_capacity(self):
         return len(self.fingers)
 
     def successor(self):
-        return self.fingers[0].node
+        successor = self.fingers[0].node
+        if successor:
+            return successor
+
+        raise Exception(f"{self}' successor not found!")
 
     def predecessor(self):
-        return self._predecessor
+        if self._predecessor:
+            return self._predecessor
+
+        raise Exception(f"{self}'s predecessor not found!")
 
     def set_predecessor(self, node: BaseNode):
         self._predecessor = node
@@ -82,12 +89,12 @@ class Node(BaseNode):
         node = self.find_predecessor(id)
         return node.successor()
 
-    def update_fingers(self, node: BaseNode, i: int):
-        finger_node = self.fingers[i].node
+    def update_fingers(self, node: BaseNode, index: int):
+        finger_node = self.fingers[index].node
 
         if finger_node and self.id <= node.id < finger_node.id:
-            self.fingers[i] = node
-            self.predecessor().update_fingers(node, i)
+            self.fingers[index].node = node
+            self.predecessor().update_fingers(node, index)
 
     def update_others(self):
         for i in range(len(self.fingers)):
@@ -101,8 +108,9 @@ class Node(BaseNode):
         self.successor().set_predecessor(self)
 
         for i in range(1, len(self.fingers)):
-            if self.id <= self.fingers[i].start < self.fingers[i-1].node.id:
-                self.fingers[i].node = self.fingers[i-1].node
+            prev_node = self.fingers[i-1].node
+            if prev_node and self.id <= self.fingers[i].start < prev_node.id:
+                self.fingers[i].node = prev_node
             else:
                 self.fingers[i].node = node.find_successor(
                     self.fingers[i].start)
