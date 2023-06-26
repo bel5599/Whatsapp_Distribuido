@@ -7,7 +7,7 @@ if __name__ == "__main__":
     # using this imports until node submodule is implemented
     from server.chord.node import Node
     from server.chord.remote_node import RemoteNode
-    from server.util import generate_id, get_ip
+    from server.util import generate_id, get_ip, LOCAL_IP
     from server.chord.routers import fingers, predecessor, successor
 
     def inject_node(app: FastAPI, node: Node):
@@ -24,10 +24,10 @@ if __name__ == "__main__":
     fastapi_app.include_router(predecessor.router)
 
     @typer_app.command()
-    def create(capacity: int = Argument(64), port: str = "4173"):
+    def create(capacity: int = Argument(64), port: str = "4173", local: bool = False):
         capacity = min(capacity, 256)
 
-        ip = get_ip()
+        ip = get_ip(local)
         node = Node.create_network(ip, port, capacity)
 
         inject_node(fastapi_app, node)
@@ -37,8 +37,9 @@ if __name__ == "__main__":
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173"):
-        remote_ip, remote_port = address.split(":")
+    def join(address: str, port: str = "4173", local: bool = False):
+        remote_ip, remote_port = address.split(
+            ":") if not local else (LOCAL_IP, port)
         remote_node = RemoteNode(-1, remote_ip, remote_port)
 
         capacity = remote_node.network_capacity()
