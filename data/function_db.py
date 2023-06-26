@@ -1,19 +1,20 @@
 from db import Base,engine,session
 from models import*
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+
 
 
 def create_database():
     Base.metadata.create_all(engine)
 
 # USER 
-def add_user(nickname_):
+def add_user(nickname_,password_):
     #si no existe agregalo
     if not contain_user(nickname_):
         with session:
             user = User(
             nickname=nickname_,
+            password = password_
             )
             session.add_all([user])
             session.commit()
