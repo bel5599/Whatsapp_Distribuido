@@ -20,8 +20,7 @@ class Node(BaseNode):
         self._predecessor: Union[BaseNode, None] = None
 
     @classmethod
-    def create_network(cls, port: str, network_capacity: int):
-        ip = get_ip()
+    def create_network(cls, ip: str, port: str, network_capacity: int):
         id = generate_id(f"{ip}:{port}", network_capacity)
         node = cls(id, ip, port)
 
