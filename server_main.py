@@ -1,26 +1,30 @@
 if __name__ == "__main__":
     import asyncio
-    from typer import Typer
+    from typer import Typer, Argument
     from fastapi import FastAPI, Request
     from uvicorn import Config, Server
 
     # using this imports until node submodule is implemented
-    from .chord.node import Node
-    from .chord.remote_node import RemoteNode
-    from .util import generate_id, get_ip
+    from server.chord.node import Node
+    from server.chord.remote_node import RemoteNode
+    from server.util import generate_id, get_ip
+    from server.chord.routers import fingers, predecessor, successor
 
     def inject_node(app: FastAPI, node: Node):
         @app.middleware("http")
         async def middleware(request: Request, call_next):
             request.state.node = node
-
             return await call_next(request)
 
     typer_app = Typer()
+
     fastapi_app = FastAPI()
+    fastapi_app.include_router(fingers.router)
+    fastapi_app.include_router(successor.router)
+    fastapi_app.include_router(predecessor.router)
 
     @typer_app.command()
-    def create(capacity: int = 64, port: str = "4173"):
+    def create(capacity: int = Argument(64), port: str = "4173"):
         capacity = min(capacity, 256)
 
         ip = get_ip()
@@ -28,7 +32,7 @@ if __name__ == "__main__":
 
         inject_node(fastapi_app, node)
 
-        config = Config("main:fastapi_app", host=ip, port=int(port))
+        config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
         asyncio.run(server.serve())
 
@@ -43,10 +47,13 @@ if __name__ == "__main__":
 
         ip = get_ip()
         node = Node(generate_id(f"{ip}:{port}", capacity), ip, port)
+
         inject_node(fastapi_app, node)
 
-        config = Config("main:fastapi_app", host=ip, port=int(port))
+        config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
         asyncio.run(server.serve())
 
         node.join_network(remote_node)
+
+    typer_app()
