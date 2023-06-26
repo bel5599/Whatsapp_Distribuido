@@ -1,7 +1,6 @@
 from typing import Union
 
 from .base_node import BaseNode
-from .remote_node import RemoteNode
 from ..util import get_ip, generate_id
 
 
@@ -30,25 +29,6 @@ class Node(BaseNode):
         node.fingers = [Finger(network_capacity, k, node)
                         for k in range(network_capacity)]
         node.set_predecessor(node)
-
-        return node
-
-    @classmethod
-    def join_network(cls, network_ip: str, network_port: str, port: str):
-        # crear nodo remoto sin id, solo por comunicacion
-        network_node = RemoteNode(-1, network_ip, network_port)
-
-        # conseguir capacidad de la red para generar id
-        network_capacity = network_node.network_capacity()
-
-        network_node.id = generate_id(
-            f"{network_ip}:{network_port}", network_capacity)
-        # network node is ready now
-
-        ip = get_ip()
-        id = generate_id(f"{ip}:{port}", network_capacity)
-        node = cls(id, ip, port)
-        node.join(network_node)
 
         return node
 
@@ -115,6 +95,6 @@ class Node(BaseNode):
                 self.fingers[i].node = node.find_successor(
                     self.fingers[i].start)
 
-    def join(self, node: BaseNode):
+    def join_network(self, node: BaseNode):
         self.init_fingers(node)
         self.update_others()
