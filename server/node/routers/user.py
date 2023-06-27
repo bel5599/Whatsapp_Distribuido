@@ -1,9 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
-# from ..base_node import BaseNodeModel
 from ..entity_node import EntityNode
 from pydantic import BaseModel
-# from ..remote_node import RemoteNode
 
 class UserModel(BaseModel):
     nickname: str

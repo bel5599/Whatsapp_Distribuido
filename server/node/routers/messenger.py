@@ -1,9 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
-# from ..base_node import BaseNodeModel
 from ..entity_node import EntityNode
 from pydantic import BaseModel
-# from ..remote_node import RemoteNode
 
 class MessengerModel(BaseModel):
     source: str
@@ -12,6 +10,28 @@ class MessengerModel(BaseModel):
 
 
 router = APIRouter(prefix="/messenger", tags=["messenger"])
+
+@router.get("/from")
+def search_messenger_from(me, user, request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        result = node.search_messenger_from(me, user)
+    except:
+        raise HTTPException(status_code=404, detail="messenges not found!")
+    else:
+        return {str(result): result}
+    
+@router.get("/to")
+def search_messenger_to(me, user, request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        result = node.search_messenger_to(me, user)
+    except:
+        raise HTTPException(status_code=404, detail="messenges not found!")
+    else:
+        return {str(result): result}
 
 @router.put("/add")
 def add_messenger(model: MessengerModel, request: Request):
@@ -33,6 +53,7 @@ def delete_messenger(id: int, request: Request):
         result = node.delete_messenger(id)
     except:
         raise HTTPException(
-            status_code=500, detail="delete user failed!")
+            status_code=500, detail="delete messenger failed!")
     else:
         return {str(result): result}
+    

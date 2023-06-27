@@ -66,11 +66,11 @@ def search_messenger_from(me, user = None):
     
     try:
         if user is None:
-            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == me).all()
+            result = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == me).all()
         else:
-            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == me and Messenger.user_id_to == user).all()
+            result = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == me and Messenger.user_id_to == user).all()
             
-        return resoult
+        return result
     except:
         return False    
 
@@ -79,11 +79,11 @@ def search_messenger_from(me, user = None):
 def search_messenger_to(me,user=None):
     try:
         if user is None:
-            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_to == me).all()       
+            result = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_to == me).all()       
         else:
-            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == user and Messenger.user_id_to == me).all()
+            result = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == user and Messenger.user_id_to == me).all()
             
-        return resoult
+        return result
     except:
         return False    
     

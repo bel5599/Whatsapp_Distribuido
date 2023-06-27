@@ -1,14 +1,46 @@
 from fastapi import APIRouter, Request, HTTPException
 
-# from ..base_node import BaseNodeModel
 from ..entity_node import EntityNode
 from pydantic import BaseModel
-# from ..remote_node import RemoteNode
 
-class MessengerModel(BaseModel):
-    source: str
-    destiny: str
-    value: str
+class ChatModel(BaseModel):
+    user_1: str
+    user_2: str
 
 
-router = APIRouter(prefix="/messenger", tags=["messenger"])
+router = APIRouter(prefix="/chat", tags=["chat"])
+
+@router.get("/")
+def search_chat_id(model: ChatModel, request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        chat_id = node.search_chat_id(model.user_1, model.user_2)
+    except: 
+        raise HTTPException(status_code=404, detail="chat id not found!")
+    else:
+        return node.serialize()
+
+@router.put("/add")
+def add_chat(model: ChatModel, request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        result = node.add_chat(model.user_1, model.user_2)
+    except:
+        raise HTTPException(
+            status_code=500, detail="add chat failed!")
+    else:
+        return {str(result): result}
+    
+@router.delete("/delete")
+def delete_chat(model: ChatModel, request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        result = node.delete_chat(model.user_1, model.user_2)
+    except:
+        raise HTTPException(
+            status_code=500, detail="delete chat failed!")
+    else:
+        return {str(result): result}

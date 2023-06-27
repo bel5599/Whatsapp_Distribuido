@@ -1,5 +1,5 @@
 from ..chord.node import Node as ChordNode
-from ..data.function_db import *
+from ...data.function_db import *
 
 class EntityNode(ChordNode):
     def __init__(self, id: int, ip: str, port: str):
@@ -12,8 +12,14 @@ class EntityNode(ChordNode):
     def delete_user(self, nickname):
         return delete_user(nickname)
 
-    def add_messenger(self, source,destiny,value):
-        return add_messenger(source,destiny,value)
+    def add_messenger(self, source, destiny, value):
+        return add_messenger(source, destiny, value)
+    
+    def search_messenger_from(self, me, user):
+        return search_messenger_from(me, user)
+    
+    def search_messenger_to(self, me, user):
+        return search_messenger_to(me, user)
 
     def delete_messenger(self, id_messenger):
         return delete_messenger(id_messenger)
