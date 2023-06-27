@@ -60,7 +60,33 @@ def delete_messenger(id_messenger):
         return True
     return False
 
+#Todos los sms que envie, o que envie a user
+#Devuelve una lista de tuplas(user_from,Value)
+def search_messenger_from(me, user = None):
+    
+    try:
+        if user is None:
+            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == me).all()
+        else:
+            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == me and Messenger.user_id_to == user).all()
+            
+        return resoult
+    except:
+        return False    
 
+#Todos los sms que me enviaron , o los que me envio user
+#Devuelve una lista de tuplas(user_from,Value)
+def search_messenger_to(me,user=None):
+    try:
+        if user is None:
+            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_to == me).all()       
+        else:
+            resoult = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == user and Messenger.user_id_to == me).all()
+            
+        return resoult
+    except:
+        return False    
+    
 # CHAT
 def add_chat(user_id_1_,user_id_2_):
     if search_chat_id(user_id_1_,user_id_2_) is False:
@@ -76,12 +102,6 @@ def add_chat(user_id_1_,user_id_2_):
 
 def search_chat_id(user_id_1,user_id_2):
     
-    # stmt = select(Chat).where(Chat.user_id_1.is_(user_id_1) and Chat.user_id_2.is_(user_id_2) or 
-    #                           Chat.user_id_1.is_(user_id_2) and Chat.user_id_2.is_(user_id_1)  )
-    
-    # for chat in session.scalars(stmt):
-    #     return chat.id
-    
     try:
         chat = session.query(Chat).filter(Chat.user_id_1 == user_id_1 and Chat.user_id_2==user_id_2 ).one()
         return chat.chat_id
@@ -95,6 +115,10 @@ def search_chat_id(user_id_1,user_id_2):
 def delete_chat(user_id_1,user_id_2):
     chat_id = search_chat_id(user_id_1,user_id_2)
     if chat_id is not False:
+        #Elimina todos los sms del chat
+        for id in session.query(Messenger).filter(Messenger.chat_id==chat_id).all():
+            session.delete(id)
+            
         contain = session.query(Chat).get(chat_id)
         session.delete(contain) 
         session.commit()
