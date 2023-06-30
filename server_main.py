@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
         capacity = remote_node.network_capacity()
 
-        remote_node.id = generate_id(address, capacity)
+        remote_node.id = generate_id(f"{remote_ip}:{remote_port}", capacity)
 
         ip = get_ip(local)
         node = Node(ip, port, capacity)
