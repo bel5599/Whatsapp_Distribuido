@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 import json
 import requests
-from fastapi_utils.tasks import repeat_every
-from sqlalchemy import true
+# from fastapi_utils.tasks import repeat_every
+# from sqlalchemy import true
 import os
-from client_node import ClientNode
+from .client_node import ClientNode
 
 client_interface = FastAPI()
 client = ClientNode()
