@@ -11,10 +11,11 @@ if __name__ == "__main__":
     from server.chord.routers import fingers, predecessor, successor
 
     def inject_node(app: FastAPI, node: Node):
-        @app.middleware("http")
         async def middleware(request: Request, call_next):
             request.state.node = node
             return await call_next(request)
+
+        app.middleware("http")(middleware)
 
     typer_app = Typer()
 
