@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
+from pydantic import BaseModel
 
 from ..entity_node import EntityNode
-from pydantic import BaseModel
+
 
 class UserModel(BaseModel):
     nickname: str
@@ -9,6 +10,7 @@ class UserModel(BaseModel):
 
 
 router = APIRouter(prefix="/user", tags=["user"])
+
 
 @router.put("/add")
 def add_user(model: UserModel, request: Request):
@@ -21,10 +23,11 @@ def add_user(model: UserModel, request: Request):
             status_code=500, detail="add user failed!")
     else:
         return {str(result): result}
-    
+
+
 @router.delete("/delete/{nickname}")
 def delete_user(nickname: str, request: Request):
-    node:EntityNode = request.state.node
+    node: EntityNode = request.state.node
 
     try:
         result = node.delete_user(nickname)
@@ -33,4 +36,3 @@ def delete_user(nickname: str, request: Request):
             status_code=500, detail="delete user failed!")
     else:
         return {str(result): result}
-   

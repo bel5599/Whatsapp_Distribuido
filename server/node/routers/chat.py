@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
+from pydantic import BaseModel
 
 from ..entity_node import EntityNode
-from pydantic import BaseModel
+
 
 class ChatModel(BaseModel):
     user_1: str
@@ -10,16 +11,18 @@ class ChatModel(BaseModel):
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
+
 @router.get("/")
 def search_chat_id(model: ChatModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
         chat_id = node.search_chat_id(model.user_1, model.user_2)
-    except: 
+    except:
         raise HTTPException(status_code=404, detail="chat id not found!")
     else:
         return node.serialize()
+
 
 @router.put("/add")
 def add_chat(model: ChatModel, request: Request):
@@ -32,7 +35,8 @@ def add_chat(model: ChatModel, request: Request):
             status_code=500, detail="add chat failed!")
     else:
         return {str(result): result}
-    
+
+
 @router.delete("/delete/{model.user_1}{model.user_2}")
 def delete_chat(model: ChatModel, request: Request):
     node: EntityNode = request.state.node
