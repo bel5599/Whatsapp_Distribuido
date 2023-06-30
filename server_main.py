@@ -39,15 +39,20 @@ if __name__ == "__main__":
 
     @typer_app.command()
     def join(address: str, port: str = "4173", local: bool = False):
-        remote_ip, remote_port = address.split(
-            ":") if not local else (LOCAL_IP, port)
+        if not local:
+            remote_ip, remote_port = address.split(
+                ":")
+        else:
+            remote_ip = LOCAL_IP
+            remote_port = address
+
         remote_node = RemoteNode(-1, remote_ip, remote_port)
 
         capacity = remote_node.network_capacity()
 
         remote_node.id = generate_id(address, capacity)
 
-        ip = get_ip()
+        ip = get_ip(local)
         node = Node(generate_id(f"{ip}:{port}", capacity), ip, port)
 
         inject_node(fastapi_app, node)
