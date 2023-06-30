@@ -1,7 +1,7 @@
 from typing import Union
 
 from .base_node import BaseNode
-from ..util import get_ip, generate_id
+from ..util import generate_id
 
 
 class Finger:
@@ -13,20 +13,21 @@ class Finger:
 
 
 class Node(BaseNode):
-    def __init__(self, id: int, ip: str, port: str):
+    def __init__(self, ip: str, port: str, capacity: int):
+        id = generate_id(f"{ip}:{port}", capacity)
         super().__init__(id, ip, port)
 
-        self.fingers: list[Finger] = []
+        self.fingers: list[Finger] = [Finger(capacity, k, None)
+                                      for k in range(capacity)]
         self._predecessor: Union[BaseNode, None] = None
 
     @classmethod
     def create_network(cls, ip: str, port: str, network_capacity: int):
-        id = generate_id(f"{ip}:{port}", network_capacity)
-        node = cls(id, ip, port)
+        node = cls(ip, port, network_capacity)
 
         # node is the only node in network, so:
-        node.fingers = [Finger(network_capacity, k, node)
-                        for k in range(network_capacity)]
+        for finger in node.fingers:
+            finger.node = node
         node.set_predecessor(node)
 
         return node
