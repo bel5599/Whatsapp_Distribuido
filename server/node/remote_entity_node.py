@@ -15,7 +15,7 @@ class RemoteEntityNode(ChordRemoteNode):
             return result
         
         raise Exception(response.json()["detail"])
-    
+
     def delete_user(self, nickname: str):
         response = delete(f"{self.url}/user/delete/{nickname}")
         
@@ -79,8 +79,8 @@ class RemoteEntityNode(ChordRemoteNode):
         
         raise Exception(response.json()["detail"])
 
-    def delete_chat(self):
-        response = delete(f"{self.url}/chat/delete")
+    def delete_chat(self, user_1, user_2):
+        response = delete(f"{self.url}/chat/delete/{user_1}{user_2}")
         
         if response.status_code == 200:
             result: dict = response.json()

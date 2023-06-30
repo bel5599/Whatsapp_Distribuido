@@ -33,7 +33,7 @@ def add_chat(model: ChatModel, request: Request):
     else:
         return {str(result): result}
     
-@router.delete("/delete")
+@router.delete("/delete/{model.user_1}{model.user_2}")
 def delete_chat(model: ChatModel, request: Request):
     node: EntityNode = request.state.node
 
