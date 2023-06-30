@@ -6,7 +6,6 @@ from ..chord.remote_node import RemoteNode as ChordRemoteNode
 class RemoteEntityNode(ChordRemoteNode):
     def __init__(self, id: int, ip: str, port: str):
         super().__init__(id, ip, port)
-        self.url = f"http://{self.ip}:{self.port}"
 
     def add_user(self):
         response = put(f"{self.url}/user/add")
