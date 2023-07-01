@@ -1,5 +1,6 @@
 if __name__ == "__main__":
     import asyncio
+    from logging import basicConfig, DEBUG
     from typer import Typer, Argument
     from fastapi import FastAPI, Request
     from uvicorn import Config, Server
@@ -8,7 +9,9 @@ if __name__ == "__main__":
     from server.chord.node import Node
     from server.chord.remote_node import RemoteNode
     from server.util import generate_id, get_ip, LOCAL_IP
-    from server.chord.routers import fingers, predecessor, successor
+    from server.chord.routers import fingers, predecessor, successor, debug as debug_module
+
+    basicConfig(level=DEBUG)
 
     def inject_node(app: FastAPI, node: Node):
         async def middleware(request: Request, call_next):
@@ -25,7 +28,10 @@ if __name__ == "__main__":
     fastapi_app.include_router(predecessor.router)
 
     @typer_app.command()
-    def create(capacity: int = Argument(64), port: str = "4173", local: bool = False):
+    def create(capacity: int = Argument(64), port: str = "4173", local: bool = False, debug: bool = False):
+        if debug:
+            fastapi_app.include_router(debug_module.router)
+
         capacity = min(capacity, 256)
 
         ip = get_ip(local)
@@ -38,17 +44,25 @@ if __name__ == "__main__":
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173", local: bool = False):
-        remote_ip, remote_port = address.split(
-            ":") if not local else (LOCAL_IP, port)
+    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False):
+        if debug:
+            fastapi_app.include_router(debug_module.router)
+
+        if not local:
+            remote_ip, remote_port = address.split(
+                ":")
+        else:
+            remote_ip = LOCAL_IP
+            remote_port = address
+
         remote_node = RemoteNode(-1, remote_ip, remote_port)
 
         capacity = remote_node.network_capacity()
 
-        remote_node.id = generate_id(address, capacity)
+        remote_node.id = generate_id(f"{remote_ip}:{remote_port}", capacity)
 
-        ip = get_ip()
-        node = Node(generate_id(f"{ip}:{port}", capacity), ip, port)
+        ip = get_ip(local)
+        node = Node(ip, port, capacity)
 
         inject_node(fastapi_app, node)
 

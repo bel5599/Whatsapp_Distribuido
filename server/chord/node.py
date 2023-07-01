@@ -1,7 +1,8 @@
 from typing import Union
+from logging import info as log_info, error as log_error
 
 from .base_node import BaseNode
-from ..util import get_ip, generate_id
+from ..util import generate_id
 
 
 class Finger:
@@ -11,62 +12,95 @@ class Finger:
         self.node = node
         # finger[i].node = suc cessor(finger[i].start)
 
+    def serialize(self):
+        return {
+            "start": self.start,
+            "end": self.end,
+            "node": self.node.serialize() if self.node else {}
+        }
+
 
 class Node(BaseNode):
-    def __init__(self, id: int, ip: str, port: str):
+    def __init__(self, ip: str, port: str, capacity: int):
+        id = generate_id(f"{ip}:{port}", capacity)
         super().__init__(id, ip, port)
 
-        self.fingers: list[Finger] = []
+        self.fingers: list[Finger] = [Finger(capacity, k, None)
+                                      for k in range(capacity)]
         self._predecessor: Union[BaseNode, None] = None
 
     @classmethod
     def create_network(cls, ip: str, port: str, network_capacity: int):
-        id = generate_id(f"{ip}:{port}", network_capacity)
-        node = cls(id, ip, port)
+        node = cls(ip, port, network_capacity)
 
         # node is the only node in network, so:
-        node.fingers = [Finger(network_capacity, k, node)
-                        for k in range(network_capacity)]
+        for finger in node.fingers:
+            finger.node = node
         node.set_predecessor(node)
 
         return node
 
     def network_capacity(self):
+        log_info(f"getting network capacity from {self}...")
         return len(self.fingers)
 
     def successor(self):
+        log_info(f"getting {self} successor...")
+
         successor = self.fingers[0].node
         if successor:
+            log_info(f"{self} successor found: {successor}")
             return successor
 
-        raise Exception(f"{self}' successor not found!")
+        error_msg = f"{self} successor not found!"
+        log_error(error_msg)
+        raise Exception(error_msg)
 
     def predecessor(self):
+        log_info(f"getting {self} predecessor...")
+
         if self._predecessor:
+            log_info(f"{self} predecessor found: {self._predecessor}")
             return self._predecessor
 
-        raise Exception(f"{self}'s predecessor not found!")
+        error_msg = f"{self} predecessor not found!"
+        log_error(error_msg)
+        raise Exception(error_msg)
 
     def set_predecessor(self, node: BaseNode):
+        log_info(f"setting {self} predecessor...")
         self._predecessor = node
+        log_info(f"successfully setted {self} predecessor: {node}")
 
     def closest_preceding_finger(self, id: int):
+        log_info(f"getting {self} closest preceding finger of '{id}'...")
+
+        node = self
         for finger in self.fingers[::-1]:
             if finger.node and self.id < finger.node.id < id:
-                return finger.node
-        return self
+                node = finger.node
+                break
+
+        log_info(f"{self} closest preceding finger of '{id}' is: {node}")
+        return node
 
     def find_predecessor(self, id: int):
-        node = self
+        log_info(f"finding '{id}' predecessor from {self}...")
 
+        node = self
         while id <= node.id or id > node.successor().id:
             node = node.closest_preceding_finger(id)
 
+        log_info(f"'{id}' predecessor from {self}: {node}")
         return node
 
     def find_successor(self, id: int):
-        node = self.find_predecessor(id)
-        return node.successor()
+        log_info(f"finding '{id}' successor from {self}...")
+
+        node = self.find_predecessor(id).successor()
+
+        log_info(f"'{id}' successor from {self}: {node}")
+        return node
 
     def update_fingers(self, node: BaseNode, index: int):
         finger_node = self.fingers[index].node
