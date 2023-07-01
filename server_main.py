@@ -1,5 +1,6 @@
 if __name__ == "__main__":
     import asyncio
+    from logging import basicConfig, DEBUG
     from typer import Typer, Argument
     from fastapi import FastAPI, Request
     from uvicorn import Config, Server
@@ -9,6 +10,8 @@ if __name__ == "__main__":
     from server.chord.remote_node import RemoteNode
     from server.util import generate_id, get_ip, LOCAL_IP
     from server.chord.routers import fingers, predecessor, successor
+
+    basicConfig(level=DEBUG)
 
     def inject_node(app: FastAPI, node: Node):
         async def middleware(request: Request, call_next):
