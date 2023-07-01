@@ -12,6 +12,13 @@ class Finger:
         self.node = node
         # finger[i].node = suc cessor(finger[i].start)
 
+    def serialize(self):
+        return {
+            "start": self.start,
+            "end": self.end,
+            "node": self.node.serialize() if self.node else {}
+        }
+
 
 class Node(BaseNode):
     def __init__(self, ip: str, port: str, capacity: int):
