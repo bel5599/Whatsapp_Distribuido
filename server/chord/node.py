@@ -133,7 +133,7 @@ class Node(BaseNode):
         self.update_others()
 
     # def fingers_list(self):
-    #     fingers_list = [(finger.node.ip, finger.node.port) for finger in self.fingers if finger not == None]
+    #     fingers_list = [(finger.node.ip, finger.node.port) for finger in self.fingers if finger is not None]
     #     if not self._predecessor == None:
     #         fingers_list.append((self._predecessor.ip, self._predecessor.port))
 

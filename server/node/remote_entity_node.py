@@ -15,7 +15,7 @@ class RemoteEntityNode(ChordRemoteNode):
         raise Exception(response.json()["detail"])
     
     def nickname_entity_node(self, nickname):
-        response = get(f"{self.url}/user/{nickname}")
+        response = get(f"{self.url}/user/entity{nickname}")
 
         if response.status_code == 200:
             result: dict = response.json()
