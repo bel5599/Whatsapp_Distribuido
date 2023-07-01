@@ -97,3 +97,11 @@ class Node(BaseNode):
     def join_network(self, node: BaseNode):
         self.init_fingers(node)
         self.update_others()
+
+    # def fingers_list(self):
+    #     fingers_list = [(finger.node.ip, finger.node.port) for finger in self.fingers if finger not == None]
+    #     if not self._predecessor == None:
+    #         fingers_list.append((self._predecessor.ip, self._predecessor.port))
+
+    #     return fingers_list
+

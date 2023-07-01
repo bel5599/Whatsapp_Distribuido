@@ -9,6 +9,9 @@ class EntityNode(ChordNode):
 
     def add_user(self, nickname: str, password: str):
         return add_user(nickname, password)
+    
+    def nickname_entity_node(self, nickname):
+        pass
 
     def delete_user(self, nickname):
         return delete_user(nickname)

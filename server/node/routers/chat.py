@@ -21,7 +21,7 @@ def search_chat_id(model: ChatModel, request: Request):
     except:
         raise HTTPException(status_code=404, detail="chat id not found!")
     else:
-        return node.serialize()
+        return node.serialize()#tengo que arreglarlo
 
 
 @router.put("/add")
@@ -34,7 +34,7 @@ def add_chat(model: ChatModel, request: Request):
         raise HTTPException(
             status_code=500, detail="add chat failed!")
     else:
-        return {str(result): result}
+        return {"success": result}
 
 
 @router.delete("/delete/{model.user_1}{model.user_2}")
@@ -47,4 +47,4 @@ def delete_chat(model: ChatModel, request: Request):
         raise HTTPException(
             status_code=500, detail="delete chat failed!")
     else:
-        return {str(result): result}
+        return {"success": result}

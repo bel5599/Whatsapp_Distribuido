@@ -22,7 +22,7 @@ def search_messenger_from(me, user, request: Request):
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
-        return {str(result): result}
+        return node.serialize()#tengo que arreglarlo
 
 
 @router.get("/to")
@@ -34,7 +34,7 @@ def search_messenger_to(me, user, request: Request):
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
-        return {str(result): result}
+        return node.serialize()#tengo que arreglarlo
 
 
 @router.put("/add")
@@ -47,7 +47,7 @@ def add_messenger(model: MessengerModel, request: Request):
         raise HTTPException(
             status_code=500, detail="add messenger failed!")
     else:
-        return {str(result): result}
+        return {"success": result}
 
 
 @router.delete("/delete/{id}")
@@ -60,4 +60,4 @@ def delete_messenger(id: int, request: Request):
         raise HTTPException(
             status_code=500, detail="delete messenger failed!")
     else:
-        return {str(result): result}
+        return {"success": result}

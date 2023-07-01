@@ -22,7 +22,7 @@ def add_user(model: UserModel, request: Request):
         raise HTTPException(
             status_code=500, detail="add user failed!")
     else:
-        return {str(result): result}
+        return {"success": result}
 
 
 @router.delete("/delete/{nickname}")
@@ -35,4 +35,4 @@ def delete_user(nickname: str, request: Request):
         raise HTTPException(
             status_code=500, detail="delete user failed!")
     else:
-        return {str(result): result}
+        return {"success": result}

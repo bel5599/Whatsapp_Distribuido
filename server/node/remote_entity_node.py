@@ -4,8 +4,6 @@ from ..chord.remote_node import RemoteNode as ChordRemoteNode
 
 
 class RemoteEntityNode(ChordRemoteNode):
-    def __init__(self, id: int, ip: str, port: str):
-        super().__init__(id, ip, port)
 
     def add_user(self):
         response = put(f"{self.url}/user/add")
@@ -14,6 +12,15 @@ class RemoteEntityNode(ChordRemoteNode):
             result: dict = response.json()
             return result
 
+        raise Exception(response.json()["detail"])
+    
+    def nickname_entity_node(self, nickname):
+        response = get(f"{self.url}/user/{nickname}")
+
+        if response.status_code == 200:
+            result: dict = response.json()
+            return result
+        
         raise Exception(response.json()["detail"])
 
     def delete_user(self, nickname: str):
