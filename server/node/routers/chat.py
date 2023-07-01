@@ -1,16 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
-from pydantic import BaseModel
 
-from ..entity_node import EntityNode
-
-
-class ChatModel(BaseModel):
-    user_1: str
-    user_2: str
-
+from ..entity_node import EntityNode, ChatModel
 
 router = APIRouter(prefix="/chat", tags=["chat"])
-
 
 @router.get("/")
 def search_chat_id(model: ChatModel, request: Request):
@@ -21,7 +13,7 @@ def search_chat_id(model: ChatModel, request: Request):
     except:
         raise HTTPException(status_code=404, detail="chat id not found!")
     else:
-        return node.serialize()#tengo que arreglarlo
+        return {"chat_id": chat_id}
 
 
 @router.put("/add")

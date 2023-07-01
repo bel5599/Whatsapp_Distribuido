@@ -1,10 +1,25 @@
 from ..chord.node import Node as ChordNode
 from ...data.function_db import *
 
+from pydantic import BaseModel
+
+class ChatModel(BaseModel):
+    user_1: str
+    user_2: str
+
+class MessengerModel(BaseModel):
+    source: str
+    destiny: str
+    value: str
+
+class UserModel(BaseModel):
+    nickname: str
+    password: str
+
 
 class EntityNode(ChordNode):
-    def __init__(self, id: int, ip: str, port: str):
-        super().__init__(id, ip, port)
+    def __init__(self, ip: str, port: str, capacity: int):
+        super().__init__(ip, port, capacity)
         create_database()
 
     def add_user(self, nickname: str, password: str):

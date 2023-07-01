@@ -1,17 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
-from pydantic import BaseModel
 
-from ..entity_node import EntityNode
-
-
-class MessengerModel(BaseModel):
-    source: str
-    destiny: str
-    value: str
-
+from ..entity_node import EntityNode, MessengerModel
 
 router = APIRouter(prefix="/messenger", tags=["messenger"])
-
 
 @router.get("/from")
 def search_messenger_from(me, user, request: Request):
@@ -22,7 +13,7 @@ def search_messenger_from(me, user, request: Request):
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
-        return node.serialize()#tengo que arreglarlo
+        return {(user_id_from, value):(user_id_from, value) for (user_id_from, value) in result}
 
 
 @router.get("/to")
@@ -34,7 +25,7 @@ def search_messenger_to(me, user, request: Request):
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
-        return node.serialize()#tengo que arreglarlo
+        return {(user_id_from, value):(user_id_from, value) for (user_id_from, value) in result}
 
 
 @router.put("/add")

@@ -1,13 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException
-from pydantic import BaseModel
 
-from ..entity_node import EntityNode
-
-
-class UserModel(BaseModel):
-    nickname: str
-    password: str
-
+from ..entity_node import EntityNode, UserModel
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -21,7 +14,7 @@ def nickname_entity_node(nickname, request:Request):
         raise HTTPException(
             status_code=500, detail="add user failed!")
     else:
-        return {"success": result}
+        return result.serialize()
 
 
 @router.put("/add")

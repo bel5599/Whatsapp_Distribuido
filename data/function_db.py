@@ -72,7 +72,7 @@ def search_messenger_from(me, user = None):
             
         return result
     except:
-        return False    
+        return []    
 
 #Todos los sms que me enviaron , o los que me envio user
 #Devuelve una lista de tuplas(user_from,Value)
@@ -85,7 +85,7 @@ def search_messenger_to(me,user=None):
             
         return result
     except:
-        return False    
+        return []   
     
 # CHAT
 def add_chat(user_id_1_,user_id_2_):

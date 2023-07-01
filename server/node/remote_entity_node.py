@@ -1,6 +1,7 @@
 from requests import get, put, delete
 
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
+from ..chord.base_node import BaseNodeModel
 
 
 class RemoteEntityNode(ChordRemoteNode):
@@ -18,8 +19,8 @@ class RemoteEntityNode(ChordRemoteNode):
         response = get(f"{self.url}/user/entity{nickname}")
 
         if response.status_code == 200:
-            result: dict = response.json()
-            return result
+            model = BaseNodeModel(**response.json())
+            return RemoteEntityNode.from_base_model(model)
         
         raise Exception(response.json()["detail"])
 
