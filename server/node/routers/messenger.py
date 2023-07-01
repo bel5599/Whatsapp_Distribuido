@@ -13,7 +13,7 @@ def search_messenger_from(me, user, request: Request):
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
-        return {(user_id_from, value):(user_id_from, value) for (user_id_from, value) in result}
+        return [{"user_id_from":user_id_from, "value": value} for (user_id_from, value) in result]
 
 
 @router.get("/to")
@@ -25,7 +25,7 @@ def search_messenger_to(me, user, request: Request):
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
-        return {(user_id_from, value):(user_id_from, value) for (user_id_from, value) in result}
+        return [{"user_id_from":user_id_from, "value": value} for (user_id_from, value) in result]
 
 
 @router.put("/add")

@@ -64,7 +64,7 @@ class RemoteEntityNode(ChordRemoteNode):
         response = get(f"{self.url}/messenger/to")
 
         if response.status_code == 200:
-            result: dict = response.json()
+            result: list = response.json()
             return result
 
         raise Exception(response.json()["detail"])
@@ -73,7 +73,7 @@ class RemoteEntityNode(ChordRemoteNode):
         response = put(f"{self.url}/chat/add")
 
         if response.status_code == 200:
-            result: dict = response.json()
+            result: list = response.json()
             return result
 
         raise Exception(response.json()["detail"])
@@ -95,3 +95,4 @@ class RemoteEntityNode(ChordRemoteNode):
             return result
 
         raise Exception(response.json()["detail"])
+    
