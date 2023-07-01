@@ -9,7 +9,7 @@ if __name__ == "__main__":
     from server.chord.node import Node
     from server.chord.remote_node import RemoteNode
     from server.util import generate_id, get_ip, LOCAL_IP
-    from server.chord.routers import fingers, predecessor, successor
+    from server.chord.routers import fingers, predecessor, successor, debug as debug_module
 
     basicConfig(level=DEBUG)
 
@@ -28,7 +28,10 @@ if __name__ == "__main__":
     fastapi_app.include_router(predecessor.router)
 
     @typer_app.command()
-    def create(capacity: int = Argument(64), port: str = "4173", local: bool = False):
+    def create(capacity: int = Argument(64), port: str = "4173", local: bool = False, debug: bool = False):
+        if debug:
+            fastapi_app.include_router(debug_module.router)
+
         capacity = min(capacity, 256)
 
         ip = get_ip(local)
@@ -41,7 +44,10 @@ if __name__ == "__main__":
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173", local: bool = False):
+    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False):
+        if debug:
+            fastapi_app.include_router(debug_module.router)
+
         if not local:
             remote_ip, remote_port = address.split(
                 ":")
