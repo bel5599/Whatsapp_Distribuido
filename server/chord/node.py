@@ -131,6 +131,3 @@ class Node(BaseNode):
     def join_network(self, node: BaseNode):
         self.init_fingers(node)
         self.update_others()
-
-
-
