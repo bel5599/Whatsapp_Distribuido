@@ -42,6 +42,26 @@ class Node(BaseNode):
 
         return node
 
+    @staticmethod
+    def _inside_interval(value: int, interval: tuple[int, int], inclusive: tuple[bool, bool] = (False, False)):
+        low, up = interval
+        if low > up:
+            # if low > up, you have, for example an interval like this: {5, 3}
+            # the complementary interval is !{3, 5!}
+            # so checking if not in the complementary is equivalent
+            low, up = up, low
+            inclusive = (not inclusive[1], not inclusive[0])
+            return not Node._inside_interval(value, (low, up), inclusive)
+
+        inclusive_low, inclusive_up = inclusive
+
+        def low_compare(
+            v: int, l: int): return v >= l if inclusive_low else v > l
+        def up_compare(
+            v: int, u: int): return v <= u if inclusive_up else v < u
+
+        return low_compare(value, low) and up_compare(value, up)
+
     def network_capacity(self):
         log_info(f"getting network capacity from {self}...")
         return len(self.fingers)
@@ -79,7 +99,7 @@ class Node(BaseNode):
 
         node = self
         for finger in self.fingers[::-1]:
-            if finger.node and self.id < finger.node.id < id:
+            if finger.node and self._inside_interval(finger.node.id, (self.id, id)):
                 node = finger.node
                 break
 
@@ -90,7 +110,7 @@ class Node(BaseNode):
         log_info(f"finding '{id}' predecessor from {self}...")
 
         node = self
-        while id <= node.id or id > node.successor().id:
+        while not self._inside_interval(id, (node.id, node.successor().id), (False, True)):
             node = node.closest_preceding_finger(id)
 
         log_info(f"'{id}' predecessor from {self}: {node}")
@@ -107,7 +127,7 @@ class Node(BaseNode):
     def update_fingers(self, node: BaseNode, index: int):
         finger_node = self.fingers[index].node
 
-        if finger_node and self.id <= node.id < finger_node.id:
+        if finger_node and self._inside_interval(node.id, (self.id, finger_node.id), (True, False)):
             self.fingers[index].node = node
             self.predecessor().update_fingers(node, index)
 
@@ -124,7 +144,7 @@ class Node(BaseNode):
 
         for i in range(1, len(self.fingers)):
             prev_node = self.fingers[i-1].node
-            if prev_node and self.id <= self.fingers[i].start < prev_node.id:
+            if prev_node and self._inside_interval(self.fingers[i].start, (self.id, prev_node.id), (True, False)):
                 self.fingers[i].node = prev_node
             else:
                 self.fingers[i].node = node.find_successor(
