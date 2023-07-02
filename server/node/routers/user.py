@@ -4,17 +4,7 @@ from ..entity_node import EntityNode, UserModel
 
 router = APIRouter(prefix="/user", tags=["user"])
 
-@router.get("/entity{nickname}")
-def nickname_entity_node(nickname, request:Request):
-    node: EntityNode = request.state.node
 
-    try:
-        result = node.nickname_entity_node(nickname)
-    except:
-        raise HTTPException(
-            status_code=500, detail="add user failed!")
-    else:
-        return result.serialize()
 
 
 @router.put("/add")

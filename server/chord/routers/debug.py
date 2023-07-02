@@ -32,8 +32,3 @@ def get_finger(index: int, request: Request):
             500, detail=f"index '{index}' must be lower than {node.network_capacity()}!")
 
     
-@router.get("/fingers_with_predecessor")
-def fingers_predecessor_list(request: Request):
-    node : Node = request.state.node
-
-    return [{"ip": ip, "port": port} for (ip, port) in node.fingers_predecessor_list()]

@@ -66,11 +66,4 @@ class RemoteNode(BaseNode):
         if response.status_code != 200:
             raise Exception(response.json()["detail"])
         
-    def fingers_predecessor_list(self):
-        response = get(f"{self.url}/fingers_predecessor")
 
-        if response.status_code == 200:
-            result: list = response.json()
-            return result
-        
-        raise Exception(response.json()["detail"])

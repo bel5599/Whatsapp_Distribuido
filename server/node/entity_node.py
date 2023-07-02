@@ -52,3 +52,10 @@ class EntityNode(ChordNode):
 
     def delete_chat(self, user_id_1, user_id_2):
         return delete_chat(user_id_1, user_id_2)
+    
+    def fingers_predecessor_list(self):
+        fingers_list = [(finger.node.ip, finger.node.port) for finger in self.fingers if finger is not None]
+        if not self._predecessor == None:
+            fingers_list.append((self._predecessor.ip, self._predecessor.port))
+
+        return fingers_list
