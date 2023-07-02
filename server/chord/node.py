@@ -6,11 +6,13 @@ from ..util import generate_id
 
 
 class Finger:
-    def __init__(self, m, k, node: Union[BaseNode, None] = None):
-        self.start = (2**k) % (2**m)  # 2^(k) mod 2^m
-        self.end = (2**(k+1)) % (2**m)  # 2^(k+1) mod 2^m
+    def __init__(self, i: int, m: int, k: int, node: Union[BaseNode, None] = None):
+        m = 2**m
+        k = 2**k
+        self.start = (i + k) % m
+        self.end = (i + 2*k) % m
+
         self.node = node
-        # finger[i].node = suc cessor(finger[i].start)
 
     def serialize(self):
         return {
@@ -25,7 +27,7 @@ class Node(BaseNode):
         id = generate_id(f"{ip}:{port}", capacity)
         super().__init__(id, ip, port)
 
-        self.fingers: list[Finger] = [Finger(capacity, k, None)
+        self.fingers: list[Finger] = [Finger(id, capacity, k, None)
                                       for k in range(capacity)]
         self._predecessor: Union[BaseNode, None] = None
 
