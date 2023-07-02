@@ -10,7 +10,13 @@ class ClientNode:
         self.login = True
         for s in server:
             self.server.append(s)
-
+    
+    def logout_user(self):
+        self.user = {}
+        self.server = []
+        self.login = False
+        
+        
     # def check_password(self,nickname:str,password:str):
     #     if self.user['nickname'] == nickname and self.user['password'] == password:
     #         return True
