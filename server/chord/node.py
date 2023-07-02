@@ -132,7 +132,7 @@ class Node(BaseNode):
             self.predecessor().update_fingers(node, index)
 
     def update_others(self):
-        for i in range(len(self.fingers)):
+        for i in range(self.network_capacity()):
             node = self.find_predecessor(self.id - 2**i)
             node.update_fingers(self, i)
 
@@ -142,7 +142,7 @@ class Node(BaseNode):
         self.set_predecessor(self.successor().predecessor())
         self.successor().set_predecessor(self)
 
-        for i in range(1, len(self.fingers)):
+        for i in range(1, self.network_capacity()):
             prev_node = self.fingers[i-1].node
             if prev_node and self._inside_interval(self.fingers[i].start, (self.id, prev_node.id), (True, False)):
                 self.fingers[i].node = prev_node
