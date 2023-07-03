@@ -33,6 +33,10 @@ def delete_user(nickname):
         return True
     return False
 
+def get_password(nickname):
+    password = session.query(User.password).filter(User.nickname==nickname).one()
+    return password[0]
+    
 
 # MESSENGER
 def add_messenger(source,destiny,value_):

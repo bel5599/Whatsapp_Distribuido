@@ -17,7 +17,7 @@ class User(Base):
     password : Mapped[str] = Column(String(30),nullable=False)
     
     def __repr__(self) -> str:
-        return f"User(nickname={self.nickname!r})"
+        return f"User(nickname={self.nickname!r},password={self.password!r})"
 
 class Messenger(Base):
     __tablename__ = "messenger"
