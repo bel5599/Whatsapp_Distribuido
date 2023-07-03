@@ -55,3 +55,6 @@ class BaseNode:
 
     def __eq__(self, other: "BaseNode"):
         return self.id == other.id and self.ip == other.ip and self.port == other.port
+
+    def __ne__(self, other: "BaseNode"):
+        return not self.__eq__(other)

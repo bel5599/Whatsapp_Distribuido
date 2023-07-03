@@ -119,7 +119,11 @@ class Node(BaseNode):
 
         node = self
         while not self._inside_interval(id, (node.id, node.successor().id), (False, True)):
-            node = node.closest_preceding_finger(id)
+            closest = node.closest_preceding_finger(id)
+            if node != closest:
+                node = closest
+            else:
+                break
 
         log_info(f"'{id}' predecessor from {self}: {node}")
         return node
