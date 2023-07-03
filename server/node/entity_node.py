@@ -25,9 +25,17 @@ class EntityNode(ChordNode):
     def add_user(self, nickname: str, password: str):
         return add_user(nickname, password)
     
-    def nickname_entity_node(self, nickname):
+    def nickname_entity_node(self, nickname: str):
         if contain_user(nickname): return self
-        self.successor.nickname_entity_node(nickname)
+
+        return self.successor.nickname_entity_node_rec(nickname, self)
+    
+    def nickname_entity_node_rec(self, nickname: str, node):
+        if self.id == node.id: 
+            return None
+
+        if contain_user(nickname): return self
+        return self.successor.nickname_entity_node_rec(nickname, node)
 
     def delete_user(self, nickname):
         return delete_user(nickname)
