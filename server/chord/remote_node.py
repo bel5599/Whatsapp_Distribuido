@@ -1,5 +1,4 @@
-from reqs import RequestManager
-
+from service.requests import RequestManager
 from .base_node import BaseNode, BaseNodeModel
 
 
