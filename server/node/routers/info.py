@@ -21,4 +21,6 @@ def nickname_entity_node(nickname, request:Request):
         raise HTTPException(
             status_code=500, detail="node search failed!")
     else:
+        if result is None:
+            return {}
         return {"ip": result.ip, "port": result.port}
