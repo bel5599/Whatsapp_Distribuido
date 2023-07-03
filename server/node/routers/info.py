@@ -17,10 +17,10 @@ def nickname_entity_node(nickname, request:Request):
 
     try:
         result = node.nickname_entity_node(nickname)
+        if result is None:
+            result = node.search_node()
     except:
         raise HTTPException(
             status_code=500, detail="node search failed!")
     else:
-        if result is None:
-            return {}
         return {"ip": result.ip, "port": result.port}

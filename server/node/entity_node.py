@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from ..chord.node import Node as ChordNode
 from ...data.function_db import *
+from ..util import generate_id
 
 
 class ChatModel(BaseModel):
@@ -41,6 +42,20 @@ class EntityNode(ChordNode):
         if contain_user(nickname):
             return self
         return self.successor.nickname_entity_node_rec(nickname, node)
+    
+    def search_node(self):
+        id = generate_id(f"{self.ip}:{self.port}", self.network_capacity())
+        
+        if id >= self.id:
+            return self
+        
+        node = self.successor
+        while(not self.id == node.id):
+            if id >= node.id:
+                return node
+            else:
+                node.successor()
+
 
     def delete_user(self, nickname):
         return delete_user(nickname)
