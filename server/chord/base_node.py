@@ -52,3 +52,6 @@ class BaseNode:
 
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id})"
+
+    def __eq__(self, other: "BaseNode"):
+        return self.id == other.id and self.ip == other.ip and self.port == other.port
