@@ -62,6 +62,11 @@ class Node(BaseNode):
 
         return low_compare(value, low) and up_compare(value, up)
 
+    def _alone(self):
+        p = self == self.predecessor()
+        s = p and self == self.successor()
+        return s and all([finger.node and finger.node == self for finger in self.fingers])
+
     def network_capacity(self):
         log_info(f"getting network capacity from {self}...")
         return len(self.fingers)
@@ -108,6 +113,9 @@ class Node(BaseNode):
 
     def find_predecessor(self, id: int):
         log_info(f"finding '{id}' predecessor from {self}...")
+
+        if self._alone():
+            return self
 
         node = self
         while not self._inside_interval(id, (node.id, node.successor().id), (False, True)):
