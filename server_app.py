@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     import asyncio
     from logging import basicConfig, INFO
-    from typer import Typer, Argument
+    from typer import Typer
     from fastapi import FastAPI, Request
     from uvicorn import Config, Server
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         return "beat"
 
     @typer_app.command()
-    def create(capacity: int = Argument(64), port: str = "4173", local: bool = False, debug: bool = False):
+    def create(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False):
         if debug:
             fastapi_app.include_router(debug_module.router)
 
