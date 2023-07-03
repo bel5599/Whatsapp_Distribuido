@@ -4,6 +4,8 @@ import requests
 # from fastapi_utils.tasks import repeat_every
 # from sqlalchemy import true
 import os
+
+from server.node.remote_entity_node import RemoteEntityNode
 from .client_node import ClientNode
 
 client_interface = FastAPI()
@@ -12,20 +14,50 @@ client = ClientNode()
 
 @client_interface.post("/Register")
 def register(nickname: str, password: str, server: str):
-    # url = 'http://'+server+ nombredelmetodoquebuscaelentity
+    # nodo servidor de entrada FALTA VALIDADCION DEL NODO
+    ip = server.split(':')[0]
+    port = server.split(':')[1]
+    server_node = RemoteEntityNode(-1, ip, port)
+    
+    # nodo que va a guardar la informacion del user
     # Hashear el nickname para obtener un servidor
-    # Registrar los datos del usuario
+    node_data = server_node.nickname_entity_node(nickname)
+    
+    # Registrar los datos del usuario FALTA VERIFICAR SI EL USUARIO YA ESTA EN EL SISTEMA
+    server_node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
+    server_node_data.add_user(nickname,password)
+    list_servers = server_node_data.fingers_predecessor_list()
+    
+    # Agrega al entity que guarda los datos del cliente, su antecesor y los de su fingertable 
+    servers =[]
+    servers.append(node_data['ip']+":"+node_data['port'])
+    for entity in list_servers:
+        servers.append(entity['ip']+":"+entity['port'])
+        
+        # Agrega los datos del usuario para replicacion en los antecesores y fingertable
+        entity_node = RemoteEntityNode(-1,entity['ip'], entity['port'])
+        entity_node.add_user(nickname,password)
+    
     # Loguear al usuario
-
-    # Ver como seria la conexion
-    # requests.post('http://'+server+'/RegisterUser', params= {"name": name, "nickname": nickname, "password": password})
+    client.login_user(nickname,password,servers)
     return
 
 
 @client_interface.post("/Login")
-def login(nickname: str, password: str):
+def login(nickname: str, password: str,server: str):
+    if client.login:
+        return 'You Are Login'
+    # nodo servidor de entrada FALTA VALIDADCION DEL NODO
+    ip = server.split(':')[0]
+    port = server.split(':')[1]
+    # Verificar que el servidor este activo FALTA
+    server_node = RemoteEntityNode(-1, ip, port)
+    
     # Hashear el nickname para obtener un servidor
-    # Verificar que el servidor este activo
+    node_data = server_node.nickname_entity_node(nickname)
+    
+    server_node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
+    
     # Luego obetener la informacion del usuario
     # Verificar contrasenna y retornar una notificacion
     # Guardar datos de logueo en una mini cachet para saber si un usuario esta logueado
