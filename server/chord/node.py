@@ -6,11 +6,13 @@ from ..util import generate_id
 
 
 class Finger:
-    def __init__(self, m, k, node: Union[BaseNode, None] = None):
-        self.start = (2**k) % (2**m)  # 2^(k) mod 2^m
-        self.end = (2**(k+1)) % (2**m)  # 2^(k+1) mod 2^m
+    def __init__(self, i: int, m: int, k: int, node: Union[BaseNode, None] = None):
+        m = 2**m
+        k = 2**k
+        self.start = (i + k) % m
+        self.end = (i + 2*k) % m
+
         self.node = node
-        # finger[i].node = suc cessor(finger[i].start)
 
     def serialize(self):
         return {
@@ -25,7 +27,7 @@ class Node(BaseNode):
         id = generate_id(f"{ip}:{port}", capacity)
         super().__init__(id, ip, port)
 
-        self.fingers: list[Finger] = [Finger(capacity, k, None)
+        self.fingers: list[Finger] = [Finger(id, capacity, k, None)
                                       for k in range(capacity)]
         self._predecessor: Union[BaseNode, None] = None
 
@@ -39,6 +41,26 @@ class Node(BaseNode):
         node.set_predecessor(node)
 
         return node
+
+    @staticmethod
+    def _inside_interval(value: int, interval: tuple[int, int], inclusive: tuple[bool, bool] = (False, False)):
+        low, up = interval
+        if low > up:
+            # if low > up, you have, for example an interval like this: {5, 3}
+            # the complementary interval is !{3, 5!}
+            # so checking if not in the complementary is equivalent
+            low, up = up, low
+            inclusive = (not inclusive[1], not inclusive[0])
+            return not Node._inside_interval(value, (low, up), inclusive)
+
+        inclusive_low, inclusive_up = inclusive
+
+        def low_compare(
+            v: int, l: int): return v >= l if inclusive_low else v > l
+        def up_compare(
+            v: int, u: int): return v <= u if inclusive_up else v < u
+
+        return low_compare(value, low) and up_compare(value, up)
 
     def network_capacity(self):
         log_info(f"getting network capacity from {self}...")
@@ -77,7 +99,7 @@ class Node(BaseNode):
 
         node = self
         for finger in self.fingers[::-1]:
-            if finger.node and self.id < finger.node.id < id:
+            if finger.node and self._inside_interval(finger.node.id, (self.id, id)):
                 node = finger.node
                 break
 
@@ -88,7 +110,7 @@ class Node(BaseNode):
         log_info(f"finding '{id}' predecessor from {self}...")
 
         node = self
-        while id <= node.id or id > node.successor().id:
+        while not self._inside_interval(id, (node.id, node.successor().id), (False, True)):
             node = node.closest_preceding_finger(id)
 
         log_info(f"'{id}' predecessor from {self}: {node}")
@@ -105,12 +127,12 @@ class Node(BaseNode):
     def update_fingers(self, node: BaseNode, index: int):
         finger_node = self.fingers[index].node
 
-        if finger_node and self.id <= node.id < finger_node.id:
+        if finger_node and self._inside_interval(node.id, (self.id, finger_node.id), (True, False)):
             self.fingers[index].node = node
             self.predecessor().update_fingers(node, index)
 
     def update_others(self):
-        for i in range(len(self.fingers)):
+        for i in range(self.network_capacity()):
             node = self.find_predecessor(self.id - 2**i)
             node.update_fingers(self, i)
 
@@ -120,9 +142,9 @@ class Node(BaseNode):
         self.set_predecessor(self.successor().predecessor())
         self.successor().set_predecessor(self)
 
-        for i in range(1, len(self.fingers)):
+        for i in range(1, self.network_capacity()):
             prev_node = self.fingers[i-1].node
-            if prev_node and self.id <= self.fingers[i].start < prev_node.id:
+            if prev_node and self._inside_interval(self.fingers[i].start, (self.id, prev_node.id), (True, False)):
                 self.fingers[i].node = prev_node
             else:
                 self.fingers[i].node = node.find_successor(
@@ -131,6 +153,3 @@ class Node(BaseNode):
     def join_network(self, node: BaseNode):
         self.init_fingers(node)
         self.update_others()
-
-
-

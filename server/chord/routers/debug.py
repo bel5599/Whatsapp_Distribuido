@@ -30,5 +30,3 @@ def get_finger(index: int, request: Request):
     except:
         raise HTTPException(
             500, detail=f"index '{index}' must be lower than {node.network_capacity()}!")
-
-    

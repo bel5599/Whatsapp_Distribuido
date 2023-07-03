@@ -66,10 +66,20 @@ if __name__ == "__main__":
 
         inject_node(fastapi_app, node)
 
-        config = Config(fastapi_app, host=ip, port=int(port))
-        server = Server(config)
-        asyncio.run(server.serve())
+        async def _join_network():
+            await asyncio.sleep(1)
+            node.join_network(remote_node)
 
-        node.join_network(remote_node)
+        async def _serve():
+            config = Config(fastapi_app, host=ip, port=int(port))
+            server = Server(config)
+            await server.serve()
+
+        async def _gather():
+            s = _serve()
+            j = _join_network()
+            await asyncio.gather(s, j)
+
+        asyncio.run(_gather())
 
     typer_app()

@@ -65,5 +65,3 @@ class RemoteNode(BaseNode):
 
         if response.status_code != 200:
             raise Exception(response.json()["detail"])
-        
-
