@@ -43,19 +43,9 @@ class EntityNode(ChordNode):
             return self
         return self.successor.nickname_entity_node_rec(nickname, node)
     
-    def search_node(self):
-        id = generate_id(f"{self.ip}:{self.port}", self.network_capacity())
-        
-        if id >= self.id:
-            return self
-        
-        node = self.successor
-        while(not self.id == node.id):
-            if id >= node.id:
-                return node
-            else:
-                node.successor()
-
+    def search_entity_node(self, nickname):
+        id = generate_id(nickname, self.network_capacity())
+        return self.find_successor(id)
 
     def delete_user(self, nickname):
         return delete_user(nickname)

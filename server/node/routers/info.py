@@ -11,16 +11,30 @@ def fingers_predecessor_list(request: Request):
 
     return [{"ip": ip, "port": port} for (ip, port) in node.fingers_predecessor_list()]
 
+
 @router.get("/entity/{nickname}")
 def nickname_entity_node(nickname, request:Request):
     node: EntityNode = request.state.node
 
     try:
         result = node.nickname_entity_node(nickname)
-        if result is None:
-            result = node.search_node()
     except:
         raise HTTPException(
             status_code=500, detail="node search failed!")
     else:
+        if result is None:
+            return {}
         return {"ip": result.ip, "port": result.port}
+    
+
+@router.get("/search_entity/{nickname}")
+def search_entity_node(nickname, request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        new_node = node.search_entity_node(nickname)
+    except:
+        raise HTTPException(
+            status_code=500, detail="node search failed!")
+    else:
+        return {"ip": new_node.ip, "port": new_node.port}

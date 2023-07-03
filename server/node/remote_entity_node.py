@@ -21,6 +21,15 @@ class RemoteEntityNode(ChordRemoteNode):
             return result
 
         raise Exception(response.json()["detail"])
+    
+    def search_entity_node(self, nickname):
+        response = self._manager.get(f"/info/search_entity/{nickname}")
+
+        if response.status_code == 200:
+            result: dict = response.json()
+            return result
+
+        raise Exception(response.json()["detail"])
 
     def delete_user(self, nickname: str):
         response = self._manager.delete(f"/user/delete/{nickname}")
