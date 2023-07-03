@@ -4,8 +4,17 @@ from ..entity_node import EntityNode, UserModel
 
 router = APIRouter(prefix="/user", tags=["user"])
 
+@router.get("/pasword/{nickname}")
+def get_pasword(nickname: str, request: Request):
+    node: EntityNode = request.state.node
 
-
+    try:
+        pasw = node.get_pasword(nickname)
+    except:
+        raise HTTPException(
+            status_code=500, detail="get pasword failed!")
+    else:
+        return {"pasword": pasw}
 
 @router.put("/add")
 def add_user(model: UserModel, request: Request):
@@ -19,7 +28,6 @@ def add_user(model: UserModel, request: Request):
     else:
         return {"success": result}
 
-
 @router.delete("/delete/{nickname}")
 def delete_user(nickname: str, request: Request):
     node: EntityNode = request.state.node
@@ -31,3 +39,5 @@ def delete_user(nickname: str, request: Request):
             status_code=500, detail="delete user failed!")
     else:
         return {"success": result}
+    
+
