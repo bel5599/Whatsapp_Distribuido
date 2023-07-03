@@ -29,6 +29,10 @@ if __name__ == "__main__":
     fastapi_app.include_router(successor.router)
     fastapi_app.include_router(predecessor.router)
 
+    @fastapi_app.get("/heart")
+    def ping():
+        return "beat"
+
     @typer_app.command()
     def create(capacity: int = Argument(64), port: str = "4173", local: bool = False, debug: bool = False):
         if debug:
