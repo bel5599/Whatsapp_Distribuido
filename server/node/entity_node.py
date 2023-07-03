@@ -73,3 +73,6 @@ class EntityNode(ChordNode):
             fingers_list.append((self._predecessor.ip, self._predecessor.port))
 
         return fingers_list
+    
+    def get_pasword(self, nickname):
+        return get_password(nickname)

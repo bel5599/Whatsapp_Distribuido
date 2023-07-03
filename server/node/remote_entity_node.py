@@ -91,7 +91,7 @@ class RemoteEntityNode(ChordRemoteNode):
         raise Exception(response.json()["detail"])
 
     def delete_chat(self, user_1, user_2):
-        response = self._manager.delete(f"/chat/delete/{user_1}{user_2}")
+        response = self._manager.delete(f"/chat/delete/{user_1}/{user_2}")
 
         if response.status_code == 200:
             result: dict = response.json()
@@ -106,4 +106,13 @@ class RemoteEntityNode(ChordRemoteNode):
             result: list = response.json()
             return result
 
+        raise Exception(response.json()["detail"])
+    
+    def get_pasword(self, nickname):
+        response = self._manager.get(f"/user/pasword/{nickname}")
+
+        if response.status_code == 200:
+            result: dict = response.json()
+            return result
+        
         raise Exception(response.json()["detail"])
