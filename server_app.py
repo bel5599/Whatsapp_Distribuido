@@ -8,8 +8,10 @@ if __name__ == "__main__":
     # using this imports until node submodule is implemented
     from server.chord.node import Node
     from server.chord.remote_node import RemoteNode
-    from server.util import generate_id, get_ip, LOCAL_IP
+    from server.util import generate_id
     from server.chord.routers import fingers, predecessor, successor, debug as debug_module
+
+    from shared import get_ip, LOCAL_IP
 
     basicConfig(level=INFO)
 
