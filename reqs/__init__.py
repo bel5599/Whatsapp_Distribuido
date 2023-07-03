@@ -1,4 +1,4 @@
-from requests import get, put
+from requests import get, put, delete
 from json import dumps
 
 
@@ -20,3 +20,6 @@ class RequestManager:
         kwargs["data"] = dumps(data)
 
         return put(f"{self._url}{route}", **kwargs)
+
+    def delete(self, route: str, **kwargs):
+        return delete(f"{self._url}{route}", **kwargs)
