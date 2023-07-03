@@ -19,25 +19,32 @@ def register(nickname: str, password: str, server: str):
     port = server.split(':')[1]
     server_node = RemoteEntityNode(-1, ip, port)
     
-    # nodo que va a guardar la informacion del user
-    # Hashear el nickname para obtener un servidor
+    # verificar si el usuario ya esta en el sistema
     node_data = server_node.nickname_entity_node(nickname)
-    
-    # Registrar los datos del usuario FALTA VERIFICAR SI EL USUARIO YA ESTA EN EL SISTEMA
+    if node_data.get('ip') is not None:
+        return "You are already registered"
+    else: # Hashear el nickname para obtener un servidor
+        node_data = server_node.search_entity_node(nickname)
+        
+    # Guardar la informacion del usuario
+    # nodo que va a guardar la informacion del user
     server_node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
     server_node_data.add_user(nickname,password)
-    list_servers = server_node_data.fingers_predecessor_list()
+    # replicar la informacion del usuario en el nodo sucesor
+    dict_successor = server_node_data.successor()
+    server_successor = RemoteEntityNode(-1,dict_successor.ip,dict_successor.port)
+    server_successor.add_user(nickname,password)
+    # replicar la informacion del usuario en el nodos antecesor
+    dict_predecessor = server_node_data.predecessor()
+    server_predecessor = RemoteEntityNode(-1,dict_predecessor.ip,dict_predecessor.port)
+    server_predecessor.add_user(nickname,password)
     
-    # Agrega al entity que guarda los datos del cliente, su antecesor y los de su fingertable 
+    # Agrega al entity que guarda los datos del cliente, su antecesor, sucesor y por el q se conecta
     servers =[]
-    servers.append(node_data['ip']+":"+node_data['port'])
-    for entity in list_servers:
-        servers.append(entity['ip']+":"+entity['port'])
-        
-        # Agrega los datos del usuario para replicacion en los antecesores y fingertable
-        entity_node = RemoteEntityNode(-1,entity['ip'], entity['port'])
-        entity_node.add_user(nickname,password)
-    
+    servers.append(server)
+    servers.append(node_data['ip']+":"+node_data['port'])    
+    servers.append(dict_successor.ip+":"+dict_successor.port)
+    servers.append(dict_predecessor.ip+":"+dict_predecessor.port)    
     # Loguear al usuario
     client.login_user(nickname,password,servers)
     return
@@ -53,19 +60,38 @@ def login(nickname: str, password: str,server: str):
     # Verificar que el servidor este activo FALTA
     server_node = RemoteEntityNode(-1, ip, port)
     
-    # Hashear el nickname para obtener un servidor
+    # verificar si el usuario ya esta en el sistema
     node_data = server_node.nickname_entity_node(nickname)
+    if node_data.get('ip') is None:
+        return "You are not registered"
     
-    server_node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
-    
-    # Luego obetener la informacion del usuario
     # Verificar contrasenna y retornar una notificacion
-    # Guardar datos de logueo en una mini cachet para saber si un usuario esta logueado
+    server_node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
+    if password!= server_node_data.get_pasword(nickname):
+        return "Wrong password"
+    
+    # obtener los nodos que tienen la informacion replicada del usuario 
+    dict_successor = server_node_data.successor()
+    dict_predecessor = server_node_data.predecessor()
+    
+    # Agrega al entity que guarda los datos del cliente, su antecesor, sucesor y por el q se conecta
+    servers =[]
+    servers.append(server)
+    servers.append(node_data['ip']+":"+node_data['port'])    
+    servers.append(dict_successor.ip+":"+dict_successor.port)
+    servers.append(dict_predecessor.ip+":"+dict_predecessor.port)    
+    # Loguear al usuario
+    client.login_user(nickname,password,servers)
     return
 
+# permite cerrar la sesión del usuario.
+@client_interface.post("/Logout")  
+def logout():
+  client.logout_user()
+  return
+
+
 # Permite ver los mensajes entre "my_nickname" y "nickname".
-
-
 @client_interface.get("/Messages")
 def messages(nickname: str):  # usuario de la conversacion conmigo
     # chequear que el usuario esté loggeado
