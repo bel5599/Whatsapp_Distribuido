@@ -76,6 +76,9 @@ class Node(BaseNode):
 
         raise Exception(f"{self} successor not found!")
 
+    def set_successor(self, node: BaseNode):
+        self.fingers[0].node = node
+
     def predecessor(self):
         if self._predecessor:
             return self._predecessor

@@ -25,6 +25,12 @@ class RemoteNode(BaseNode):
 
         raise Exception(response.json()["detail"])
 
+    def set_successor(self, node: BaseNode):
+        response = self._manager.put("/successor/", data=node.serialize())
+
+        if response.status_code != 200:
+            raise Exception(response.json()["detail"])
+
     def predecessor(self):
         response = self._manager.get("/predecessor/")
 

@@ -35,6 +35,9 @@ class BaseNode:
     def successor(self) -> "BaseNode":
         raise NotImplementedError()
 
+    def set_successor(self, node: "BaseNode") -> None:
+        raise NotImplementedError()
+
     def predecessor(self) -> "BaseNode":
         raise NotImplementedError()
 
