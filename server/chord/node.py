@@ -1,5 +1,4 @@
 from typing import Union
-from logging import info as log_info, error as log_error
 
 from .base_node import BaseNode
 from ..util import generate_id
@@ -68,73 +67,47 @@ class Node(BaseNode):
         return s and all([finger.node and finger.node == self for finger in self.fingers])
 
     def network_capacity(self):
-        log_info(f"getting network capacity from {self}...")
         return len(self.fingers)
 
     def successor(self):
-        log_info(f"getting {self} successor...")
-
         successor = self.fingers[0].node
         if successor:
-            log_info(f"{self} successor found: {successor}")
             return successor
 
-        error_msg = f"{self} successor not found!"
-        log_error(error_msg)
-        raise Exception(error_msg)
+        raise Exception(f"{self} successor not found!")
 
     def predecessor(self):
-        log_info(f"getting {self} predecessor...")
-
         if self._predecessor:
-            log_info(f"{self} predecessor found: {self._predecessor}")
             return self._predecessor
 
-        error_msg = f"{self} predecessor not found!"
-        log_error(error_msg)
-        raise Exception(error_msg)
+        raise Exception(f"{self} predecessor not found!")
 
     def set_predecessor(self, node: BaseNode):
-        log_info(f"setting {self} predecessor...")
         self._predecessor = node
-        log_info(f"successfully setted {self} predecessor: {node}")
 
     def closest_preceding_finger(self, id: int):
-        log_info(f"getting {self} closest preceding finger of '{id}'...")
-
         node = self
         for finger in self.fingers[::-1]:
             if finger.node and self._inside_interval(finger.node.id, (self.id, id)):
                 node = finger.node
                 break
 
-        log_info(f"{self} closest preceding finger of '{id}' is: {node}")
         return node
 
     def find_predecessor(self, id: int):
-        log_info(f"finding '{id}' predecessor from {self}...")
-
-        if self._alone():
-            return self
-
         node = self
         while not self._inside_interval(id, (node.id, node.successor().id), (False, True)):
             closest = node.closest_preceding_finger(id)
             if node != closest:
                 node = closest
             else:
+                # stop when same node was found twice in a row
                 break
 
-        log_info(f"'{id}' predecessor from {self}: {node}")
         return node
 
     def find_successor(self, id: int):
-        log_info(f"finding '{id}' successor from {self}...")
-
-        node = self.find_predecessor(id).successor()
-
-        log_info(f"'{id}' successor from {self}: {node}")
-        return node
+        return self.find_predecessor(id).successor()
 
     def update_fingers(self, node: BaseNode, index: int):
         finger_node = self.fingers[index].node
