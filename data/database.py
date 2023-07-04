@@ -12,7 +12,7 @@ class DataBase:
         Base.metadata.create_all(engine)
 
     # USER 
-    def add_user(self,nickname_,password_):
+    def add_user(self,nickname_:str,password_:str):
         #si no existe agregalo
         if not self.contain_user(nickname_):
             with self.session:
@@ -24,11 +24,11 @@ class DataBase:
                 return True
         return False
         
-    def contain_user(self,nickname_):
+    def contain_user(self,nickname_:str):
         contain = self.session.query(User).get(nickname_)
         return contain is not None 
                            
-    def delete_user(self,nickname):
+    def delete_user(self,nickname:str):
         contain = self.session.query(User).get(nickname)
         if contain is not None:
             self.session.delete(contain) 
@@ -36,12 +36,12 @@ class DataBase:
             return True
         return False
 
-    def get_password(self,nickname):
+    def get_password(self,nickname:str):
         password = self.session.query(User.password).filter(User.nickname==nickname).one()
         return password[0]
     
     # MESSENGER
-    def add_messenger(self,source,destiny,value_):
+    def add_messenger(self,source:str,destiny:str,value_:str):
         # Crear el chat si no existe y luego agregarselo a la tabla 
         self.add_chat(source,destiny)    
         idChat = self.search_chat_id(source,destiny)
@@ -56,7 +56,7 @@ class DataBase:
             return True
         # Se podria coger la fecha y hora de la computadora en el momento que se usa el m\'etodo
         
-    def delete_messenger(self,id_messenger):
+    def delete_messenger(self,id_messenger:int):
         messenger = self.session.query(Messenger).get(id_messenger)
         if messenger is not None:
             self.session.delete(messenger) 
@@ -66,7 +66,7 @@ class DataBase:
 
     # Todos los sms que envie, o que envie a user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenger_from(self,me, user = None):
+    def search_messenger_from(self,me:str, user:str = None):
         try:
             if user is None:
                 result = self.session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_from == me).all()
@@ -79,7 +79,7 @@ class DataBase:
 
     # Todos los sms que me enviaron , o los que me envio user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenger_to(self,me,user=None):
+    def search_messenger_to(self,me:str,user:str=None):
         try:
             if user is None:
                 result = self.session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.user_id_to == me).all()       
@@ -90,7 +90,7 @@ class DataBase:
             return []   
     
     # CHAT
-    def add_chat(self,user_id_1_,user_id_2_):
+    def add_chat(self,user_id_1_:str,user_id_2_:str):
         if  self.search_chat_id(user_id_1_,user_id_2_) is False:
             with self.session:
                 chat = Chat(
@@ -102,7 +102,7 @@ class DataBase:
                 return True
         return False
 
-    def search_chat_id(self,user_id_1,user_id_2):
+    def search_chat_id(self,user_id_1:str,user_id_2:str):
         try:
             chat = self.session.query(Chat).filter(Chat.user_id_1 == user_id_1 and Chat.user_id_2==user_id_2 ).one()
             return chat.chat_id
@@ -113,7 +113,7 @@ class DataBase:
             except:
                 return False
                
-    def delete_chat(self,user_id_1,user_id_2):
+    def delete_chat(self,user_id_1:str,user_id_2:str):
         chat_id = self.search_chat_id(user_id_1,user_id_2)
         if chat_id is not False:
             # Elimina todos los sms del chat
@@ -126,7 +126,7 @@ class DataBase:
             return True
         return False
 
-    def search_chat(self,user_id_1,user_id_2):
+    def search_chat(self,user_id_1:str,user_id_2:str):
         chat_id = self.search_chat_id(user_id_1,user_id_2)
         if chat_id is not False:
             try:
