@@ -2,7 +2,6 @@ if __name__ == "__main__":
     import asyncio
     from typer import Typer
     from uvicorn import Config, Server
-    import time
 
     from service.heartbeat.app import app as fastapi_app, manager
     from shared import get_ip
@@ -20,10 +19,7 @@ if __name__ == "__main__":
 
         async def _start_service():
             await asyncio.sleep(1)
-            # manager hace algo para empezar a avisar
-            # cada cierto tiempo (usar interval)
-            manager.check_health()
-            time.sleep(interval)
+            manager.check_health(interval)
 
         async def _gather():
             s = _serve()
