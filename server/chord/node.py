@@ -125,18 +125,26 @@ class Node(BaseNode):
             node.update_fingers(self, i)
 
     def init_fingers(self, node: BaseNode):
-        self.fingers[0].node = node.find_successor(
-            self.fingers[0].start)
-        self.set_predecessor(self.successor().predecessor())
-        self.successor().set_predecessor(self)
+        # get successor and predecessor nodes
+        successor = node.find_successor(self.fingers[0].start)
+        predecessor = successor.predecessor()
 
-        for i in range(1, self.network_capacity()):
-            prev_node = self.fingers[i-1].node
-            if prev_node and self._inside_interval(self.fingers[i].start, (self.id, prev_node.id), (True, False)):
-                self.fingers[i].node = prev_node
+        # connect successor
+        self.set_successor(successor)
+        successor.set_predecessor(self)
+
+        # connect predecessor
+        self.set_predecessor(predecessor)
+        predecessor.set_successor(self)
+
+        # at this point self is correctly placed in the network
+
+        for prev_finger, finger in zip(self.fingers[:-1], self.fingers[1:]):
+            start = finger.start
+            if prev_finger.node and self._inside_interval(start, (self.id, prev_finger.node.id), (True, False)):
+                finger.node = prev_finger.node
             else:
-                self.fingers[i].node = node.find_successor(
-                    self.fingers[i].start)
+                finger.node = node.find_successor(start)
 
     def join_network(self, node: BaseNode):
         self.init_fingers(node)
