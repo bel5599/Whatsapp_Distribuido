@@ -95,18 +95,49 @@ def logout():
 @client_interface.get("/Messages")
 def messages(nickname: str):  # usuario de la conversacion conmigo
     # chequear que el usuario esté loggeado
-    # retornar una notificacion en caso de no estarlo
-    # buscar el entity en que está almacenada la información del usuario
-    # verificar si tengo entre mis contactos a la persona de la cual quiero ver los mensajes que tenemos
+    if not client.login:
+        return "You are not logged in"
+    # buscar un server activo en la lista de servers del user
+    servers = client.server
+    # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS
+    # server que contiene su informacion original
+    if len(servers)>1:
+        inf_node = servers[1]
+    else:        
+    # en caso de que no haya activo o guardado un nodo que tenga su informacion
+        inf_node = client.server[0]
+        search = True
+    
+    ip = inf_node.split(':')[0]
+    port = inf_node.split(':')[1]
+    node_data = RemoteEntityNode(-1, ip, port) 
+    
+    if search: #entonces hay que buscar el nodo con iformacion del usuario
+        node_data = node_data.nickname_entity_node(nickname)
+        #si no se encontro un nodo con informacion del usuario
+        if node_data.get('ip') is None:
+            return "Your data has been lost"
+        # si se encontro un nodo, obtener el nodo para hcerle los pedidos
+        node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port']) 
+        
     # mando a buscar los mensajes al servidor
-    return
-
+    messengers = node_data.search_chat(client.user,nickname)
+    
+    # Para ver mejor los mensajes
+    messages_format = []
+    for message in messengers:
+        if message['user_id_from'] == client.user:
+            messages_format.append( 'me' + ": " + message['value']) 
+        else:
+            messages_format.append(message['user_id_from'] + ": " + message['value'])  
+    return messages_format
+  
+  
 # para enviar mensajes a otro usuario
-
-
 @client_interface.post("/Send")
 def send(user: str, message: str):
     # se chequea que yo esté loggeado
+    
     # retornar una notificacion en caso de no estarlo
     # buscar el entity en que está almacenada la información del usuario
     # busco mi lista de contactos
