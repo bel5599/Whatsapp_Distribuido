@@ -1,14 +1,23 @@
-from function_db import*
+from database import*
 
 
 
 
 
 if __name__ == '__main__':
-    #create_database()
-    #add_user('Ale','1234')
-    # add_user('Fernanda','1234')
-    #add_messenger('Fernanda','Ale','Hola')
-    #add_messenger('Ale','Fernanda','Hola')
-    #print(get_password('Ale'))
-    #delete_chat('Ale','Fernanda')
+
+    data1 = DataBase('data1')
+    # data1.add_user('Ale','1234')
+    # data1.add_user('Fernanda','1234')
+    # data1.add_messenger('Fernanda','Ale','Hola')
+    # data1.add_messenger('Ale','Fernanda','Hola')
+
+    data2 = DataBase('data2')
+    # data2.add_user('Ale','1234')
+    # data2.add_user('Roxana','1234')
+    # data2.add_messenger('Fernanda','Ale','Hola')
+    # data2.add_messenger('Ale','Fernanda','Hola')
+    # data2.add_messenger('Ale','Roxana','Hola')
+    
+    #data1.copy_database(data2)
+    #data1.delete_user("Roxana")
