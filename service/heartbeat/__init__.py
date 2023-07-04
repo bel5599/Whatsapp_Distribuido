@@ -5,15 +5,21 @@ from ..requests import RequestManager
 
 class HeartBeatManager:
     def __init__(self):
-        self.request_manager_list: list[RequestManager] = []
+        self.request_manager_list = set()
 
     def add_request_manager(self, request_manager: RequestManager):
-        self.request_manager_list.append(request_manager)
+        self.request_manager_list.add(request_manager)
 
     def check_health(self, interval: int):
         while True:
             for request_manager in self.request_manager_list:
-                request_manager.get("/heart")
+                try:
+                    response = request_manager.get("/heart")
+                except:
+                    self.request_manager_list.remove(request_manager)
+                else:
+                    if not response.status_code == 200:
+                        self.request_manager_list.remove(request_manager)
 
             sleep(interval)
 
