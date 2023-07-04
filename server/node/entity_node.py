@@ -5,11 +5,6 @@ from ...data.function_db import *
 from ..util import generate_id
 
 
-class ChatModel(BaseModel):
-    user_1: str
-    user_2: str
-
-
 class MessengerModel(BaseModel):
     source: str
     destiny: str
@@ -81,3 +76,6 @@ class EntityNode(ChordNode):
     
     def get_pasword(self, nickname):
         return get_password(nickname)
+    
+    def search_chat(self, user_id_1, user_id_2):
+        return search_chat(user_id_1, user_id_2)

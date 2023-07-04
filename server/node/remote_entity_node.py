@@ -125,3 +125,12 @@ class RemoteEntityNode(ChordRemoteNode):
             return result
         
         raise Exception(response.json()["detail"])
+    
+    def search_chat(self, user_id_1, user_id_2):
+        response = self._manager.get(f"/chat/search/{user_id_1}/{user_id_2}")
+
+        if response.status_code == 200:
+            result: list = response.json()
+            return result
+        
+        raise Exception(response.json()["detail"])
