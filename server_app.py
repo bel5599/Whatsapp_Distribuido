@@ -34,7 +34,7 @@ if __name__ == "__main__":
         return "beat"
 
     @typer_app.command()
-    def create(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False):
+    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False):
         if debug:
             fastapi_app.include_router(debug_module.router)
 
