@@ -120,8 +120,13 @@ class Node(BaseNode):
             self.predecessor().update_fingers(node, index)
 
     def update_others(self):
-        for i in range(self.network_capacity()):
-            node = self.find_predecessor(self.id - 2**i)
+        c = self.network_capacity()
+        power_c = 2**c
+
+        for i in range(c):
+            # make sure id is valid is valid (between 0 and 2^c-1)
+            id = (self.id - 2**i + power_c) % power_c
+            node = self.find_predecessor(id)
             node.update_fingers(self, i)
 
     def init_fingers(self, node: BaseNode):
