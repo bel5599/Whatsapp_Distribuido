@@ -62,10 +62,11 @@ if __name__ == "__main__":
 
         capacity = remote_node.network_capacity()
 
-        remote_node.id = generate_id(f"{remote_ip}:{remote_port}", capacity)
-
         ip = get_ip(local)
         node = Node(ip, port, capacity)
+
+        remote_node.id = generate_id(f"{remote_ip}:{remote_port}", capacity)
+        remote_node.set_local_node(node)
 
         inject_node(fastapi_app, node)
 
