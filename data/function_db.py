@@ -128,3 +128,12 @@ def delete_chat(user_id_1,user_id_2):
         session.commit()
         return True
     return False
+
+def search_chat(user_id_1,user_id_2):
+    chat_id = search_chat_id(user_id_1,user_id_2)
+    if chat_id is not False:
+        try:
+            result = session.query(Messenger.user_id_from,Messenger.value).filter(Messenger.chat_id==chat_id).all()
+            return result
+        except:
+            return []
