@@ -21,7 +21,7 @@ class HeartBeatManager:
                 else:
                     if response.status_code != 200:
                         temp_set.add(request_manager)
-                        
+
             self.request_manager_list = self.request_manager_list - temp_set
 
             sleep(interval)
