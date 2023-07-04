@@ -132,12 +132,12 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
             messages_format.append(message['user_id_from'] + ": " + message['value'])  
     return messages_format
   
+  
 # para enviar mensajes a otro usuario
-
-
 @client_interface.post("/Send")
 def send(user: str, message: str):
     # se chequea que yo esté loggeado
+    
     # retornar una notificacion en caso de no estarlo
     # buscar el entity en que está almacenada la información del usuario
     # busco mi lista de contactos
