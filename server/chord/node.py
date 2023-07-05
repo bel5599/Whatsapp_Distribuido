@@ -165,7 +165,7 @@ class Node(BaseNode):
         self.init_fingers(node)
 
     def fix_random_finger(self):
-        index = random.randint(1, self.network_capacity())
+        index = random.randint(1, self.network_capacity() - 1)
         finger = self.fingers[index]
 
         finger.node = self.find_successor(finger.start)
