@@ -1,5 +1,6 @@
 from typing import Union
 import random
+import time
 
 from .base_node import BaseNode
 from ..util import generate_id
@@ -152,27 +153,22 @@ class Node(BaseNode):
             else:
                 finger.node = node.find_successor(start)
 
-    def join(self, node: BaseNode):
-        self._predecessor = None
-        self.set_successor(node.find_successor(self.id))
-
-    def stabilize(self):
-        node = self.find_predecessor(self.successor.id)
-        if self._inside_interval(node.id, (self.id, self.successor.id)):
-            self.set_successor(node)
-        self.successor.notify(self)
-
-    def notify(self, node: BaseNode):
-        if self._predecessor is None or self._inside_interval(node.id, (self._predecessor.id, self.id)):
-            self._predecessor = node
-
-    def fix_fingers(self):
-        i = random.randint(1, len(self.fingers))
-        self.fingers[i].node = self.find_successor(self.fingers[i].start)
-
     def join_network(self, node: BaseNode):
         # TODO: check if no other node is using self id
 
         self.connect(node)
         self.update_others()
         self.init_fingers(node)
+
+    def fix_random_finger(self):
+        index = random.randint(1, self.network_capacity())
+        finger = self.fingers[index]
+
+        finger.node = self.find_successor(finger.start)
+
+    def stabilize(self, interval: int):
+        while True:
+            self.connect(self)  # self will find successor
+            self.fix_random_finger()
+
+            time.sleep(interval)

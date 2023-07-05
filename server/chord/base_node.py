@@ -53,9 +53,6 @@ class BaseNode:
     def update_fingers(self, node: "BaseNode", index: int) -> None:
         raise NotImplementedError()
 
-    def notify(self, node: "BaseNode") -> None:
-        raise NotImplementedError()
-
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id})"
 
