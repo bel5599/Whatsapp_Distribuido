@@ -1,14 +1,14 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from models import*
+
+
 
 class DataBase:
     def __init__(self,name:str = 'data'):
         engine = create_engine('sqlite:///'+name+'.sqlite')
         Session = sessionmaker(bind=engine)
         self.session = Session()
-        self.Base = declarative_base()
         Base.metadata.create_all(engine)
 
     # USER 
