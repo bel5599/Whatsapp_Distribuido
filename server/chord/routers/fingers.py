@@ -5,7 +5,7 @@ from ..node import Node
 from ..remote_node import RemoteNode
 
 
-router = APIRouter(prefix="/fingers", tags=["fingers"])
+router = APIRouter(prefix="/fingers")
 
 
 @router.get("/capacity")

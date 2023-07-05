@@ -5,7 +5,7 @@ from ..node import Node
 from ..remote_node import RemoteNode
 
 
-router = APIRouter(prefix="/predecessor", tags=["predecessor"])
+router = APIRouter(prefix="/predecessor")
 
 
 @router.get("/")

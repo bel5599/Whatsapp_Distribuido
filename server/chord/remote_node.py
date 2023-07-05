@@ -25,7 +25,7 @@ class RemoteNode(BaseNode):
         self._local_node = node
 
     def network_capacity(self):
-        response = self._manager.get("/fingers/capacity/")
+        response = self._manager.get("/chord/fingers/capacity/")
 
         if response.status_code == 200:
             capacity: int = response.json()["capacity"]
@@ -34,7 +34,7 @@ class RemoteNode(BaseNode):
         raise Exception(response.json()["detail"])
 
     def successor(self):
-        response = self._manager.get("/successor/")
+        response = self._manager.get("/chord/successor/")
 
         if response.status_code == 200:
             model = BaseNodeModel(**response.json())
@@ -43,13 +43,14 @@ class RemoteNode(BaseNode):
         raise Exception(response.json()["detail"])
 
     def set_successor(self, node: BaseNode):
-        response = self._manager.put("/successor/", data=node.serialize())
+        response = self._manager.put(
+            "/chord/successor/", data=node.serialize())
 
         if response.status_code != 200:
             raise Exception(response.json()["detail"])
 
     def predecessor(self):
-        response = self._manager.get("/predecessor/")
+        response = self._manager.get("/chord/predecessor/")
 
         if response.status_code == 200:
             model = BaseNodeModel(**response.json())
@@ -58,13 +59,14 @@ class RemoteNode(BaseNode):
         raise Exception(response.json()["detail"])
 
     def set_predecessor(self, node: BaseNode):
-        response = self._manager.put("/predecessor/", data=node.serialize())
+        response = self._manager.put(
+            "/chord/predecessor/", data=node.serialize())
 
         if response.status_code != 200:
             raise Exception(response.json()["detail"])
 
     def closest_preceding_finger(self, id: int):
-        response = self._manager.get(f"/fingers/closest_preceding/{id}")
+        response = self._manager.get(f"/chord/fingers/closest_preceding/{id}")
 
         if response.status_code == 200:
             model = BaseNodeModel(**response.json())
@@ -73,7 +75,7 @@ class RemoteNode(BaseNode):
         raise Exception(response.json()["detail"])
 
     def find_successor(self, id: int):
-        response = self._manager.get(f"/successor/{id}")
+        response = self._manager.get(f"/chord/successor/{id}")
 
         if response.status_code == 200:
             model = BaseNodeModel(**response.json())
@@ -82,7 +84,7 @@ class RemoteNode(BaseNode):
         raise Exception(response.json()["detail"])
 
     def update_fingers(self, node: BaseNode, index: int):
-        response = self._manager.put(f"/fingers/update/{index}",
+        response = self._manager.put(f"/chord/fingers/update/{index}",
                                      data=node.serialize())
 
         if response.status_code != 200:

@@ -10,7 +10,7 @@ if __name__ == "__main__":
     from server.chord.node import Node
     from server.chord.remote_node import RemoteNode
     from server.util import generate_id
-    from server.chord.routers import fingers, predecessor, successor, debug as debug_module
+    from server.chord.routers import router as chord_router, debug_router
 
     from shared import get_ip, LOCAL_IP
 
@@ -24,9 +24,7 @@ if __name__ == "__main__":
     typer_app = Typer()
 
     fastapi_app = FastAPI()
-    fastapi_app.include_router(fingers.router)
-    fastapi_app.include_router(successor.router)
-    fastapi_app.include_router(predecessor.router)
+    fastapi_app.include_router(chord_router)
 
     @fastapi_app.get("/heart")
     def ping():
@@ -35,7 +33,7 @@ if __name__ == "__main__":
     @typer_app.command()
     def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, stabilize: bool = True, interval: int = 5):
         if debug:
-            fastapi_app.include_router(debug_module.router)
+            fastapi_app.include_router(debug_router)
 
         capacity = min(capacity, 256)
 
@@ -59,7 +57,7 @@ if __name__ == "__main__":
     @typer_app.command()
     def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, stabilize: bool = True, interval: int = 5):
         if debug:
-            fastapi_app.include_router(debug_module.router)
+            fastapi_app.include_router(debug_router)
 
         if not local:
             remote_ip, remote_port = address.split(

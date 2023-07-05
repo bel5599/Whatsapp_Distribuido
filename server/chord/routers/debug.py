@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, HTTPException
 from ..node import Node
 
 
-router = APIRouter(prefix="/debug", tags=["debug"])
+router = APIRouter(prefix="/chord-debug", tags=["chord-protocol", "debug"])
 
 
 @router.get("/me")
