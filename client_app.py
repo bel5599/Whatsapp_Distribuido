@@ -1,17 +1,15 @@
+
 # levanta la interfaz del cliente
 if __name__ == "__main__":
     import uvicorn
+    from typer import Typer
     from shared import get_ip
     from client.client import client_interface
 
-    host = get_ip()
-    print('Insert Port')
-    port = input()
-    try:
-        port = int(port)
-        uvicorn.run(client_interface,
-                    host=host, port=port)
+    typer_app = Typer()
 
-    except:
-        uvicorn.run(client_interface,
-                    host=host, port=9000)
+    @typer_app.command()
+    def run(ip:str,port:int =9000):
+        uvicorn.run(client_interface,host=ip, port=port)
+
+    typer_app()
