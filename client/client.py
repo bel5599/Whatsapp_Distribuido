@@ -5,7 +5,6 @@ from fastapi import FastAPI
 # from fastapi_utils.tasks import repeat_every
 # from sqlalchemy import true
 
-
 from server.node.remote_entity_node import RemoteEntityNode
 from .client_node import ClientNode
 
@@ -51,6 +50,7 @@ def replication_messenge(inf_nodo,source,destiny,messenge):
     server_successor_successor.add_messenger(source,destiny,messenge)
     return dict_successor,dict_successor_successor
 
+
 @client_interface.post("/Register")
 def register(nickname: str, password: str, server: str):
     # nodo servidor de entrada FALTA VALIDADCION DEL NODO
@@ -76,7 +76,6 @@ def register(nickname: str, password: str, server: str):
     # Loguear al usuario
     client.login_user(nickname,password,servers)
     return
-
 
 @client_interface.post("/Login")
 def login(nickname: str, password: str,server: str):
@@ -111,12 +110,10 @@ def login(nickname: str, password: str,server: str):
     client.login_user(nickname,password,servers)
     return
 
-# permite cerrar la sesión del usuario.
 @client_interface.post("/Logout")
 def logout():
   client.logout_user()
   return
-
 
 # Permite ver los mensajes entre "my_nickname" y "nickname".
 @client_interface.get("/Messages")
@@ -162,7 +159,6 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
         else:
             messages_format.append(message['user_id_from'] + ": " + message['value'])
     return messages_format
-
 
 # para enviar mensajes a otro usuario
 @client_interface.post("/Send")
