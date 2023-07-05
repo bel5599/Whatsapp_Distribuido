@@ -33,7 +33,7 @@ if __name__ == "__main__":
         return "beat"
 
     @typer_app.command()
-    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False):
+    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, stabilize: bool = True, interval: int = 5):
         if debug:
             fastapi_app.include_router(debug_module.router)
 
@@ -44,12 +44,20 @@ if __name__ == "__main__":
 
         inject_node(fastapi_app, node)
 
+        def _stabilize():
+            if stabilize:
+                time.sleep(1)
+                node.stabilize(interval)
+        stabilize_task = threading.Thread(target=_stabilize)
+
         config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
+
+        stabilize_task.start()
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 5):
+    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, stabilize: bool = True, interval: int = 5):
         if debug:
             fastapi_app.include_router(debug_module.router)
 
@@ -72,11 +80,12 @@ if __name__ == "__main__":
 
         inject_node(fastapi_app, node)
 
-        def join_network():
+        def _join_network():
             time.sleep(1)
             node.join_network(remote_node)
-            node.stabilize(interval)
-        join_task = threading.Thread(target=join_network)
+            if stabilize:
+                node.stabilize(interval)
+        join_task = threading.Thread(target=_join_network)
 
         config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
