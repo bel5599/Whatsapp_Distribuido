@@ -44,6 +44,11 @@ class EntityNode(ChordNode):
         if database_original:
             return self.database.add_user(nickname, password)
         return self.replication_database.add_user(nickname, password)
+    
+    def get_pasword(self, nickname: str, database_original: bool):
+        if database_original:
+            return self.database.get_password(nickname)
+        return self.replication_database.get_password(nickname)
 
     def nickname_entity_node(self, nickname: str, database_original: bool):
         if database_original:
@@ -65,46 +70,46 @@ class EntityNode(ChordNode):
             return self
         return self.successor.nickname_entity_node_rec(nickname, node, database_original)
     
-    def search_entity_node(self, nickname):
+    def search_entity_node(self, nickname: str):
         id = generate_id(nickname, self.network_capacity())
         return self.find_successor(id)
 
-    def delete_user(self, nickname, database_original):
+    def delete_user(self, nickname: str, database_original: bool):
         if database_original:
             return self.database.delete_user(nickname)
         return self.replication_database.delete_user(nickname)
 
-    def add_messenger(self, source, destiny, value, database_original):
+    def add_messenger(self, source: str, destiny: str, value: str, database_original: bool):
         if database_original:
             return self.database.add_messenger(source, destiny, value)
         return self.replication_database.add_messenger(source, destiny, value)
 
-    def search_messenger_from(self, me, user, database_original):
+    def search_messenger_from(self, me: str, user: str, database_original: bool):
         if database_original:
             return self.database.search_messenger_from(me, user)
         return self.replication_database.search_messenger_from(me, user)
 
-    def search_messenger_to(self, me, user, database_original):
+    def search_messenger_to(self, me: str, user: str, database_original: bool):
         if database_original:
             return self.database.search_messenger_to(me, user)
         return self.replication_database.search_messenger_to(me, user)
 
-    def delete_messenger(self, id_messenger, database_original):
+    def delete_messenger(self, id_messenger: int, database_original: bool):
         if database_original:
             return self.database.delete_messenger(id_messenger)
         return self.replication_database.delete_messenger(id_messenger)
 
-    def add_chat(self, user_id_1_, user_id_2_, database_original):
+    def add_chat(self, user_id_1_: str, user_id_2_: str, database_original: bool):
         if database_original:
             return self.database.add_chat(user_id_1_, user_id_2_)
         return self.replication_database.add_chat(user_id_1_, user_id_2_)
 
-    def search_chat_id(self, user_id_1, user_id_2, database_original):
+    def search_chat_id(self, user_id_1: str, user_id_2: str, database_original: bool):
         if database_original:
             return self.database.search_chat_id(user_id_1, user_id_2)
         return self.replication_database.search_chat_id(user_id_1, user_id_2)
 
-    def delete_chat(self, user_id_1, user_id_2, database_original):
+    def delete_chat(self, user_id_1: str, user_id_2: str, database_original: bool):
         if database_original:
             return self.database.delete_chat(user_id_1, user_id_2)
         return self.replication_database.delete_chat(user_id_1, user_id_2)
@@ -116,13 +121,8 @@ class EntityNode(ChordNode):
             fingers_list.append((self._predecessor.ip, self._predecessor.port))
 
         return fingers_list
-    
-    def get_pasword(self, nickname, database_original):
-        if database_original:
-            return self.database.get_password(nickname)
-        return self.replication_database.get_password(nickname)
-    
-    def search_chat(self, user_id_1, user_id_2, database_original):
+
+    def search_chat(self, user_id_1: str, user_id_2: str, database_original: bool):
         if database_original:
             return self.database.search_chat(user_id_1, user_id_2)
         return self.replication_database.search_chat(user_id_1, user_id_2)

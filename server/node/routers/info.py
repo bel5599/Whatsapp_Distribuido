@@ -13,7 +13,7 @@ def fingers_predecessor_list(request: Request):
 
 
 @router.get("/entity/{nickname}")
-def nickname_entity_node(nickname, model: DataBaseModel, request:Request):
+def nickname_entity_node(nickname: str, model: DataBaseModel, request:Request):
     node: EntityNode = request.state.node
 
     try:
@@ -28,7 +28,7 @@ def nickname_entity_node(nickname, model: DataBaseModel, request:Request):
     
 
 @router.get("/search_entity/{nickname}")
-def search_entity_node(nickname, request: Request):
+def search_entity_node(nickname: str, request: Request):
     node: EntityNode = request.state.node
 
     try:
