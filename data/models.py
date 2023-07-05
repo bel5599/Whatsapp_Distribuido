@@ -1,6 +1,5 @@
 from datetime import*
-
-from db import  Base
+from sqlalchemy.ext.declarative import declarative_base
 from typing import List
 from typing import Optional
 from sqlalchemy import ForeignKey
@@ -8,7 +7,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy import Column, Integer, String, Float, DATETIME, Date
 
-
+Base = declarative_base()
 
 class User(Base):
     __tablename__ = "user_account"

@@ -1,5 +1,7 @@
 if __name__ == "__main__":
     import asyncio
+    import threading
+    import time
     from typer import Typer
     from fastapi import FastAPI, Request
     from uvicorn import Config, Server
@@ -70,20 +72,15 @@ if __name__ == "__main__":
 
         inject_node(fastapi_app, node)
 
-        async def _join_network():
-            await asyncio.sleep(1)
+        def _join_network():
+            time.sleep(1)
             node.join_network(remote_node)
+        join_task = threading.Thread(target=_join_network)
 
-        async def _serve():
-            config = Config(fastapi_app, host=ip, port=int(port))
-            server = Server(config)
-            await server.serve()
+        config = Config(fastapi_app, host=ip, port=int(port))
+        server = Server(config)
 
-        async def _gather():
-            s = _serve()
-            j = _join_network()
-            await asyncio.gather(s, j)
-
-        asyncio.run(_gather())
+        join_task.start()
+        asyncio.run(server.serve())
 
     typer_app()
