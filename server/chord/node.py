@@ -44,6 +44,11 @@ class Node(BaseNode):
     @staticmethod
     def _inside_interval(value: int, interval: tuple[int, int], inclusive: tuple[bool, bool] = (False, False)):
         low, up = interval
+
+        if low == up:
+            # range is all the ring
+            return value != low or any(inclusive)
+
         if low > up:
             # if low > up, you have, for example an interval like this: {5, 3}
             # the complementary interval is !{3, 5!}
@@ -100,12 +105,7 @@ class Node(BaseNode):
     def find_predecessor(self, id: int):
         node = self
         while not self._inside_interval(id, (node.id, node.successor().id), (False, True)):
-            closest = node.closest_preceding_finger(id)
-            if node != closest:
-                node = closest
-            else:
-                # stop when same node was found twice in a row
-                break
+            node = node.closest_preceding_finger(id)
 
         return node
 
@@ -114,7 +114,6 @@ class Node(BaseNode):
 
     def update_fingers(self, node: BaseNode, index: int):
         finger_node = self.fingers[index].node
-
         if finger_node and self._inside_interval(node.id, (self.id, finger_node.id), (True, False)):
             self.fingers[index].node = node
             self.predecessor().update_fingers(node, index)
