@@ -2,6 +2,7 @@ from typing import Union
 
 from .base_node import BaseNode
 from ..util import generate_id
+import random
 
 
 class Finger:
@@ -150,6 +151,29 @@ class Node(BaseNode):
                 finger.node = prev_finger.node
             else:
                 finger.node = node.find_successor(start)
+
+    def join(self, node: BaseNode):
+        self._predecessor = None
+        self.set_successor(node.find_successor(self.id))
+
+    def stabilize(self):
+        node = self.find_predecessor(self.successor.id)
+        if self._inside_interval(node.id, (self.id, self.successor.id)):
+            self.set_successor(node)
+        self.successor.notify(self)
+
+        return self
+
+    def notify(self, node: BaseNode):
+        if self._predecessor is None or self._inside_interval(node.id, (self._predecessor.id, self.id)):
+            self._predecessor = node
+
+    def fix_fingers(self):
+        i = random.randint(1, len(self.fingers))
+        self.fingers[i].node = self.find_successor(self.fingers[i].start)
+
+        return self
+    
 
     def join_network(self, node: BaseNode):
         # TODO: check if no other node is using self id
