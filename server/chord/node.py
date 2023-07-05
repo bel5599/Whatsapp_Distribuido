@@ -159,7 +159,7 @@ class Node(BaseNode):
         if node_temp.id == self.id:
             print("A node already exists with this id")
             sys.exit(0)
-        
+
         self.connect(node)
         self.update_others()
         self.init_fingers(node)
