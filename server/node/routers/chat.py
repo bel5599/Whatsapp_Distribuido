@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..entity_node import EntityNode
+from ..entity_node import EntityNode, ChatModel
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 @router.get("/")
-def search_chat_id(user_1, user_2, request: Request):
+def search_chat_id(model: ChatModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        chat_id = node.search_chat_id(user_1, user_2)
+        chat_id = node.search_chat_id(model.user_id_1, model.user_id_2, model.database_original)
     except:
         raise HTTPException(status_code=404, detail="chat id not found!")
     else:
@@ -17,11 +17,11 @@ def search_chat_id(user_1, user_2, request: Request):
 
 
 @router.put("/add")
-def add_chat(user_1, user_2, request: Request):
+def add_chat(model: ChatModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.add_chat(user_1, user_2)
+        result = node.add_chat(model.user_id_1, model.user_id_2, model.database_original)
     except:
         raise HTTPException(
             status_code=500, detail="add chat failed!")
@@ -29,24 +29,24 @@ def add_chat(user_1, user_2, request: Request):
         return {"success": result}
 
 
-@router.delete("/delete/{user_1}/{user_2}")
-def delete_chat(user_1, user_2, request: Request):
+@router.delete("/delete")
+def delete_chat(model: ChatModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.delete_chat(user_1, user_2)
+        result = node.delete_chat(model.user_id_1, model.user_id_2, model.database_original)
     except:
         raise HTTPException(
             status_code=500, detail="delete chat failed!")
     else:
         return {"success": result}
 
-@router.get("/search/{user_1}/{user_2}")
-def search_chat(user_1, user_2, request: Request):
+@router.get("/search")
+def search_chat(model: ChatModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.search_chat(user_1, user_2)
+        result = node.search_chat(model.user_id_1, model.user_id_2, model.database_original)
     except:
         raise HTTPException(
             status_code=500, detail="search chat failed!")

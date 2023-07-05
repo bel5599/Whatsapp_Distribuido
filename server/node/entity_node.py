@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from ..chord.node import Node as ChordNode
-from ...data.function_db import *
+from ...data.database import DataBase
 from ..util import generate_id
 
 
@@ -9,23 +9,34 @@ class MessengerModel(BaseModel):
     source: str
     destiny: str
     value: str
+    database_original: bool
 
 
 class UserModel(BaseModel):
     nickname: str
     password: str
+    database_original: bool
+
+
+class ChatModel(BaseModel):
+    user_id_1: str
+    user_id_2: str
+    database_original: bool
 
 
 class EntityNode(ChordNode):
     def __init__(self, ip: str, port: str, capacity: int):
         super().__init__(ip, port, capacity)
-        create_database()
+        self.database = DataBase("data")
+        self.replication_database = DataBase("replication_data")
 
-    def add_user(self, nickname: str, password: str):
-        return add_user(nickname, password)
+    def add_user(self, nickname: str, password: str, database_original):
+        if database_original:
+            return self.database.add_user(nickname, password)
+        return self.replication_database.add_user(nickname, password)
 
     def nickname_entity_node(self, nickname: str):
-        if contain_user(nickname):
+        if self.database.contain_user(nickname) or self.replication_database.contain_user(nickname):
             return self
 
         return self.successor.nickname_entity_node_rec(nickname, self)
@@ -34,7 +45,7 @@ class EntityNode(ChordNode):
         if self.id == node.id:
             return None
 
-        if contain_user(nickname):
+        if self.database.contain_user(nickname) or self.replication_database.contain_user(nickname):
             return self
         return self.successor.nickname_entity_node_rec(nickname, node)
     
@@ -42,29 +53,45 @@ class EntityNode(ChordNode):
         id = generate_id(nickname, self.network_capacity())
         return self.find_successor(id)
 
-    def delete_user(self, nickname):
-        return delete_user(nickname)
+    def delete_user(self, nickname, database_original):
+        if database_original:
+            return self.database.delete_user(nickname)
+        return self.replication_database.delete_user(nickname)
 
-    def add_messenger(self, source, destiny, value):
-        return add_messenger(source, destiny, value)
+    def add_messenger(self, source, destiny, value, database_original):
+        if database_original:
+            return self.database.add_messenger(source, destiny, value)
+        return self.replication_database.add_messenger(source, destiny, value)
 
-    def search_messenger_from(self, me, user):
-        return search_messenger_from(me, user)
+    def search_messenger_from(self, me, user, database_original):
+        if database_original:
+            return self.database.search_messenger_from(me, user)
+        return self.replication_database.search_messenger_from(me, user)
 
-    def search_messenger_to(self, me, user):
-        return search_messenger_to(me, user)
+    def search_messenger_to(self, me, user, database_original):
+        if database_original:
+            return self.database.search_messenger_to(me, user)
+        return self.replication_database.search_messenger_to(me, user)
 
-    def delete_messenger(self, id_messenger):
-        return delete_messenger(id_messenger)
+    def delete_messenger(self, id_messenger, database_original):
+        if database_original:
+            return self.database.delete_messenger(id_messenger)
+        return self.replication_database.delete_messenger(id_messenger)
 
-    def add_chat(self, user_id_1_, user_id_2_):
-        return add_chat(user_id_1_, user_id_2_)
+    def add_chat(self, user_id_1_, user_id_2_, database_original):
+        if database_original:
+            return self.database.add_chat(user_id_1_, user_id_2_)
+        return self.replication_database.add_chat(user_id_1_, user_id_2_)
 
-    def search_chat_id(self, user_id_1, user_id_2):
-        return search_chat_id(user_id_1, user_id_2)
+    def search_chat_id(self, user_id_1, user_id_2, database_original):
+        if database_original:
+            return self.database.search_chat_id(user_id_1, user_id_2)
+        return self.replication_database.search_chat_id(user_id_1, user_id_2)
 
-    def delete_chat(self, user_id_1, user_id_2):
-        return delete_chat(user_id_1, user_id_2)
+    def delete_chat(self, user_id_1, user_id_2, database_original):
+        if database_original:
+            return self.database.delete_chat(user_id_1, user_id_2)
+        return self.replication_database.delete_chat(user_id_1, user_id_2)
 
     def fingers_predecessor_list(self):
         fingers_list = [(finger.node.ip, finger.node.port)
@@ -74,8 +101,12 @@ class EntityNode(ChordNode):
 
         return fingers_list
     
-    def get_pasword(self, nickname):
-        return get_password(nickname)
+    def get_pasword(self, nickname, database_original):
+        if database_original:
+            return self.database.get_password(nickname)
+        return self.replication_database.get_password(nickname)
     
-    def search_chat(self, user_id_1, user_id_2):
-        return search_chat(user_id_1, user_id_2)
+    def search_chat(self, user_id_1, user_id_2, database_original):
+        if database_original:
+            return self.database.search_chat(user_id_1, user_id_2)
+        return self.replication_database.search_chat(user_id_1, user_id_2)

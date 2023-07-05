@@ -4,12 +4,14 @@ from ..entity_node import EntityNode, MessengerModel
 
 router = APIRouter(prefix="/messenger", tags=["messenger"])
 
+
+
 @router.get("/from")
-def search_messenger_from(me, user, request: Request):
+def search_messenger_from(model: MessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.search_messenger_from(me, user)
+        result = node.search_messenger_from(model.source, model.destiny, model.database_original)
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
@@ -17,11 +19,11 @@ def search_messenger_from(me, user, request: Request):
 
 
 @router.get("/to")
-def search_messenger_to(me, user, request: Request):
+def search_messenger_to(model: MessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.search_messenger_to(me, user)
+        result = node.search_messenger_to(model.source, model.destiny, model.database_original)
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
@@ -33,7 +35,7 @@ def add_messenger(model: MessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.add_messenger(model.source, model.destiny, model.value)
+        result = node.add_messenger(model.source, model.destiny, model.value, model.database_original)
     except:
         raise HTTPException(
             status_code=500, detail="add messenger failed!")
@@ -42,11 +44,11 @@ def add_messenger(model: MessengerModel, request: Request):
 
 
 @router.delete("/delete/{id}")
-def delete_messenger(id: int, request: Request):
+def delete_messenger(id: int, database_original: bool, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.delete_messenger(id)
+        result = node.delete_messenger(id, database_original)
     except:
         raise HTTPException(
             status_code=500, detail="delete messenger failed!")
