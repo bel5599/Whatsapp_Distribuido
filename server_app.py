@@ -49,7 +49,7 @@ if __name__ == "__main__":
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False):
+    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 5):
         if debug:
             fastapi_app.include_router(debug_module.router)
 
@@ -72,10 +72,11 @@ if __name__ == "__main__":
 
         inject_node(fastapi_app, node)
 
-        def _join_network():
+        def join_network():
             time.sleep(1)
             node.join_network(remote_node)
-        join_task = threading.Thread(target=_join_network)
+            node.stabilize(interval)
+        join_task = threading.Thread(target=join_network)
 
         config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
