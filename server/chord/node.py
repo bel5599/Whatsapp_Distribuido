@@ -155,9 +155,8 @@ class Node(BaseNode):
                 finger.node = node.find_successor(start)
 
     def join_network(self, node: BaseNode):
-
-        node_temp = self.find_successor(node.id)
-        if node_temp.id == node.id:
+        node_temp = node.find_successor(self.id)
+        if node_temp.id == self.id:
             print("A node already exists with this id")
             sys.exit(0)
         
