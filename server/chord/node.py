@@ -128,7 +128,7 @@ class Node(BaseNode):
             node = self.find_predecessor(id)
             node.update_fingers(self, i)
 
-    def init_fingers(self, node: BaseNode):
+    def connect(self, node: BaseNode):
         # get successor and predecessor nodes
         successor = node.find_successor(self.fingers[0].start)
         predecessor = successor.predecessor()
@@ -143,6 +143,7 @@ class Node(BaseNode):
 
         # at this point self is correctly placed in the network
 
+    def init_fingers(self, node: BaseNode):
         for prev_finger, finger in zip(self.fingers[:-1], self.fingers[1:]):
             start = finger.start
             if prev_finger.node and self._inside_interval(start, (self.id, prev_finger.node.id), (True, False)):
@@ -151,5 +152,8 @@ class Node(BaseNode):
                 finger.node = node.find_successor(start)
 
     def join_network(self, node: BaseNode):
-        self.init_fingers(node)
+        # TODO: check if no other node is using self id
+
+        self.connect(node)
         self.update_others()
+        self.init_fingers(node)
