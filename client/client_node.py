@@ -16,12 +16,3 @@ class ClientNode:
         self.server = []
         self.login = False
         
-        
-    # def check_password(self,nickname:str,password:str):
-    #     if self.user['nickname'] == nickname and self.user['password'] == password:
-    #         return True
-    #     return False
-
-    # def check_login(self,nickname:str,password:str):
-    #     if self.check_password(nickname,password):
-    #         return self.login
