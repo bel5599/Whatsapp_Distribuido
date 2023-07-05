@@ -1,6 +1,7 @@
 from typing import Union
 import random
 import time
+import sys
 
 from .base_node import BaseNode
 from ..util import generate_id
@@ -154,8 +155,12 @@ class Node(BaseNode):
                 finger.node = node.find_successor(start)
 
     def join_network(self, node: BaseNode):
-        # TODO: check if no other node is using self id
 
+        node_temp = self.find_successor(node.id)
+        if node_temp.id == node.id:
+            print("A node already exists with this id")
+            sys.exit(0)
+        
         self.connect(node)
         self.update_others()
         self.init_fingers(node)
