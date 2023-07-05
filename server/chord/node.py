@@ -168,7 +168,7 @@ class Node(BaseNode):
 
     def stabilize(self, interval: int):
         while True:
+            time.sleep(interval)
+
             self.connect(self)  # self will find successor
             self.fix_random_finger()
-
-            time.sleep(interval)
