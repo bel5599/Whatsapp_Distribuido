@@ -52,7 +52,7 @@ class BaseNode:
 
     def update_fingers(self, node: "BaseNode", index: int) -> None:
         raise NotImplementedError()
-    
+
     def notify(self, node: "BaseNode") -> None:
         raise NotImplementedError()
 
