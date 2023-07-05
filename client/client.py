@@ -19,10 +19,11 @@ def replication_user(inf_nodo,nickname,password):
     dict_successor = server_node_data.successor()
     server_successor = RemoteEntityNode(-1,dict_successor.ip,dict_successor.port)
     server_successor.add_user(nickname,password)
-    # replicar la informacion del usuario en el nodos antecesor
+    # replicar la informacion del usuario en el nodo sucesor del sucesor
     dict_successor_successor = server_successor.successor()
     server_successor_successor = RemoteEntityNode(-1,dict_successor_successor.ip,dict_successor_successor.port)
     server_successor_successor.add_user(nickname,password)
+    
     return dict_successor,dict_successor_successor
 
 def get_entity_data(inf_nodo):
