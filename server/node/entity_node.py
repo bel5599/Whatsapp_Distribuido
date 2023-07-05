@@ -23,6 +23,11 @@ class ChatModel(BaseModel):
     user_id_2: str
     database_original: bool
 
+class DataBaseModel(BaseModel):
+    database_original: bool
+
+class S
+
 
 class EntityNode(ChordNode):
     def __init__(self, ip: str, port: str, capacity: int):
@@ -35,7 +40,7 @@ class EntityNode(ChordNode):
             return self.database.add_user(nickname, password)
         return self.replication_database.add_user(nickname, password)
 
-    def nickname_entity_node(self, nickname: str):
+    def nickname_entity_node(self, nickname: str, database_original: bool):
         if self.database.contain_user(nickname) or self.replication_database.contain_user(nickname):
             return self
 

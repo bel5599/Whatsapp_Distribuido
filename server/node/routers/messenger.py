@@ -5,7 +5,6 @@ from ..entity_node import EntityNode, MessengerModel
 router = APIRouter(prefix="/messenger", tags=["messenger"])
 
 
-
 @router.get("/from")
 def search_messenger_from(model: MessengerModel, request: Request):
     node: EntityNode = request.state.node
