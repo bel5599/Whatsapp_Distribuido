@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..entity_node import EntityNode, MessengerModel
+from ..entity_node import EntityNode, MessengerModel, SearchMessengerModel
 
 router = APIRouter(prefix="/messenger", tags=["messenger"])
 
 
 @router.get("/from")
-def search_messenger_from(model: MessengerModel, request: Request):
+def search_messenger_from(model: SearchMessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
@@ -18,7 +18,7 @@ def search_messenger_from(model: MessengerModel, request: Request):
 
 
 @router.get("/to")
-def search_messenger_to(model: MessengerModel, request: Request):
+def search_messenger_to(model: SearchMessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:

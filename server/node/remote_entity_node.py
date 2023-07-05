@@ -70,7 +70,7 @@ class RemoteEntityNode(ChordRemoteNode):
 
     def search_messenger_from(self, me, user, database_original: bool):
         response = self._manager.get("/messenger/from",
-                                     data={"me": me, "user": user, "value": None, "database_original": database_original})
+                                     data={"me": me, "user": user, "database_original": database_original})
 
         if response.status_code == 200:
             result: dict = response.json()
@@ -80,7 +80,7 @@ class RemoteEntityNode(ChordRemoteNode):
 
     def search_messenger_to(self, me, user, database_original: bool):
         response = self._manager.get("/messenger/to",
-                                     data={"me": me, "user": user, "value": None, "database_original": database_original})
+                                     data={"me": me, "user": user, "database_original": database_original})
 
         if response.status_code == 200:
             result: list = response.json()

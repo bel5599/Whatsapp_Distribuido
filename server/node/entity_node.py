@@ -23,10 +23,15 @@ class ChatModel(BaseModel):
     user_id_2: str
     database_original: bool
 
+
 class DataBaseModel(BaseModel):
     database_original: bool
 
-class S
+
+class SearchMessengerModel(BaseModel):
+    source: str
+    destiny: str
+    database_original: bool
 
 
 class EntityNode(ChordNode):
@@ -41,18 +46,24 @@ class EntityNode(ChordNode):
         return self.replication_database.add_user(nickname, password)
 
     def nickname_entity_node(self, nickname: str, database_original: bool):
+        if database_original:
+            self.database.contain_user(nickname)
+            return self
         if self.database.contain_user(nickname) or self.replication_database.contain_user(nickname):
             return self
 
-        return self.successor.nickname_entity_node_rec(nickname, self)
+        return self.successor.nickname_entity_node_rec(nickname, self, database_original)
 
-    def nickname_entity_node_rec(self, nickname: str, node):
+    def nickname_entity_node_rec(self, nickname: str, node, database_original: bool):
         if self.id == node.id:
             return None
 
+        if database_original:
+            self.database.contain_user(nickname)
+            return self
         if self.database.contain_user(nickname) or self.replication_database.contain_user(nickname):
             return self
-        return self.successor.nickname_entity_node_rec(nickname, node)
+        return self.successor.nickname_entity_node_rec(nickname, node, database_original)
     
     def search_entity_node(self, nickname):
         id = generate_id(nickname, self.network_capacity())

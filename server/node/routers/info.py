@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..entity_node import EntityNode
+from ..entity_node import EntityNode, DataBaseModel
 
 
 router = APIRouter(prefix="/info", tags=["info"])
@@ -13,11 +13,11 @@ def fingers_predecessor_list(request: Request):
 
 
 @router.get("/entity/{nickname}")
-def nickname_entity_node(nickname, request:Request):
+def nickname_entity_node(nickname, model: DataBaseModel, request:Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.nickname_entity_node(nickname)
+        result = node.nickname_entity_node(nickname, model.database_original)
     except:
         raise HTTPException(
             status_code=500, detail="node search failed!")
