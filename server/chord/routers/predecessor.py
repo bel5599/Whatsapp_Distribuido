@@ -32,7 +32,8 @@ def set_predecessor(model: BaseNodeModel, request: Request):
             status_code=500, detail="setting predecessor failed!")
     else:
         return node.serialize()
-    
+
+
 @router.get("/notify")
 def notify(model: BaseNodeModel, request: Request):
     node: Node = request.state.node
