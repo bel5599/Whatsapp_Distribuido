@@ -22,7 +22,7 @@ class RemoteEntityNode(ChordRemoteNode):
         
         raise Exception(response.json()["detail"])
 
-    def nickname_entity_node(self, nickname, database_original: bool):
+    def nickname_entity_node(self, nickname, database_original: bool=False):
         response = self._manager.get(f"/info/entity/{nickname}", data = {"database_original": database_original})
 
         if response.status_code == 200:
