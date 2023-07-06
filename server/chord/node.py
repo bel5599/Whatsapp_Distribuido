@@ -187,12 +187,15 @@ class Node(BaseNode):
 
         finger.node = self.find_successor(finger.start)
 
-    def keep_healthy(self, interval: int):
+    def keep_healthy(self, interval: int, *tasks):
         while True:
             time.sleep(interval)
 
             self._check_successor()
             self._stabilize()
             self._fix_random_finger()
+
+            for task in tasks:
+                task()
 
     # endregion
