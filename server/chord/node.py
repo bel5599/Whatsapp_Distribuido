@@ -137,8 +137,39 @@ class Node(BaseNode):
         if (not predecessor) or self._inside_interval(node.id, (predecessor.id, self.id)):
             self.set_predecessor(node)
 
+    # region HEALTH
+
     def heart(self):
         return "beat"
+
+    def _check_successor(self):
+        successor = self.successor()
+        if not (successor and successor.heart()):
+            # try to find successor
+            start = self.fingers[0].start
+
+            # using predecessor
+            predecessor = self.predecessor()
+            if predecessor and predecessor.heart():
+                new_successor = predecessor.find_successor(start)
+                if new_successor:
+                    self.set_successor(new_successor)
+                    return
+            else:
+                # clear predecessor
+                self._predecessor = None
+
+            # using some other finger
+            for finger in self.fingers[::-1]:
+                node = finger.node
+                if node and node.heart():
+                    new_successor = node.find_successor(start)
+                    if new_successor:
+                        self.set_successor(new_successor)
+                        return
+
+            # clear successor
+            self.set_successor(self)
 
     def _stabilize(self):
         old_successor = self.successor()
@@ -160,7 +191,8 @@ class Node(BaseNode):
         while True:
             time.sleep(interval)
 
+            self._check_successor()
             self._stabilize()
             self._fix_random_finger()
 
-# TODO: setting successor/predecessor to None when a using them raises error
+    # endregion
