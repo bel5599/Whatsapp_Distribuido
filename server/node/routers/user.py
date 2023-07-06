@@ -10,7 +10,7 @@ def add_user(model: UserModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.add_user(model.nickname, model.password, model.database_original)
+        result = node.add_user(model.nickname, model.password, model.ip, model.port, model.database_original)
     except:
         raise HTTPException(
             status_code=500, detail="add user failed!")
