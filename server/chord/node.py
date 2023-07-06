@@ -140,7 +140,7 @@ class Node(BaseNode):
     def heart(self):
         return "beat"
 
-    def stabilize(self):
+    def _stabilize(self):
         old_successor = self.successor()
         node = old_successor and old_successor.predecessor()
 
@@ -150,7 +150,7 @@ class Node(BaseNode):
         new_successor = self.successor()
         return new_successor and new_successor.notify(self)
 
-    def fix_random_finger(self):
+    def _fix_random_finger(self):
         index = random.randint(1, self.network_capacity() - 1)
         finger = self.fingers[index]
 
@@ -160,7 +160,7 @@ class Node(BaseNode):
         while True:
             time.sleep(interval)
 
-            self.stabilize()
-            self.fix_random_finger()
+            self._stabilize()
+            self._fix_random_finger()
 
 # TODO: setting successor/predecessor to None when a using them raises error
