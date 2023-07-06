@@ -22,6 +22,13 @@ def get_network_capacity(request: Request):
     return capacity
 
 
+@router.get("/heart")
+def beat(request: Request):
+    node: Node = request.state.node
+
+    return node.heart()
+
+
 @router.put("/notify")
 def notify(model: BaseNodeModel, request: Request):
     node: Node = request.state.node

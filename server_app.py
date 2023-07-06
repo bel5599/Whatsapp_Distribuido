@@ -26,10 +26,6 @@ if __name__ == "__main__":
     fastapi_app = FastAPI()
     fastapi_app.include_router(chord_router)
 
-    @fastapi_app.get("/heart")
-    def ping():
-        return "beat"
-
     @typer_app.command()
     def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 5):
         if debug:

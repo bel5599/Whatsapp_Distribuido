@@ -54,6 +54,9 @@ class BaseNode:
     def notify(self, node: "BaseNode") -> None:
         raise NotImplementedError()
 
+    def heart(self) -> Union[str, None]:
+        raise NotImplementedError()
+
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id})"
 

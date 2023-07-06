@@ -137,6 +137,9 @@ class Node(BaseNode):
         if (not predecessor) or self._inside_interval(node.id, (predecessor.id, self.id)):
             self.set_predecessor(node)
 
+    def heart(self):
+        return "beat"
+
     def stabilize(self):
         old_successor = self.successor()
         node = old_successor and old_successor.predecessor()

@@ -111,3 +111,12 @@ class RemoteNode(BaseNode):
         else:
             if response.status_code != 200:
                 print("ERROR:", response.json()["detail"])
+
+    def heart(self):
+        try:
+            response = self._manager.get("/chord/heart/")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                return str(response.json())
