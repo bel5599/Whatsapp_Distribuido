@@ -12,12 +12,11 @@ router = APIRouter(prefix="/successor")
 def get_successor(request: Request):
     node: Node = request.state.node
 
-    try:
-        successor = node.successor()
-    except:
-        raise HTTPException(status_code=404, detail="successor not found!")
-    else:
+    successor = node.successor()
+    if successor:
         return successor.serialize()
+
+    raise HTTPException(status_code=404, detail="successor not found!")
 
 
 @router.put("/")
@@ -38,10 +37,9 @@ def set_successor(model: BaseNodeModel, request: Request):
 def find_successor(id: int, request: Request):
     node: Node = request.state.node
 
-    try:
-        id_successor = node.find_successor(id)
-    except:
-        raise HTTPException(
-            status_code=404, detail=f"successor of '{id}' not found!")
-    else:
+    id_successor = node.find_successor(id)
+    if id_successor:
         return id_successor.serialize()
+
+    raise HTTPException(
+        status_code=404, detail=f"successor of '{id}' not found!")

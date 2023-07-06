@@ -12,12 +12,11 @@ router = APIRouter(prefix="/predecessor")
 def get_predecessor(request: Request):
     node: Node = request.state.node
 
-    try:
-        predecessor = node.predecessor()
-    except:
-        raise HTTPException(status_code=404, detail="predecessor not found!")
-    else:
+    predecessor = node.predecessor()
+    if predecessor:
         return predecessor.serialize()
+
+    raise HTTPException(status_code=404, detail="predecessor not found!")
 
 
 @router.put("/")

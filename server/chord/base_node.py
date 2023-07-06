@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Union
 
 
 class BaseNodeModel(BaseModel):
@@ -32,22 +33,22 @@ class BaseNode:
     def network_capacity(self) -> int:
         raise NotImplementedError()
 
-    def successor(self) -> "BaseNode":
+    def successor(self) -> Union["BaseNode", None]:
         raise NotImplementedError()
 
     def set_successor(self, node: "BaseNode") -> None:
         raise NotImplementedError()
 
-    def predecessor(self) -> "BaseNode":
+    def predecessor(self) -> Union["BaseNode", None]:
         raise NotImplementedError()
 
     def set_predecessor(self, node: "BaseNode") -> None:
         raise NotImplementedError()
 
-    def closest_preceding_finger(self, id: int) -> "BaseNode":
+    def closest_preceding_finger(self, id: int) -> Union["BaseNode", None]:
         raise NotImplementedError()
 
-    def find_successor(self, id: int) -> "BaseNode":
+    def find_successor(self, id: int) -> Union["BaseNode", None]:
         raise NotImplementedError()
 
     def notify(self, node: "BaseNode") -> None:

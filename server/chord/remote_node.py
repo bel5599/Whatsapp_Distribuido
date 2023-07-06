@@ -34,57 +34,80 @@ class RemoteNode(BaseNode):
         raise Exception(response.json()["detail"])
 
     def successor(self):
-        response = self._manager.get("/chord/successor/")
+        try:
+            response = self._manager.get("/chord/successor/")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return self._ensure_local(RemoteNode.from_base_model(model))
 
-        if response.status_code == 200:
-            model = BaseNodeModel(**response.json())
-            return self._ensure_local(RemoteNode.from_base_model(model))
-
-        raise Exception(response.json()["detail"])
+            print("ERROR:", response.json()["detail"])
 
     def set_successor(self, node: BaseNode):
-        response = self._manager.put(
-            "/chord/successor/", data=node.serialize())
-
-        if response.status_code != 200:
-            raise Exception(response.json()["detail"])
+        try:
+            response = self._manager.put(
+                "/chord/successor/", data=node.serialize())
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code != 200:
+                print("ERROR:", response.json()["detail"])
 
     def predecessor(self):
-        response = self._manager.get("/chord/predecessor/")
+        try:
+            response = self._manager.get("/chord/predecessor/")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return self._ensure_local(RemoteNode.from_base_model(model))
 
-        if response.status_code == 200:
-            model = BaseNodeModel(**response.json())
-            return self._ensure_local(RemoteNode.from_base_model(model))
-
-        raise Exception(response.json()["detail"])
+            print("ERROR:", response.json()["detail"])
 
     def set_predecessor(self, node: BaseNode):
-        response = self._manager.put(
-            "/chord/predecessor/", data=node.serialize())
-
-        if response.status_code != 200:
-            raise Exception(response.json()["detail"])
+        try:
+            response = self._manager.put(
+                "/chord/predecessor/", data=node.serialize())
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code != 200:
+                print("ERROR:", response.json()["detail"])
 
     def closest_preceding_finger(self, id: int):
-        response = self._manager.get(f"/chord/fingers/closest_preceding/{id}")
+        try:
+            response = self._manager.get(
+                f"/chord/fingers/closest_preceding/{id}")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return self._ensure_local(RemoteNode.from_base_model(model))
 
-        if response.status_code == 200:
-            model = BaseNodeModel(**response.json())
-            return self._ensure_local(RemoteNode.from_base_model(model))
-
-        raise Exception(response.json()["detail"])
+            print("ERROR:", response.json()["detail"])
 
     def find_successor(self, id: int):
-        response = self._manager.get(f"/chord/successor/{id}")
+        try:
+            response = self._manager.get(f"/chord/successor/{id}")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return self._ensure_local(RemoteNode.from_base_model(model))
 
-        if response.status_code == 200:
-            model = BaseNodeModel(**response.json())
-            return self._ensure_local(RemoteNode.from_base_model(model))
-
-        raise Exception(response.json()["detail"])
+            print("ERROR:", response.json()["detail"])
 
     def notify(self, node: BaseNode):
-        response = self._manager.put("/chord/notify/", data=node.serialize())
-
-        if response.status_code != 200:
-            raise Exception(response.json()["detail"])
+        try:
+            response = self._manager.put(
+                "/chord/notify/", data=node.serialize())
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code != 200:
+                print("ERROR:", response.json()["detail"])

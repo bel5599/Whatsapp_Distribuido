@@ -78,20 +78,13 @@ class Node(BaseNode):
         return len(self.fingers)
 
     def successor(self):
-        successor = self.fingers[0].node
-        if successor:
-            return successor
-
-        raise Exception(f"{self} successor not found!")
+        return self.fingers[0].node
 
     def set_successor(self, node: BaseNode):
         self.fingers[0].node = node
 
     def predecessor(self):
-        if self._predecessor:
-            return self._predecessor
-
-        raise Exception(f"{self} predecessor not found!")
+        return self._predecessor
 
     def set_predecessor(self, node: BaseNode):
         self._predecessor = node
@@ -107,22 +100,37 @@ class Node(BaseNode):
 
     def find_predecessor(self, id: int):
         node = self
-        while not self._inside_interval(id, (node.id, node.successor().id), (False, True)):
-            node = node.closest_preceding_finger(id)
+        while True:
+            successor = node.successor()
+            if not successor:
+                break
+
+            if not self._inside_interval(id, (node.id, successor.id), (False, True)):
+                closest = node.closest_preceding_finger(id)
+                if not closest:
+                    break
+
+                node = closest
+            else:
+                break
 
         return node
 
     def find_successor(self, id: int):
-        return self.find_predecessor(id).successor()
+        id_predecessor = self.find_predecessor(id)
+        return id_predecessor and id_predecessor.successor()
 
     def join_network(self, node: BaseNode):
-        successor = node.find_successor(self.id)
+        id_successor = node.find_successor(self.id)
+        if not id_successor:
+            print("An error has ocurred! Try connecting through other node")
+            return sys.exit(0)
 
-        if successor.id == self.id:
+        if id_successor.id == self.id:
             print("A node already exists with this id")
-            sys.exit(0)
+            return sys.exit(0)
 
-        self.set_successor(successor)
+        self.set_successor(id_successor)
 
     def notify(self, node: BaseNode):
         predecessor = self.predecessor()
@@ -130,12 +138,14 @@ class Node(BaseNode):
             self.set_predecessor(node)
 
     def stabilize(self):
-        successor = self.successor()
-        node = successor.predecessor()
-        if self._inside_interval(node.id, (self.id, successor.id)):
+        old_successor = self.successor()
+        node = old_successor and old_successor.predecessor()
+
+        if old_successor and node and self._inside_interval(node.id, (self.id, old_successor.id)):
             self.set_successor(node)
 
-        self.successor().notify(self)
+        new_successor = self.successor()
+        return new_successor and new_successor.notify(self)
 
     def fix_random_finger(self):
         index = random.randint(1, self.network_capacity() - 1)
@@ -149,3 +159,5 @@ class Node(BaseNode):
 
             self.stabilize()
             self.fix_random_finger()
+
+# TODO: setting successor/predecessor to None when a using them raises error
