@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from ..chord.node import Node as ChordNode
-from ...data.database_entity import DataBaseUser
+from data.database_entity import DataBaseUser
 from ..util import generate_id
 
 
@@ -36,27 +36,27 @@ class EntityNode(ChordNode):
         self.database = DataBaseUser("data")
         self.replication_database = DataBaseUser("replication_data")
 
-    #User
-    #Arreglar
+    # User
+    # Arreglar
     def add_user(self, nickname: str, password: str, ip: str, port: str, database_original):
         if database_original:
             return self.database.add_user(nickname, password)
         return self.replication_database.add_user(nickname, password)
-    
+
     def get_users(self, database_original: bool):
         if database_original:
             return self.database.get_users()
-    
+
     def get_pasword(self, nickname: str, database_original: bool):
         if database_original:
             return self.database.get_password(nickname)
         return self.replication_database.get_password(nickname)
-    
+
     def delete_user(self, nickname: str, database_original: bool):
         if database_original:
             return self.database.delete_user(nickname)
         return self.replication_database.delete_user(nickname)
-    
+
     def update_user(self, nickanme: str, ip: str, port: str, database_original: bool):
         if database_original:
             return self.database.update_user(nickanme, ip, port)
@@ -81,14 +81,13 @@ class EntityNode(ChordNode):
         if self.database.contain_user(nickname) or self.replication_database.contain_user(nickname):
             return self
         return self.successor.nickname_entity_node_rec(nickname, node, database_original)
-    
+
     def search_entity_node(self, nickname: str):
         id = generate_id(nickname, self.network_capacity())
         return self.find_successor(id)
 
-
-    
     # MESSENGES
+
     def add_messenges(self, source: str, destiny: str, value: str, database_original: bool):
         if database_original:
             return self.database.add_messenges(source, destiny, value)

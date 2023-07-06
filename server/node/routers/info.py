@@ -5,15 +5,16 @@ from ..entity_node import EntityNode, DataBaseModel
 
 router = APIRouter(prefix="/info", tags=["info"])
 
+
 @router.get("/fingers_with_predecessor")
 def fingers_predecessor_list(request: Request):
-    node : EntityNode = request.state.node
+    node: EntityNode = request.state.node
 
     return [{"ip": ip, "port": port} for (ip, port) in node.fingers_predecessor_list()]
 
 
 @router.get("/entity/{nickname}")
-def nickname_entity_node(nickname: str, model: DataBaseModel, request:Request):
+def nickname_entity_node(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
@@ -25,7 +26,7 @@ def nickname_entity_node(nickname: str, model: DataBaseModel, request:Request):
         if result is None:
             return {}
         return {"ip": result.ip, "port": result.port}
-    
+
 
 @router.get("/search_entity/{nickname}")
 def search_entity_node(nickname: str, request: Request):
