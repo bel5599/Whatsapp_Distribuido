@@ -8,14 +8,6 @@ from ..remote_node import RemoteNode
 router = APIRouter(prefix="/fingers")
 
 
-@router.get("/capacity")
-def get_network_capacity(request: Request):
-    node: Node = request.state.node
-
-    capacity = node.network_capacity()
-    return {"capacity": capacity}
-
-
 @router.get("/closest_preceding/{id}")
 def get_closest_preceding_finger(id: int, request: Request):
     node: Node = request.state.node

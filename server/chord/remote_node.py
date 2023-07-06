@@ -25,10 +25,10 @@ class RemoteNode(BaseNode):
         self._local_node = node
 
     def network_capacity(self):
-        response = self._manager.get("/chord/fingers/capacity/")
+        response = self._manager.get("/chord/capacity/")
 
         if response.status_code == 200:
-            capacity: int = response.json()["capacity"]
+            capacity = int(response.json())
             return capacity
 
         raise Exception(response.json()["detail"])
