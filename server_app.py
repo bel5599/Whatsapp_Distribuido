@@ -39,7 +39,7 @@ if __name__ == "__main__":
         inject_node(fastapi_app, node)
 
         healthy_task = threading.Thread(
-            target=node.keep_healthy, args=(interval,))
+            target=node.keep_healthy, args=(interval,), daemon=True)
 
         config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
@@ -75,7 +75,7 @@ if __name__ == "__main__":
             time.sleep(1)
             node.join_network(remote_node)
             node.keep_healthy(interval)
-        join_task = threading.Thread(target=join_network)
+        join_task = threading.Thread(target=join_network, daemon=True)
 
         config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
