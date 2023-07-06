@@ -30,7 +30,7 @@ def register(nickname: str, password: str, server: str):
         node_data = server_node.search_entity_node(nickname)
 
     # Guardar la informacion del usuario y replica la informacion
-    dict_successor,dict_successor_successor = replication_user(node_data,nickname,password)
+    dict_successor,dict_successor_successor = replication_user(node_data,nickname,password,client.ip,client.port)
     if dict_successor is False:
         return "Register failed"
     
@@ -91,6 +91,7 @@ def login(nickname: str, password: str,server: str):
 @client_interface.post("/Logout")
 def logout():
   client.logout_user()
+  # Tunvar el ciente FALTA
   return
 
 # Permite ver los mensajes entre "my_nickname" y "nickname".

@@ -10,7 +10,9 @@ if __name__ == "__main__":
     typer_app = Typer()
 
     @typer_app.command()
-    def run(ip:str,port:int =9000):
+    def run(ip:str,port:str ='9000'):
+        client.ip = ip
+        client.port = port
         # Creacion de un hilo para este servicio
         def update():
             time.sleep(1)
