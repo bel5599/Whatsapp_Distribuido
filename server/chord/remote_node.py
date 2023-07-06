@@ -83,9 +83,8 @@ class RemoteNode(BaseNode):
 
         raise Exception(response.json()["detail"])
 
-    def update_fingers(self, node: BaseNode, index: int):
-        response = self._manager.put(f"/chord/fingers/update/{index}",
-                                     data=node.serialize())
+    def notify(self, node: BaseNode):
+        response = self._manager.put("/chord/notify/", data=node.serialize())
 
         if response.status_code != 200:
             raise Exception(response.json()["detail"])

@@ -115,54 +115,27 @@ class Node(BaseNode):
     def find_successor(self, id: int):
         return self.find_predecessor(id).successor()
 
-    def update_fingers(self, node: BaseNode, index: int):
-        finger_node = self.fingers[index].node
-        if finger_node and self._inside_interval(node.id, (self.id, finger_node.id), (True, False)):
-            self.fingers[index].node = node
-            self.predecessor().update_fingers(node, index)
-
-    def update_others(self):
-        c = self.network_capacity()
-        power_c = 2**c
-
-        for i in range(c):
-            # make sure id is valid is valid (between 0 and 2^c-1)
-            id = (self.id - 2**i + power_c) % power_c
-            node = self.find_predecessor(id)
-            node.update_fingers(self, i)
-
-    def connect(self, node: BaseNode):
-        # get successor and predecessor nodes
-        successor = node.find_successor(self.fingers[0].start)
-        predecessor = successor.predecessor()
-
-        # connect successor
-        self.set_successor(successor)
-        successor.set_predecessor(self)
-
-        # connect predecessor
-        self.set_predecessor(predecessor)
-        predecessor.set_successor(self)
-
-        # at this point self is correctly placed in the network
-
-    def init_fingers(self, node: BaseNode):
-        for prev_finger, finger in zip(self.fingers[:-1], self.fingers[1:]):
-            start = finger.start
-            if prev_finger.node and self._inside_interval(start, (self.id, prev_finger.node.id), (True, False)):
-                finger.node = prev_finger.node
-            else:
-                finger.node = node.find_successor(start)
-
     def join_network(self, node: BaseNode):
-        node_temp = node.find_successor(self.id)
-        if node_temp.id == self.id:
+        successor = node.find_successor(self.id)
+
+        if successor.id == self.id:
             print("A node already exists with this id")
             sys.exit(0)
 
-        self.connect(node)
-        self.update_others()
-        self.init_fingers(node)
+        self.set_successor(successor)
+
+    def notify(self, node: BaseNode):
+        predecessor = self.predecessor()
+        if (not predecessor) or self._inside_interval(node.id, (predecessor.id, self.id)):
+            self.set_predecessor(node)
+
+    def stabilize(self):
+        successor = self.successor()
+        node = successor.predecessor()
+        if self._inside_interval(node.id, (self.id, successor.id)):
+            self.set_successor(node)
+
+        self.successor().notify(self)
 
     def fix_random_finger(self):
         index = random.randint(1, self.network_capacity() - 1)
@@ -170,9 +143,9 @@ class Node(BaseNode):
 
         finger.node = self.find_successor(finger.start)
 
-    def stabilize(self, interval: int):
+    def keep_healthy(self, interval: int):
         while True:
             time.sleep(interval)
 
-            self.connect(self)  # self will find successor
+            self.stabilize()
             self.fix_random_finger()

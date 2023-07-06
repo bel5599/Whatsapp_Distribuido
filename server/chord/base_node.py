@@ -50,7 +50,7 @@ class BaseNode:
     def find_successor(self, id: int) -> "BaseNode":
         raise NotImplementedError()
 
-    def update_fingers(self, node: "BaseNode", index: int) -> None:
+    def notify(self, node: "BaseNode") -> None:
         raise NotImplementedError()
 
     def __repr__(self):
