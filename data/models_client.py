@@ -11,8 +11,9 @@ Base = declarative_base()
 
 class Contacts(Base):
     __tablename__ = "contacts"
-    nickname:       Mapped[str] = Column(String(30),unique=True,primary_key=True,nullable=False)
-    mynickname:     Mapped[str] = Column(String,nullable =False)
+    id_contact :    Mapped[int] = Column(Integer,primary_key=True)
+    nickname:       Mapped[str] = Column(String(30),unique=True,nullable=False)
+    mynickname:     Mapped[str] = Column(String(30),nullable =False)
     name:           Mapped[str] = Column(String) 
     
     def __repr__(self) -> str:
@@ -23,8 +24,8 @@ class Messenge(Base):
     __tablename__ = "messenges"
     
     messenger_id: Mapped[int] = Column(Integer,primary_key=True)
-    user_id_from: Mapped[int] = Column(ForeignKey("contacts.nickname"))
-    user_id_to:   Mapped[int] = Column(ForeignKey("contacts.nickname"))
+    user_id_from: Mapped[int] = Column(String(30))
+    user_id_to:   Mapped[int] = Column(String(30))
     chat_id:      Mapped[int] = Column(ForeignKey("chat.chat_id"))
     value:        Mapped[str] = Column(String)
     date:         Mapped[datetime] = Column(DATETIME)
@@ -37,8 +38,8 @@ class Chat(Base):
     __tablename__ = "chat"   
     
     chat_id:    Mapped[int] = Column(Integer,primary_key=True)
-    user_id_1:  Mapped[int] = Column(ForeignKey("contacts.nickname"))
-    user_id_2:  Mapped[int] = Column(ForeignKey("contacts.nickname"))
+    user_id_1:  Mapped[int] = Column(String(30))
+    user_id_2:  Mapped[int] = Column(String(30))
     
     def __repr__(self) -> str:
         return f"Chat(id={self.chat_id!r}, user_id_1={self.user_id_1!r}, user_id_2={self.user_id_2!r})"
