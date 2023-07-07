@@ -20,7 +20,9 @@ class DataBaseClient:
             return False
         
     def add_contacts(self,mynickname_:str,nickname_:str,name_:str = "Unknown"):
-        try:
+        if self.contain_contact(mynickname_,nickname_):
+            return False
+        try: 
             with self.session:
                 contact = Contacts(
                 nickname=nickname_,
@@ -37,11 +39,11 @@ class DataBaseClient:
         self.session.commit()
         
     def contain_contact(self,mynickname:str,nickname:str):
-        contain = self.session.query(Contacts).get({'mynickname':mynickname,'nickname':nickname})
+        contain = self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.nickname == nickname).first()
         return contain is not None 
                            
     def delete_contact(self,mynickname:str,nickname:str):
-        contain = self.session.query(Contacts).get({'nickname':nickname,'mynickname':mynickname})
+        contain = self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.nickname == nickname).first()
         if contain is not None:
             self.session.delete(contain) 
             self.session.commit()
@@ -55,6 +57,10 @@ class DataBaseClient:
     def get_nickname(self,mynickname:str,name:str):
         nickname = self.session.query(Contacts.nickname).filter(Contacts.mynickname==mynickname and Contacts.name==name).one()
         return nickname[0]
+    
+    def get_id(self,mynickname:str,name:str):
+        id = self.session.query(Contacts.id_contact).filter(Contacts.mynickname==mynickname and Contacts.name==name).one()
+        return id[0]
     
         
     # MESSENGER
