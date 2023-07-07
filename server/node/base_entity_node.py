@@ -1,6 +1,7 @@
 from typing import Union
 
 from ..chord.base_node import BaseNode
+from ...data.database_entity import DataBaseUser
 
 
 class BaseEntityNode(BaseNode):
@@ -29,4 +30,7 @@ class BaseEntityNode(BaseNode):
         raise NotImplementedError()
 
     def delete_messenger(self, id_messenger: int, database_original: bool) -> bool:
+        raise NotImplementedError()
+
+    def copy_database(self, source: DataBaseUser, database_id: int) -> None:
         raise NotImplementedError()

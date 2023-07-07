@@ -11,7 +11,7 @@ def add_user(model: UserModel, request: Request):
 
     try:
         result = node.add_user(
-            model.nickname, model.password, model.ip, model.port, model.database_original)
+            model.nickname, model.password, model.ip, model.port, model.database_id)
     except:
         raise HTTPException(
             status_code=500, detail="add user failed!")
@@ -24,7 +24,7 @@ def get_pasword(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        pasw = node.get_pasword(nickname, model.database_original)
+        pasw = node.get_pasword(nickname, model.database_id)
     except:
         raise HTTPException(
             status_code=500, detail="get pasword failed!")
@@ -37,7 +37,7 @@ def delete_user(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.delete_user(nickname, model.database_original)
+        result = node.delete_user(nickname, model.database_id)
     except:
         raise HTTPException(
             status_code=500, detail="delete user failed!")

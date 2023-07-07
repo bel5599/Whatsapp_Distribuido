@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..entity_node import EntityNode, MessengerModel, SearchMessengerModel
+from ..entity_node import EntityNode, MessengerModel, SearchMessengerModel, DataBaseModel
 
 router = APIRouter(prefix="/messenges", tags=["messenges"])
 
@@ -11,7 +11,7 @@ def search_messenges_from(model: SearchMessengerModel, request: Request):
 
     try:
         result = node.search_messenger_from(
-            model.source, model.destiny, model.database_original)
+            model.source, model.destiny, model.database_id)
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
@@ -24,7 +24,7 @@ def search_messenges_to(model: SearchMessengerModel, request: Request):
 
     try:
         result = node.search_messenger_to(
-            model.source, model.destiny, model.database_original)
+            model.source, model.destiny, model.database_id)
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
     else:
@@ -37,7 +37,7 @@ def add_messenges(model: MessengerModel, request: Request):
 
     try:
         result = node.add_messenger(
-            model.source, model.destiny, model.value, model.database_original)
+            model.source, model.destiny, model.value, model.database_id)
     except:
         raise HTTPException(
             status_code=500, detail="add messenger failed!")
@@ -46,11 +46,11 @@ def add_messenges(model: MessengerModel, request: Request):
 
 
 @router.delete("/delete/{id}")
-def delete_messenges(id: int, database_original: bool, request: Request):
+def delete_messenges(id: int, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.delete_messenger(id, database_original)
+        result = node.delete_messenger(id, model.database_id)
     except:
         raise HTTPException(
             status_code=500, detail="delete messenger failed!")

@@ -1,23 +1,16 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..entity_node import EntityNode, DataBaseModel
+from ..entity_node import EntityNode, DataBaseModel, CopyDataBaseModel
 
 
 router = APIRouter(prefix="/info", tags=["info"])
-
-
-@router.get("/fingers_with_predecessor")
-def fingers_predecessor_list(request: Request):
-    node: EntityNode = request.state.node
-
-    return [{"ip": ip, "port": port} for (ip, port) in node.fingers_predecessor_list()]
 
 
 @router.get("/entity/{nickname}")
 def nickname_entity_node(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
-    entity = node.nickname_entity_node(nickname, model.database_original)
+    entity = node.nickname_entity_node(nickname, model.database_id)
     if entity:
         return entity.serialize()
 
@@ -35,3 +28,15 @@ def search_entity_node(nickname: str, request: Request):
 
     raise HTTPException(
         status_code=500, detail="node search failed!")
+
+@router.get("/copy_database")
+def copy_database(model: CopyDataBaseModel, request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        node.copy_database(model.source, model.database_id)
+    except:
+        raise HTTPException(
+            status_code=500, detail="copy database failed!")
+
+
