@@ -146,10 +146,11 @@ def logout():
 
 @client_interface.get("/Messages")
 def messages(nickname: str):  # usuario de la conversacion conmigo
-    #chequear que el usuario esté loggeado
+    # chequear que el usuario esté loggeado
     if not client.login:
         return "You are not logged in"
     
+    # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
     servers = client.server_list()
     
     # server que contiene informacion
@@ -157,15 +158,27 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
         return 'Broken Connection, you need to exit the login and login again'
     
     nickname_other_user = nickname
+    
     #Lista de tupla de tipo(nickname,name)
     contacts = client.get_contacts()
     for contact in contacts:
+        # si nickname es el nombre del contacto, actualizo el nickname del otro usuario
         if contact[1] == nickname:
             nickname_other_user = contact[0]
     
-    messages = client.search_chat(client.user['nickname'],)        
+    mynickname = client.user['nickname']
+    messenges = client.search_chat(mynickname,nickname_other_user)
+    
+    #Para ver mejor los mensajes
+    messages_format = []
+    for message in messenges:
+        if message['user_id_from'] == mynickname:
+            messages_format.append( 'me' + ": " + message['value'])
+        else:
+            messages_format.append(nickname_other_user + ": " + message['value'])
+    return messages_format
 
-
+            
 
 # para enviar mensajes a otro usuario
 @client_interface.post("/Send")
