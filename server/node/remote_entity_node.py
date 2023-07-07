@@ -1,7 +1,8 @@
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
+from .base_entity_node import BaseEntityNode
 
 
-class RemoteEntityNode(ChordRemoteNode):
+class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     # User
     def add_user(self, nickname: str, pasword: str,  ip: str, port: str, database_original: bool):
         response = self._manager.put(

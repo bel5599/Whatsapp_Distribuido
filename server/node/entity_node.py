@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from ..chord.node import Node as ChordNode
 from data.database_entity import DataBaseUser
 from ..util import generate_id
+from .base_entity_node import BaseEntityNode
 
 
 class MessengerModel(BaseModel):
@@ -30,7 +31,7 @@ class SearchMessengerModel(BaseModel):
     database_original: bool
 
 
-class EntityNode(ChordNode):
+class EntityNode(ChordNode, BaseEntityNode):
     def __init__(self, ip: str, port: str, capacity: int):
         super().__init__(ip, port, capacity)
         self.database = DataBaseUser("data")
