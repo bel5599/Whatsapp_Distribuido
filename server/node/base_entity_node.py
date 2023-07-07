@@ -1,7 +1,7 @@
 from ..chord.base_node import BaseNode
 
 
-class BaseEntityNode:
+class BaseEntityNode(BaseNode):
     def add_user(self, nickname: str, pasword: str, ip: str, port: str, database_original: bool) -> bool:
         raise NotImplementedError()
 
