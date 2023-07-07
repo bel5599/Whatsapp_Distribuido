@@ -72,11 +72,15 @@ def login(nickname: str, password: str,server: str):
     try:
         # verificar que no se ha caido el servidor 
         password_server =server_node_data.get_pasword(nickname,True)
+        # Si cambio el ip y el port actualizar estos valores
+        server_node_data.update_user(nickname,client.ip,client.port)
     except:
         return "Login failed"
              
     if password!=password_server :
         return "Wrong password"
+
+    
 
     # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
     servers =[]
@@ -88,55 +92,80 @@ def login(nickname: str, password: str,server: str):
     client.login_user(nickname,password,servers)
     return
 
+
+#FALTA
 @client_interface.post("/Logout")
 def logout():
   client.logout_user()
   # Tunvar el ciente FALTA
   return
 
-# Permite ver los mensajes entre "my_nickname" y "nickname".
+# # Permite ver los mensajes entre "my_nickname" y "nickname".
+# @client_interface.get("/Messages")
+# def messages(nickname: str):  # usuario de la conversacion conmigo
+#     # chequear que el usuario esté loggeado
+#     if not client.login:
+#         return "You are not logged in"
+#     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
+#     #client.update_servers()
+#     servers = client.server_list()
+#     # server que contiene informacion
+#     if len(servers)==0:
+#         return 'Broken Connection, you need to exit the login and login again'
+#     if len(servers)>1:
+#         inf_node = servers[1]
+#     else:
+#     # en caso de que no haya activo o guardado un nodo que tenga su informacion
+#         inf_node = servers[0]
+#         search = True
+
+#     ip = inf_node.split(':')[0]
+#     port = inf_node.split(':')[1]
+#     node_data = RemoteEntityNode(-1, ip, port)
+
+#     if search: #entonces hay que buscar el nodo con iformacion del usuario
+#         node_data = node_data.nickname_entity_node(client.user,True)
+#         #si no se encontro un nodo con informacion del usuario
+#         if node_data.get('ip') is None:
+#             return "Your data has been lost"
+#         # si se encontro un nodo, obtener el nodo para hacerle los pedidos
+#         node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
+#         messengers = node_data.search_chat(client.user,nickname,True)
+#     else:
+#         # mando a buscar los mensajes al servidor
+#         messengers = node_data.search_chat(client.user,nickname)
+
+#     # Para ver mejor los mensajes
+#     messages_format = []
+#     for message in messengers:
+#         if message['user_id_from'] == client.user:
+#             messages_format.append( 'me' + ": " + message['value'])
+#         else:
+#             messages_format.append(message['user_id_from'] + ": " + message['value'])
+#     return messages_format
+
 @client_interface.get("/Messages")
 def messages(nickname: str):  # usuario de la conversacion conmigo
-    # chequear que el usuario esté loggeado
+    #chequear que el usuario esté loggeado
     if not client.login:
         return "You are not logged in"
-    # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
-    #client.update_servers()
+    
     servers = client.server_list()
+    
     # server que contiene informacion
     if len(servers)==0:
         return 'Broken Connection, you need to exit the login and login again'
-    if len(servers)>1:
-        inf_node = servers[1]
-    else:
-    # en caso de que no haya activo o guardado un nodo que tenga su informacion
-        inf_node = servers[0]
-        search = True
+    
+    nickname_other_user = nickname
+    #Lista de tupla de tipo(nickname,name)
+    contacts = client.get_contacts()
+    for contact in contacts:
+        if contact[1] == nickname:
+            nickname_other_user = contact[0]
+    
+    messages = client.search_chat(client.user['nickname'],)        
 
-    ip = inf_node.split(':')[0]
-    port = inf_node.split(':')[1]
-    node_data = RemoteEntityNode(-1, ip, port)
 
-    if search: #entonces hay que buscar el nodo con iformacion del usuario
-        node_data = node_data.nickname_entity_node(client.user,True)
-        #si no se encontro un nodo con informacion del usuario
-        if node_data.get('ip') is None:
-            return "Your data has been lost"
-        # si se encontro un nodo, obtener el nodo para hacerle los pedidos
-        node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
-        messengers = node_data.search_chat(client.user,nickname,True)
-    else:
-        # mando a buscar los mensajes al servidor
-        messengers = node_data.search_chat(client.user,nickname)
-
-    # Para ver mejor los mensajes
-    messages_format = []
-    for message in messengers:
-        if message['user_id_from'] == client.user:
-            messages_format.append( 'me' + ": " + message['value'])
-        else:
-            messages_format.append(message['user_id_from'] + ": " + message['value'])
-    return messages_format
 
 # para enviar mensajes a otro usuario
 @client_interface.post("/Send")
