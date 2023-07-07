@@ -32,15 +32,15 @@ class DataBaseClient:
         except:
             return False
     
-    def update_contact(self,nickname:str,name:str):
-        self.session.query(Contacts).filter(Contacts.nickname == nickname).update({Contacts.name: name})
+    def update_contact(self,mynickname:str,nickname:str,name:str):
+        self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.nickname == nickname).update({Contacts.name: name})
         self.session.commit()
         
-    def contain_contact(self,nickname_:str):
-        contain = self.session.query(Contacts).get(nickname_)
+    def contain_contact(self,mynickname:str,nickname:str):
+        contain = self.session.query(Contacts).get({'mynickname':mynickname,'nickname':nickname})
         return contain is not None 
                            
-    def delete_contact(self,mynickname,nickname:str):
+    def delete_contact(self,mynickname:str,nickname:str):
         contain = self.session.query(Contacts).get({'nickname':nickname,'mynickname':mynickname})
         if contain is not None:
             self.session.delete(contain) 
@@ -48,12 +48,12 @@ class DataBaseClient:
             return True
         return False
 
-    def get_name(self,nickname:str):
-        name = self.session.query(Contacts.name).filter(Contacts.nickname==nickname).one()
+    def get_name(self,mynickname:str,nickname:str):
+        name = self.session.query(Contacts.name).filter(Contacts.mynickname==mynickname and Contacts.nickname==nickname).one()
         return name[0]
     
-    def get_nickname(self,name:str):
-        nickname = self.session.query(Contacts.nickname).filter(Contacts.name==name).one()
+    def get_nickname(self,mynickname:str,name:str):
+        nickname = self.session.query(Contacts.nickname).filter(Contacts.mynickname==mynickname and Contacts.name==name).one()
         return nickname[0]
     
         
