@@ -12,7 +12,7 @@ Base = declarative_base()
 class Contacts(Base):
     __tablename__ = "contacts"
     id_contact :    Mapped[int] = Column(Integer,primary_key=True)
-    nickname:       Mapped[str] = Column(String(30),unique=True,nullable=False)
+    nickname:       Mapped[str] = Column(String(30),nullable=False)
     mynickname:     Mapped[str] = Column(String(30),nullable =False)
     name:           Mapped[str] = Column(String) 
     
