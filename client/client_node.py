@@ -37,22 +37,22 @@ class ClientNode:
         return [(nickname, name) for (nickname,_, name) in self.database.get_contacts(self.user['nickname'])]
     
     def add_contacts(self, nickname: str, name: str):
-        return self.database.add_contacts(nickname, name)
+        return self.database.add_contacts(self.user['nickname'], nickname, name)
     
     def update_contact(self, nickname: str, name: str):
-        return self.database.update_contact(nickname, name)
+        return self.database.update_contact(self.user['nickname'], nickname, name)
     
     def contain_contact(self,nickname: str):
-        return self.database.contain_contact(nickname)
+        return self.database.contain_contact(self.user['nickname'], nickname)
     
     def delete_contact(self,nickname:str):
-        return self.database.delete_contact(nickname)
+        return self.database.delete_contact(self.user['nickname'], nickname)
     
     def get_name(self,nickname: str):
-        return self.database.get_name(nickname)
+        return self.database.get_name(self.user['nickname'], nickname)
     
     def get_nickname(self,name:str):
-        return self.database.get_nickname(name)
+        return self.database.get_nickname(self.user['nickname'], name)
     
     # MESSENGER
     def get_messages(self):
