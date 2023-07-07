@@ -179,7 +179,6 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
     return messages_format
 
             
-
 # para enviar mensajes a otro usuario
 @client_interface.post("/Send")
 def send(user: str, message: str):
@@ -223,3 +222,21 @@ def send(user: str, message: str):
     if replication_messenge(dict_node_data,client.user,user,message) is False:
         return 'send failed'
     return
+
+
+@client_interface.post("/Get Contacts")
+def get_contacts():
+    result = {}
+    contacts = client.get_contacts()
+    for contact in contacts:
+        result[contact[1]] = contact[0]
+    return result
+
+@client_interface.post("/Add Contacts")
+def add_contacts(name:str,nickname:str):
+    client.add_contacts(nickname,name)
+
+@client_interface.post("/Delete Contacts")
+def delete_contacts(name:str):
+    client.delete_contact(name)
+    pass
