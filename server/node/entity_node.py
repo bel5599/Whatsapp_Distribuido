@@ -37,6 +37,9 @@ class EntityNode(ChordNode, BaseEntityNode):
         self.database = DataBaseUser("data")
         self.replication_database = DataBaseUser("replication_data")
 
+        # self.predecessor_replica = (None, DB...)
+        # self.second_predecessor_replica = (None, DB..)
+
     # User
     # Arreglar
     def add_user(self, nickname: str, password: str, ip: str, port: str, database_original):
@@ -108,3 +111,46 @@ class EntityNode(ChordNode, BaseEntityNode):
         if database_original:
             return self.database.delete_messenges(id_messenger)
         return self.replication_database.delete_messenges(id_messenger)
+
+    def fix_replications(self):
+        # como EntityNode mantiene referencias de RemoteNodes que no se actualizan
+        # con la estabilizacion, tenemos que actualizarlas nosotros
+
+        # pero antes tenemos que chekear si el nodo en predecessor_replica
+        # se ha desconectado, porque habria entonces que guardar su información
+        # como propia, y por tanto, replicarla
+        old_predecessor, db = self.predecessor_replica
+        if not (old_predecessor and old_predecessor.heart()):
+            # 1- self.añade_a_mi_db(db)
+            # 2- self.successor().replicate(db, self.id)
+            # 3- self.successor().successor().replicate(db, self.id)
+            pass
+
+        # hasta aqui ya salvamos la info replicada del nodo que se
+        # ha desconectado, y la hemos replicado puesto que es propia ahora
+
+        # procedemos a actualizar las replicas
+        pred_replica = self.predecessor_replica
+        second_replica = self.second_predecessor_replica
+
+        predecessor = self.predecessor()
+        second_predecessor = predecessor and predecessor.predecessor()
+
+        if predecessor and predecessor != pred_replica[0]:
+            # va a reemplazarlo, pero con cual db?
+            if predecessor == second_replica[0]:
+                self.predecessor_replica = (predecessor, second_replica[1])
+            else:
+                self.predecessor_replica = (predecessor, new_DB)
+
+        if second_predecessor and second_predecessor != second_replica[0]:
+            # va a reemplazarlo, pero con cual db?
+            if second_predecessor == pred_replica[0]:
+                self.second_predecessor_replica = (
+                    second_predecessor, pred_replica[1])
+            else:
+                self.second_predecessor_replica = (second_predecessor, new_DB)
+
+        # listo!
+
+        # TODO: implementar lo que falta en el metodo
