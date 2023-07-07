@@ -1,4 +1,5 @@
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
+from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
 
 
@@ -25,24 +26,29 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         raise Exception(response.json()["detail"])
 
     def nickname_entity_node(self, nickname: str, database_original: bool = False):
-        response = self._manager.get(
-            f"/info/entity/{nickname}", data={"database_original": database_original})
+        try:
+            response = self._manager.get(
+                f"/info/entity/{nickname}", data={"database_original": database_original})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return self._ensure_local(RemoteEntityNode.from_base_model(model))
 
-        if response.status_code == 200:
-            result: dict = response.json()
-            return result
+            print("ERROR:", response.json()["detail"])
 
-        raise Exception(response.json()["detail"])
+    def search_entity_node(self, nickname: str):
+        try:
+            response = self._manager.get(f"/info/search_entity/{nickname}")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                model = BaseNodeModel(**response.json())
+                return self._ensure_local(RemoteEntityNode.from_base_model(model))
 
-    def search_entity_node(self, nickname: str, database_original: bool):
-        response = self._manager.get(
-            f"/info/search_entity/{nickname}", data={"database_original": database_original})
-
-        if response.status_code == 200:
-            result: dict = response.json()
-            return result
-
-        raise Exception(response.json()["detail"])
+            print("ERROR:", response.json()["detail"])
 
     def delete_user(self, nickname: str, database_original: bool):
         response = self._manager.delete(

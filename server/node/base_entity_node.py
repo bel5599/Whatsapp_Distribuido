@@ -1,3 +1,5 @@
+from typing import Union
+
 from ..chord.base_node import BaseNode
 
 
@@ -8,10 +10,10 @@ class BaseEntityNode(BaseNode):
     def get_pasword(self, nickname: str, database_original: bool) -> str:
         raise NotImplementedError()
 
-    def nickname_entity_node(self, nickname: str, database_original: bool) -> "BaseEntityNode":
+    def nickname_entity_node(self, nickname: str, database_original: bool) -> Union["BaseEntityNode", None]:
         raise NotImplementedError()
 
-    def search_entity_node(self, nickname: str) -> BaseNode:
+    def search_entity_node(self, nickname: str) -> Union["BaseEntityNode", None]:
         raise NotImplementedError()
 
     def delete_user(self, nickname: str, database_original: bool) -> bool:

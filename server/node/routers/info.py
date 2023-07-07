@@ -17,25 +17,21 @@ def fingers_predecessor_list(request: Request):
 def nickname_entity_node(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
-    try:
-        result = node.nickname_entity_node(nickname, model.database_original)
-    except:
-        raise HTTPException(
-            status_code=500, detail="node search failed!")
-    else:
-        if result is None:
-            return {}
-        return {"ip": result.ip, "port": result.port}
+    entity = node.nickname_entity_node(nickname, model.database_original)
+    if entity:
+        return entity.serialize()
+
+    raise HTTPException(
+        status_code=500, detail="node search failed!")
 
 
 @router.get("/search_entity/{nickname}")
 def search_entity_node(nickname: str, request: Request):
     node: EntityNode = request.state.node
 
-    try:
-        new_node = node.search_entity_node(nickname)
-    except:
-        raise HTTPException(
-            status_code=500, detail="node search failed!")
-    else:
-        return {"ip": new_node.ip, "port": new_node.port}
+    entity = node.search_entity_node(nickname)
+    if entity:
+        return entity.serialize()
+
+    raise HTTPException(
+        status_code=500, detail="node search failed!")
