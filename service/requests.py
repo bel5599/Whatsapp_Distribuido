@@ -14,6 +14,9 @@ class RequestManager:
         self._timeout = timeout
 
     def get(self, route: str, **kwargs):
+        data = kwargs.get("data", {})
+        kwargs["data"] = dumps(data)
+
         return get(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
     def put(self, route: str, **kwargs):
@@ -23,4 +26,7 @@ class RequestManager:
         return put(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
     def delete(self, route: str, **kwargs):
+        data = kwargs.get("data", {})
+        kwargs["data"] = dumps(data)
+
         return delete(f"{self._url}{route}", timeout=self._timeout, **kwargs)
