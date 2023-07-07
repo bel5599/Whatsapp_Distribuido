@@ -19,11 +19,12 @@ class DataBaseClient:
         except:
             return False
         
-    def add_contacts(self,nickname_:str,name_:str = "Unknown"):
+    def add_contacts(self,mynickname_:str,nickname_:str,name_:str = "Unknown"):
         try:
             with self.session:
                 contact = Contacts(
                 nickname=nickname_,
+                mynickname= mynickname_,
                 name = name_)
                 self.session.add_all([contact])
                 self.session.commit()
@@ -39,8 +40,8 @@ class DataBaseClient:
         contain = self.session.query(Contacts).get(nickname_)
         return contain is not None 
                            
-    def delete_contact(self,nickname:str):
-        contain = self.session.query(Contacts).get(nickname)
+    def delete_contact(self,mynickname,nickname:str):
+        contain = self.session.query(Contacts).get({'nickname':nickname,'mynickname':mynickname})
         if contain is not None:
             self.session.delete(contain) 
             self.session.commit()
