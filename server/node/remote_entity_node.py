@@ -58,7 +58,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
             print("ERROR:", response.json()["detail"])
 
-    def search_entity_node(self, nickname: str = -1):
+    def search_entity_node(self, nickname: str):
         try:
             response = self._manager.get(f"/info/search_entity/{nickname}")
         except Exception as e:
