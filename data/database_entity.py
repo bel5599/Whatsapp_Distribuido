@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model_entity import*
+from typing import Union
 
 class DataBaseUser:
     def __init__(self,name:str = 'user_data'):
@@ -11,14 +12,14 @@ class DataBaseUser:
 
     # USER 
     # Devuelve una lista:user de todos los usuarios de la base datos 
-    def get_users(self):
+    def get_users(self) -> Union[list,bool]:
         try:
             users = self.session.query(User).all()
             return users
         except:
             return False
         
-    def add_user(self,nickname_:str,password_:str,ip_:str,port_:str):
+    def add_user(self,nickname_:str,password_:str,ip_:str,port_:str)-> bool:
         try:
             with self.session:
                 user = User(
@@ -33,11 +34,11 @@ class DataBaseUser:
         except:
             return False
         
-    def contain_user(self,nickname_:str):
+    def contain_user(self,nickname_:str)-> bool:
         contain = self.session.query(User).get(nickname_)
         return contain is not None 
                            
-    def delete_user(self,nickname:str):
+    def delete_user(self,nickname:str)-> bool:
         contain = self.session.query(User).get(nickname)
         if contain is not None:
             self.session.delete(contain) 
@@ -45,27 +46,31 @@ class DataBaseUser:
             return True
         return False
 
-    def get_password(self,nickname:str):
+    def get_password(self,nickname:str)-> str:
         password = self.session.query(User.password).filter(User.nickname==nickname).one()
         return password[0]
     
-    def update_user(self,nickname:str,ip:str,port:str):
-        self.session.query(User).filter(User.nickname == nickname).update({User.ip:ip,User.port:port})
-        self.session.commit()
-    
-    def get_ip_port(self,nickname:str):
+    def update_user(self,nickname:str,ip:str,port:str)-> bool:
+        try:
+            self.session.query(User).filter(User.nickname == nickname).update({User.ip:ip,User.port:port})
+            self.session.commit()
+            return True
+        except:
+            return False
+        
+    def get_ip_port(self,nickname:str)-> str:
         password = self.session.query(User.ip,User.port).filter(User.nickname==nickname).one()
         return password[0]+password[1]
 
     # MESSENGES
-    def get_messages(self):
+    def get_messages(self)-> Union[list,bool]:
         try:
             users = self.session.query(Messenge).all()
             return users
         except:
             return False
         
-    def add_messenges(self,source:str,destiny:str,value_:str):
+    def add_messenges(self,source:str,destiny:str,value_:str)-> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla 
         try:
             with self.session:
@@ -82,7 +87,7 @@ class DataBaseUser:
                    
         # Se podria coger la fecha y hora de la computadora en el momento que se usa el m\'etodo
         
-    def delete_messenges(self,id_messenge:int):
+    def delete_messenges(self,id_messenge:int)-> bool:
         messenger = self.session.query(Messenge).get(id_messenge)
         if messenger is not None:
             self.session.delete(messenger) 
@@ -92,7 +97,7 @@ class DataBaseUser:
 
     # Todos los sms que envie, o que envie a user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_from(self,me:str, user:str = None):
+    def search_messenges_from(self,me:str, user:str = None)-> list:
         try:
             if user is None:
                 result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_from == me).all()
@@ -105,7 +110,7 @@ class DataBaseUser:
 
     # Todos los sms que me enviaron , o los que me envio user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_to(self,me:str,user:str=None):
+    def search_messenges_to(self,me:str,user:str=None)-> list:
         try:
             if user is None:
                 result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_to == me).all()       
@@ -115,25 +120,27 @@ class DataBaseUser:
         except:
             return []   
 
-    def delete_messenges_to(self,me:str):
+    def delete_messenges_to(self,me:str)->bool:
         try:
                 result = self.session.query(Messenge.messenge_id).filter(Messenge.user_id_to == me).all()
                 for r in result:
                     self.delete_messenges(r[0])
                     self.session.delete() 
                     self.session.commit()       
+                return True       
         except:
-            return []   
+            return False   
 
-    def delete_messenges_from(self,me:str):
+    def delete_messenges_from(self,me:str)->bool:
         try:
-                result = self.session.query(Messenge.messenge_id).filter(Messenge.user_id_from == me).all()
-                for r in result:
-                    self.delete_messenges(r[0])
-                    self.session.delete() 
-                    self.session.commit()       
+            result = self.session.query(Messenge.messenge_id).filter(Messenge.user_id_from == me).all()
+            for r in result:
+                self.delete_messenges(r[0])
+                self.session.delete() 
+                self.session.commit()       
+            return False    
         except:
-            return []   
+            return False   
 
     # copia los datos de la base datos source para self
     def copy_database(self,source):
