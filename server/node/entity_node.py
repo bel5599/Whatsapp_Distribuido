@@ -80,6 +80,14 @@ class EntityNode(ChordNode, BaseEntityNode):
         if self.predecessor_replica[0] == database_id:
             return self.predecessor_replica[1].update_user(nickname, ip, port)
         return self.second_predecessor_replica[1].update_user(nickname, ip, port)
+    
+    def get_ip_port(self,nickname: str,database_id: int=-1):
+        if database_id == -1:
+            return self.database.get_ip_port(nickname)
+        if self.predecessor_replica[0] == database_id:
+            return self.predecessor_replica[1].get_ip_port(nickname)
+        return self.second_predecessor_replica[1].get_ip_port(nickname)
+
 
     def nickname_entity_node(self, nickname: str, database_id: int):
         if database_id == -1:
