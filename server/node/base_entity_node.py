@@ -43,6 +43,9 @@ class BaseEntityNode(BaseNode):
 
     def delete_messenger(self, id_messenger: int, database_id: int=-1) -> bool:
         raise NotImplementedError()
-
+    
+    def database_serialize(self,database_id: int = -1)-> dict:
+        raise NotImplementedError()
+    
     def copy_database(self, source: DataBaseUser, database_id: int=-1) -> None:
         raise NotImplementedError()
