@@ -115,9 +115,26 @@ class DataBaseUser:
         except:
             return []   
 
-    
-    
-    
+    def delete_messenges_to(self,me:str):
+        try:
+                result = self.session.query(Messenge.messenge_id).filter(Messenge.user_id_to == me).all()
+                for r in result:
+                    self.delete_messenges(r[0])
+                    self.session.delete() 
+                    self.session.commit()       
+        except:
+            return []   
+
+    def delete_messenges_from(self,me:str):
+        try:
+                result = self.session.query(Messenge.messenge_id).filter(Messenge.user_id_from == me).all()
+                for r in result:
+                    self.delete_messenges(r[0])
+                    self.session.delete() 
+                    self.session.commit()       
+        except:
+            return []   
+
     # copia los datos de la base datos source para self
     def copy_database(self,source):
         list_new_users =[]
