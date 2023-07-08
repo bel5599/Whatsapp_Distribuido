@@ -1,6 +1,6 @@
 from fastapi import FastAPI
+import requests
 # import json
-# import requests
 # import os
 # from fastapi_utils.tasks import repeat_every
 # from sqlalchemy import true
@@ -185,7 +185,7 @@ def send(user: str, message: str):
     # se chequea que el usuario esté loggeado
     if not client.login:
         return "You are not logged in"
-    
+        
     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
     #client.update_servers()
     servers = client.server_list()
@@ -203,28 +203,40 @@ def send(user: str, message: str):
     except:
         return 'Broken Connection, you need to exit the login and login again'
     
-    # buscar el entity en que está almacenada la información del usuario
-    dict_node_data = node_data.nickname_entity_node(client.user,True)
-    if  dict_node_data.get('ip') is None:
+    # buscar el entity en que está almacenada la información del otro usuario
+    dict_other_user = node_data.nickname_entity_node(user)
+    if  dict_other_user.get('ip') is None:
+        return user+"is not register"
+    
+    my_nickname = client.user['nickname']
+    
+    try:
+        server_other_user = RemoteEntityNode(-1,dict_other_user['port'],dict_other_user['port'])
+        url = server_other_user.get_ip_port(user)
+        requests.post('http://'+url+'/ReceiveMessage', params= {"nickname_from": my_nickname,'value':message })
+         
+    except:
+        # buscar el entity en que está almacenada la información del usuario
+        dict_node_data = node_data.nickname_entity_node(my_nickname)
+        if  dict_node_data.get('ip') is None:
             return "Your data has been lost"
 
-    # buscar el entity en que está almacenada la información del otro usuario
-    dict_other_user = node_data.nickname_entity_node(user,True)
-    if  dict_other_user.get('ip') is None:
-            return user+"is not register"
-
-    # si la informacion de los usuarios no se guarda en la misma base datos, gurdarlo en la de el tambien
-    if dict_other_user['ip']!= dict_node_data['ip'] or dict_other_user['port']!= dict_node_data['port']:
+        
+        # si la informacion de los usuarios no se guarda en la misma base datos, gurdarlo en la de el tambien
+        if dict_other_user['ip']!= dict_node_data['ip'] or dict_other_user['port']!= dict_node_data['port']:
         # si su servidor está activo y no es mi mismo servidor hago lo mismo.
-        if replication_messenge(dict_other_user,client.user,user,message) is False:
+            if replication_messenge(dict_other_user,client.user,user,message) is False:
+                return 'send failed'
+        # si mi server está activo le mando el mensaje para ser escrito y replico los datos
+        if replication_messenge(dict_node_data,client.user,user,message) is False:
             return 'send failed'
-    # si mi server está activo le mando el mensaje para ser escrito y replico los datos
-    if replication_messenge(dict_node_data,client.user,user,message) is False:
-        return 'send failed'
     return
 
+@client_interface.post("/ReceiveMessage")
+def receive_message(nickname_from:str,value:str):
+    client.add_messenges(nickname_from,client.user['nickname'],value)
 
-@client_interface.post("/Get Contacts")
+@client_interface.get("/GetContacts")
 def get_contacts():
     result = {}
     contacts = client.get_contacts()
@@ -232,11 +244,11 @@ def get_contacts():
         result[contact[1]] = contact[0]
     return result
 
-@client_interface.post("/Add Contacts")
+@client_interface.post("/AddContacts")
 def add_contacts(name:str,nickname:str):
     client.add_contacts(nickname,name)
 
-@client_interface.post("/Delete Contacts")
+@client_interface.post("/DeleteContacts")
 def delete_contacts(name:str):
     client.delete_contact(name)
     pass
