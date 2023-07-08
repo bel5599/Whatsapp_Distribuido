@@ -32,9 +32,49 @@ class SearchMessengerModel(BaseModel):
     database_id: int
 
 
+class UsersModel(BaseModel):
+    nickname: str
+    password: str
+    ip: str
+    port: str
+    
+    def serialize(self):
+        return{
+        'nickname': self.nickname,
+        'password': self.password,
+        'ip': self.ip,
+        'port': self.port
+        }
+    
+class MessengesModel(BaseModel):
+    messenge_id:int
+    user_id_from: str
+    user_id_to: str
+    value: str
+    
+    def serialize(self):
+        return{
+        'messenge_id':self.messenge_id,
+        'user_id_from': self.user_id_from,
+        'user_id_to': self.user_id_to,
+        'value': self.value,
+        }
+
+class DataBaseUserModel(BaseModel):
+    users:list
+    messenges:list
+    
+    def serialize(self):
+        return{
+            'users':self.users,
+            'messenges':self.messenges
+        }
+        
+
 class CopyDataBaseModel(BaseModel):
-    source: DataBaseUser
+    source: DataBaseUserModel
     database_id: int
+
 
 
 class DatabaseReplica:
@@ -71,6 +111,43 @@ class EntityNode(ChordNode, BaseEntityNode):
         #     self.predecessor().id, DataBaseUser("replication_data"))
         # self.second_predecessor_replica = (
         #     self.predecessor().predecessor.id, DataBaseUser("replication_data"))
+
+    def database_serialize(self,database_id: int = -1):
+        database = self._get_database(database_id)
+        user_serialize = []
+        messenge_serialize = []
+        #lista de tupla con las propiedades de user
+        users = database.get_users()
+        if users!= False:
+            for user in users:
+                user_serialize.append(UsersModel(user[0],user[1],user[2],user[3]).serialize())
+        
+        messenges = database.get_messages()
+        if messenges!= False:
+            for messenge in messenges:
+                messenge_serialize.append(MessengesModel(messenge[0],messenge[1],messenge[2],messenge[3]).serialize())
+        
+        return DataBaseUserModel(user_serialize,messenge_serialize).serialize()
+        #return user_serialize,messenge_serialize
+            
+    def copy_database(self, source: DataBaseUserModel, database_id: int):
+        # lista de usermodel y lista de messengemodel
+        users_serialize = source['users']
+        messenges_serialize= source['messenge']
+        
+        my_database = self._get_database(database_id)
+        #Cada user es de tipo usermodel serializado
+        for user in users_serialize:
+            my_database.add_user(user['nickname'],user['password'],user['ip'],user['port'])
+         
+        for messenge in messenges_serialize:
+            my_database.add_messenges(messenge['user_id_from'],messenge['user_id_to'],messenge['value']) 
+        
+        # if database_id == -1:
+        #     return self.database.copy_database(source)
+        # if self.predecessor_replica[0] == database_id:
+        #     return self.predecessor_replica[1].copy_database(source)
+        # return self.second_predecessor_replica[1].copy_database(source)
 
     def _get_database(self, database_id: int = -1):
         if database_id == -1:
@@ -181,13 +258,6 @@ class EntityNode(ChordNode, BaseEntityNode):
             return db.delete_messenges(id_messenger)
 
         return False
-
-    def copy_database(self, source: DataBaseUser, database_id: int):
-        if database_id == -1:
-            return self.database.copy_database(source)
-        if self.predecessor_replica[0] == database_id:
-            return self.predecessor_replica[1].copy_database(source)
-        return self.second_predecessor_replica[1].copy_database(source)
 
     def fix_replications(self):
         # como EntityNode mantiene referencias de RemoteNodes que no se actualizan
