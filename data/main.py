@@ -3,19 +3,22 @@ from database_client import DataBaseClient
 from database_entity import DataBaseUser
 
 
-
+def f(data1:DataBaseClient):
+    data1.add_contacts('Daniela','Ale',"el bobo")
 
 if __name__ == '__main__':
-
     data1 = DataBaseClient('data1')
+    data1.add_messenges('Fernanda','Ale','Hola')
+    f(data1)
+    #data1 = DataBaseClient('data1')
     #data1.add_user('Ale','1234')
     # data1.add_user('Fernanda','1234')
     #data1.add_messenger('Fernanda','Ale','Hola')
     # data1.add_messenger('Ale','Fernanda','Hola')
-    data1.add_contacts('Daniela','Ale',"el bobo")
-    data1.add_contacts('Roxana','Ale',"el bobo")
+    #data1.add_contacts('Daniela','Ale',"el bobo")
+    #data1.add_contacts('Roxana','Ale',"el bobo")
     
-    data1.delete_contact('Daniela','Ale')
+    #data1.delete_contact('Daniela','Ale')
     #data1.add_contacts('Daniela','Ale',"el bobo")
     #data2 = DataBaseUser('data2')
     #data2.add_user('Ale','1234','12344444','9000')
