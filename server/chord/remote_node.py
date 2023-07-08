@@ -41,7 +41,7 @@ class RemoteNode(BaseNode):
         else:
             if response.status_code == 200:
                 model = BaseNodeModel(**response.json())
-                return self._ensure_local(RemoteNode.from_base_model(model))
+                return self._ensure_local(self.__class__.from_base_model(model))
 
             print("ERROR:", response.json()["detail"])
 
@@ -63,7 +63,7 @@ class RemoteNode(BaseNode):
         else:
             if response.status_code == 200:
                 model = BaseNodeModel(**response.json())
-                return self._ensure_local(RemoteNode.from_base_model(model))
+                return self._ensure_local(self.__class__.from_base_model(model))
 
             print("ERROR:", response.json()["detail"])
 
@@ -86,7 +86,7 @@ class RemoteNode(BaseNode):
         else:
             if response.status_code == 200:
                 model = BaseNodeModel(**response.json())
-                return self._ensure_local(RemoteNode.from_base_model(model))
+                return self._ensure_local(self.__class__.from_base_model(model))
 
             print("ERROR:", response.json()["detail"])
 
@@ -98,7 +98,7 @@ class RemoteNode(BaseNode):
         else:
             if response.status_code == 200:
                 model = BaseNodeModel(**response.json())
-                return self._ensure_local(RemoteNode.from_base_model(model))
+                return self._ensure_local(self.__class__.from_base_model(model))
 
             print("ERROR:", response.json()["detail"])
 

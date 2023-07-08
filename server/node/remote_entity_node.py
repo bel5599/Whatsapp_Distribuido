@@ -1,10 +1,9 @@
 from typing import Any
 
+from data.database_entity import DataBaseUser
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
-from ...data.database_entity import DataBaseUser
-
 from .entity_node import DataBaseUserModel
 
 
@@ -55,7 +54,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         else:
             if response.status_code == 200:
                 model = BaseNodeModel(**response.json())
-                return self._ensure_local(RemoteEntityNode.from_base_model(model))
+                return self._ensure_local(self.__class__.from_base_model(model))
 
             print("ERROR:", response.json()["detail"])
 
@@ -67,7 +66,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         else:
             if response.status_code == 200:
                 model = BaseNodeModel(**response.json())
-                return self._ensure_local(RemoteEntityNode.from_base_model(model))
+                return self._ensure_local(self.__class__.from_base_model(model))
 
             print("ERROR:", response.json()["detail"])
 
