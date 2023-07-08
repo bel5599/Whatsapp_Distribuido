@@ -53,6 +53,9 @@ class DataBaseUser:
         self.session.query(User).filter(User.nickname == nickname).update({User.ip:ip,User.port:port})
         self.session.commit()
     
+    def get_ip_port(self,nickname:str):
+        password = self.session.query(User.ip,User.port).filter(User.nickname==nickname).one()
+        return password[0]+password[1]
 
     # MESSENGES
     def get_messages(self):
