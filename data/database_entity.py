@@ -12,12 +12,12 @@ class DataBaseUser:
 
     # USER 
     # Devuelve una lista:user de todos los usuarios de la base datos 
-    def get_users(self) -> Union[list,bool]:
+    def get_users(self) -> list[tuple[str,str,str,str]]:
         try:
             users = self.session.query(User).all()
             return users
         except:
-            return False
+            return []
         
     def add_user(self,nickname_:str,password_:str,ip_:str,port_:str)-> bool:
         try:
@@ -63,12 +63,12 @@ class DataBaseUser:
         return password[0]+password[1]
 
     # MESSENGES
-    def get_messages(self)-> Union[list,bool]:
+    def get_messages(self)-> list[tuple]:
         try:
             users = self.session.query(Messenge).all()
             return users
         except:
-            return False
+            return []
         
     def add_messenges(self,source:str,destiny:str,value_:str)-> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla 

@@ -124,38 +124,41 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     def database_serialize(self, database_id: int = -1):
         database = self._get_database(database_id)
+        
         user_serialize = []
         messenge_serialize = []
         # lista de tupla con las propiedades de user
-        users = database.get_users()
-        if users != False:
-            for user in users:
-                user_serialize.append(UsersModel(
-                    user[0], user[1], user[2], user[3]).serialize())
+        if database:
+            users = database.get_users()
+            if users is not False:
+                for user in users:
+                    user_serialize.append(UsersModel(
+                        user[0], user[1], user[2], user[3]).serialize())
 
-        messenges = database.get_messages()
-        if messenges != False:
-            for messenge in messenges:
-                messenge_serialize.append(MessengesModel(
-                    messenge[0], messenge[1], messenge[2], messenge[3]).serialize())
+            messenges = database.get_messages()
+            if messenges != False:
+                for messenge in messenges:
+                    messenge_serialize.append(MessengesModel(
+                        messenge[0], messenge[1], messenge[2], messenge[3]).serialize())
 
         return DataBaseUserModel(user_serialize, messenge_serialize).serialize()
         # return user_serialize,messenge_serialize
 
-    def copy_database(self, source: DataBaseUserModel, database_id: int):
+    def copy_database(self, dataBaseUserModel: dict, database_id: int):
         # lista de usermodel y lista de messengemodel
-        users_serialize = source['users']
-        messenges_serialize = source['messenge']
+        users_serialize = dataBaseUserModel['users']
+        messenges_serialize = dataBaseUserModel['messenge']
 
         my_database = self._get_database(database_id)
+        if my_database:
         # Cada user es de tipo usermodel serializado
-        for user in users_serialize:
-            my_database.add_user(
-                user['nickname'], user['password'], user['ip'], user['port'])
+            for user in users_serialize:
+                my_database.add_user(
+                    user['nickname'], user['password'], user['ip'], user['port'])
 
-        for messenge in messenges_serialize:
-            my_database.add_messenges(
-                messenge['user_id_from'], messenge['user_id_to'], messenge['value'])
+            for messenge in messenges_serialize:
+                my_database.add_messenges(
+                    messenge['user_id_from'], messenge['user_id_to'], messenge['value'])
 
         # if database_id == -1:
         #     return self.database.copy_database(source)
