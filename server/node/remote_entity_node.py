@@ -3,6 +3,7 @@ from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
 from ...data.database_entity import DataBaseUser
 
+from .entity_node import DataBaseUserModel
 
 class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     # User
@@ -105,7 +106,15 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         raise Exception(response.json()["detail"])
     
-    def copy_database(self, source: DataBaseUser, database_id: int=-1):
+    
+    def database_serialize(self,database_id: int = -1):
+        response = self._manager.get("/database_serialize",data={"database_id": database_id})
+        
+        if response.status_code == 200:
+            result: dict = response.json()
+            return result
+
+    def copy_database(self, source: DataBaseUserModel, database_id: int=-1):
         response = self._manager.get("/copy_database", data = {"source": source, "database_id": database_id})
 
         if response.status_code == 200:
