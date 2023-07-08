@@ -27,7 +27,7 @@ class Messenge(Base):
     user_id_from: Mapped[int] = Column(ForeignKey("contacts.nickname"))
     user_id_to:   Mapped[int] = Column(ForeignKey("contacts.nickname"))
     value:        Mapped[str] = Column(String)
-    date:         Mapped[datetime] = Column(DATETIME)
+    #date:         Mapped[datetime] = Column(DATETIME)
 
     def __repr__(self) -> str:
         return f"Messenge(id={self.messenge_id!r}, user_id_from={self.user_id_from!r}, user_id_to={self.user_id_to!r},value={self.value!r})"
