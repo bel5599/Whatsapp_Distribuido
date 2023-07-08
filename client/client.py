@@ -72,16 +72,20 @@ def login(nickname: str, password: str,server: str):
     try:
         # verificar que no se ha caido el servidor 
         password_server =server_node_data.get_pasword(nickname,True)
+        if password!=password_server :
+            return "Wrong password"
+
         # Si cambio el ip y el port actualizar estos valores
+        server_node_data.update_user(nickname,client.ip,client.port)
+        
+        # Recivo los sms que tenia en espera
+        task_receive_message(client.user['nickname'],client.database,server_node_data,server_successor,server_successor_successor)
         
     except:
         return "Login failed"
              
-    if password!=password_server :
-        return "Wrong password"
-
-    server_node_data.update_user(nickname,client.ip,client.port)
-
+    
+    
     
     # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
     servers =[]
