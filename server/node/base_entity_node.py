@@ -5,15 +5,25 @@ from ...data.database_entity import DataBaseUser
 
 
 class BaseEntityNode(BaseNode):
+    
+    def get_users(self,database_id: int=-1) -> Union[list,bool]:
+        raise NotImplementedError()
+    
     def add_user(self, nickname: str, pasword: str, ip: str, port: str, database_id: int=-1) -> bool:
         raise NotImplementedError()
-
+    
     def get_pasword(self, nickname: str, database_id: int=-1) -> str:
         raise NotImplementedError()
 
     def delete_user(self, nickname: str, database_id: int=-1) -> bool:
         raise NotImplementedError()
-
+    
+    def update_user(self,nickname:str,ip:str,port:str,database_id: int=-1)-> bool:
+        raise NotImplementedError()
+        
+    def get_ip_port(self,nickname:str,database_id: int=-1)-> str:
+        raise NotImplementedError()
+    
     
     def nickname_entity_node(self, nickname: str, database_id: int=-1) -> Union["BaseEntityNode", None]:
         raise NotImplementedError()
