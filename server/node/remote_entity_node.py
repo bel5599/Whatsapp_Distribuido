@@ -36,6 +36,8 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         raise Exception(response.json()["detail"])
     
+    
+    
     def nickname_entity_node(self, nickname: str, database_id: int = -1):
         try:
             response = self._manager.get(
