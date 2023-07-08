@@ -12,7 +12,7 @@ class DataBaseClient:
 
     # Contacts
     # Devuelve una lista:Contacts de todos los usuarios en la base datos
-    def get_contacts(self,mynickname):
+    def get_contacts(self,mynickname:str):
         try:
             contacts = self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.name!="Unknown").all()
             return contacts
