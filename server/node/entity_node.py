@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Union
+from typing import Union, Any
 
 from data.database_entity import DataBaseUser
 from ..chord.node import Node as ChordNode
@@ -37,44 +37,45 @@ class UsersModel(BaseModel):
     password: str
     ip: str
     port: str
-    
+
     def serialize(self):
-        return{
-        'nickname': self.nickname,
-        'password': self.password,
-        'ip': self.ip,
-        'port': self.port
+        return {
+            'nickname': self.nickname,
+            'password': self.password,
+            'ip': self.ip,
+            'port': self.port
         }
-    
+
+
 class MessengesModel(BaseModel):
-    messenge_id:int
+    messenge_id: int
     user_id_from: str
     user_id_to: str
     value: str
-    
+
     def serialize(self):
-        return{
-        'messenge_id':self.messenge_id,
-        'user_id_from': self.user_id_from,
-        'user_id_to': self.user_id_to,
-        'value': self.value,
+        return {
+            'messenge_id': self.messenge_id,
+            'user_id_from': self.user_id_from,
+            'user_id_to': self.user_id_to,
+            'value': self.value,
         }
 
+
 class DataBaseUserModel(BaseModel):
-    users:list
-    messenges:list
-    
+    users: list
+    messenges: list
+
     def serialize(self):
-        return{
-            'users':self.users,
-            'messenges':self.messenges
+        return {
+            'users': self.users,
+            'messenges': self.messenges
         }
-        
+
 
 class CopyDataBaseModel(BaseModel):
     source: DataBaseUserModel
     database_id: int
-
 
 
 class DatabaseReplica:
@@ -84,6 +85,20 @@ class DatabaseReplica:
 
 
 class EntityNode(ChordNode, BaseEntityNode):
+    # region RETURN TYPE OVERLOAD
+    def successor(self) -> Union[BaseEntityNode, None]:
+        successor: Any = super().successor()
+        return successor
+
+    def predecessor(self) -> Union[BaseEntityNode, None]:
+        predecessor: Any = super().predecessor()
+        return predecessor
+
+    def find_successor(self, id: int) -> Union[BaseEntityNode, None]:
+        id_successor: Any = super().find_successor(id)
+        return id_successor
+    # endregion
+
     def __init__(self, ip: str, port: str, capacity: int):
         super().__init__(ip, port, capacity)
 
@@ -107,42 +122,41 @@ class EntityNode(ChordNode, BaseEntityNode):
                 "secondpred_replication_data"))
         ]
 
-        # self.predecessor_replica = (
-        #     self.predecessor().id, DataBaseUser("replication_data"))
-        # self.second_predecessor_replica = (
-        #     self.predecessor().predecessor.id, DataBaseUser("replication_data"))
-
-    def database_serialize(self,database_id: int = -1):
+    def database_serialize(self, database_id: int = -1):
         database = self._get_database(database_id)
         user_serialize = []
         messenge_serialize = []
-        #lista de tupla con las propiedades de user
+        # lista de tupla con las propiedades de user
         users = database.get_users()
-        if users!= False:
+        if users != False:
             for user in users:
-                user_serialize.append(UsersModel(user[0],user[1],user[2],user[3]).serialize())
-        
+                user_serialize.append(UsersModel(
+                    user[0], user[1], user[2], user[3]).serialize())
+
         messenges = database.get_messages()
-        if messenges!= False:
+        if messenges != False:
             for messenge in messenges:
-                messenge_serialize.append(MessengesModel(messenge[0],messenge[1],messenge[2],messenge[3]).serialize())
-        
-        return DataBaseUserModel(user_serialize,messenge_serialize).serialize()
-        #return user_serialize,messenge_serialize
-            
+                messenge_serialize.append(MessengesModel(
+                    messenge[0], messenge[1], messenge[2], messenge[3]).serialize())
+
+        return DataBaseUserModel(user_serialize, messenge_serialize).serialize()
+        # return user_serialize,messenge_serialize
+
     def copy_database(self, source: DataBaseUserModel, database_id: int):
         # lista de usermodel y lista de messengemodel
         users_serialize = source['users']
-        messenges_serialize= source['messenge']
-        
+        messenges_serialize = source['messenge']
+
         my_database = self._get_database(database_id)
-        #Cada user es de tipo usermodel serializado
+        # Cada user es de tipo usermodel serializado
         for user in users_serialize:
-            my_database.add_user(user['nickname'],user['password'],user['ip'],user['port'])
-         
+            my_database.add_user(
+                user['nickname'], user['password'], user['ip'], user['port'])
+
         for messenge in messenges_serialize:
-            my_database.add_messenges(messenge['user_id_from'],messenge['user_id_to'],messenge['value']) 
-        
+            my_database.add_messenges(
+                messenge['user_id_from'], messenge['user_id_to'], messenge['value'])
+
         # if database_id == -1:
         #     return self.database.copy_database(source)
         # if self.predecessor_replica[0] == database_id:
