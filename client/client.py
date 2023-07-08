@@ -64,8 +64,8 @@ def login(nickname: str, password: str,server: str):
         return "You are not registered"
 
     # obtener los nodos que tienen la informacion original y replicada del usuario
-    server_node_data,dict_successor,dict_successor_successor = get_entity_data(node_data)
-    if dict_successor is False:
+    server_node_data,server_successor,server_successor_successor = get_entity_data(node_data)
+    if server_successor is False:
         return "Login failed"
     
     # Verificar contrasenna y retornar una notificacion
@@ -73,21 +73,22 @@ def login(nickname: str, password: str,server: str):
         # verificar que no se ha caido el servidor 
         password_server =server_node_data.get_pasword(nickname,True)
         # Si cambio el ip y el port actualizar estos valores
-        server_node_data.update_user(nickname,client.ip,client.port)
+        
     except:
         return "Login failed"
              
     if password!=password_server :
         return "Wrong password"
 
-    
+    server_node_data.update_user(nickname,client.ip,client.port)
 
+    
     # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
     servers =[]
     servers.append(server)
     servers.append(node_data['ip']+":"+node_data['port'])
-    servers.append(dict_successor.ip+":"+dict_successor.port)
-    servers.append(dict_successor_successor.ip+":"+dict_successor_successor.port)
+    servers.append(server_successor.id+":"+server_successor.port)
+    servers.append(server_successor_successor.ip+":"+server_successor_successor.port)
     # Loguear al usuario
     client.login_user(nickname,password,servers)
     return
