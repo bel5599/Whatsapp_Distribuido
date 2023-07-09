@@ -194,7 +194,6 @@ class EntityNode(ChordNode, BaseEntityNode):
         if db:
             return db.get_password(nickname)
 
-        # TODO: determinar el return type de db.get_password
         return False
 
     def delete_user(self, nickname: str, database_id: int):
@@ -213,8 +212,6 @@ class EntityNode(ChordNode, BaseEntityNode):
         db = self._get_database(database_id)
         if db:
             return db.get_ip_port(nickname)
-
-        # TODO: determinar el return type de db.get_ip_port
         return None
 
     def nickname_entity_node(self, nickname: str, database_id: int):
@@ -256,16 +253,14 @@ class EntityNode(ChordNode, BaseEntityNode):
         db = self._get_database(database_id)
         if db:
             return db.search_messenges_from(me, user)
-
-        # TODO: determinar el return type de db.search_messenges_from
+        
         return None
 
     def search_messenges_to(self, me: str, user: str, database_id: int):
         db = self._get_database(database_id)
         if db:
             return db.search_messenges_to(me, user)
-
-        # TODO: determinar el return type de db.search_messenges_to
+        
         return None
 
     def delete_messenges(self, id_messenger: int, database_id: int):
