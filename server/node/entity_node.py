@@ -63,8 +63,8 @@ class MessengesModel(BaseModel):
 
 
 class DataBaseUserModel(BaseModel):
-    users: list
-    messenges: list
+    users: list[UsersModel]
+    messenges: list[MessengesModel]
 
     def serialize(self):
         return {
@@ -246,32 +246,33 @@ class EntityNode(ChordNode, BaseEntityNode):
             if users is not False:
                 for user in users:
                     user_serialize.append(UsersModel(
-                        nickname=user[0], password=user[1], ip=user[2], port=user[3]).serialize())
+                        nickname=user[0], password=user[1], ip=user[2], port=user[3]))
 
             messenges_ = database.get_messages()
             if messenges_ != False:
                 for messenge in messenges_:
                     messenge_serialize.append(MessengesModel(
-                        messenge_id=messenge[0], user_id_from=messenge[1], user_id_to=messenge[2], value=messenge[3]).serialize())
+                        messenge_id=messenge[0], user_id_from=messenge[1], user_id_to=messenge[2], value=messenge[3]))
 
-        return DataBaseUserModel(users=user_serialize, messenges=messenge_serialize).serialize()
+        return DataBaseUserModel(users=user_serialize, messenges=messenge_serialize)
         # return user_serialize,messenge_serialize
 
-    def copy_database(self, dataBaseUserModel: dict, database_id: int):
+    def copy_database(self, model: DataBaseUserModel, database_id: int):
         # lista de usermodel y lista de messengemodel
-        users_serialize = dataBaseUserModel['users']
-        messenges_serialize = dataBaseUserModel['messenge']
+        #dataBaseUserModel = model.serialize()
+        users_serialize = model.users
+        messenges_serialize = model.messenges
 
         my_database = self._get_database(database_id)
         if my_database:
             # Cada user es de tipo usermodel serializado
             for user in users_serialize:
                 my_database.add_user(
-                    user['nickname'], user['password'], user['ip'], user['port'])
+                    user.nickname, user.password, user.ip, user.port)
 
             for messenge in messenges_serialize:
                 my_database.add_messenges(
-                    messenge['user_id_from'], messenge['user_id_to'], messenge['value'])
+                    messenge.user_id_from, messenge.user_id_to, messenge.value)
 
     # endregion
 

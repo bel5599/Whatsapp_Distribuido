@@ -81,7 +81,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         try:
             response = self._manager.put(
-                f"/user/update/{nickname}", data={"ip": ip, "port": port, "database_id": database_id})
+                f"/user/update/", data={'nickname':nickname,"ip": ip, "port": port, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -218,7 +218,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def copy_database(self, source: DataBaseUserModel, database_id: int):
         try:
             response = self._manager.get(
-                "/info/copy_database", data={"source": source.serialize(), "database_id": database_id})
+                "/info/copy_database", data={"source": source, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
