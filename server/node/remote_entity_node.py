@@ -205,7 +205,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         # FIXME: falta el handler de esta ruta
         try:
             response = self._manager.get(
-                "/database_serialize", data={"database_id": database_id})
+                "/info/database_serialize", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
