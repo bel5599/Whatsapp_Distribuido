@@ -81,7 +81,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
                 return result
             print("ERROR:", response.json()["detail"])
 
-    def get_users(self, database_id: int = -1) -> list[tuple[str, str, str, str]]:
+    def get_users(self, database_id: int = -1):
         try:
             response = self._manager.get("/get_users", data={"database_id": database_id})
         except Exception as e:
@@ -92,7 +92,16 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
                 return result
             print("ERROR:", response.json()["detail"])
 
-    
+    def update_user(self, nickname: str, ip: str, port: str, database_id: int = -1):
+        try:
+            response = self._manager.put(f"/update_user/{nickname}", data={"ip": ip, "port": port, "database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: dict = response.json() 
+                return result
+            print("ERROR:", response.json()["detail"])
 
 
     # MESSENGES
