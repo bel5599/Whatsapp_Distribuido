@@ -16,7 +16,7 @@ class BaseEntityNode(BaseNode):
         raise NotImplementedError()
     # endregion
 
-    def get_users(self, database_id: int = -1) -> Union[list, bool]:
+    def get_users(self, database_id: int = -1) -> list[tuple[str,str,str,str]]:
         raise NotImplementedError()
 
     def add_user(self, nickname: str, pasword: str, ip: str, port: str, database_id: int = -1) -> bool:
@@ -39,19 +39,28 @@ class BaseEntityNode(BaseNode):
 
     def search_entity_node(self, nickname: str) -> Union["BaseEntityNode", None]:
         raise NotImplementedError()
-
+    
+    def get_messages(self)-> list[tuple[int,str,str,str]]:
+        raise NotImplementedError()
+    
     def add_messenger(self, source: str, destiny: str, value: str, database_id: int = -1) -> bool:
         raise NotImplementedError()
 
-    def search_messenger_from(self, me: str, user: str, database_id: int = -1) -> list:
+    def delete_messenges(self, id_messenger: int, database_id: int = -1) -> bool:
+        raise NotImplementedError()
+    
+    def search_messenger_from(self, me: str, user: str, database_id: int = -1) -> list[tuple[str,str]]:
         raise NotImplementedError()
 
-    def search_messenger_to(self, me: str, user: str, database_id: int = -1) -> list:
+    def search_messenger_to(self, me: str, user: str, database_id: int = -1) -> list[tuple[str,str]]:
         raise NotImplementedError()
 
-    def delete_messenger(self, id_messenger: int, database_id: int = -1) -> bool:
+    def delete_messenges_from(self,me:str, user:str = '')-> bool:
         raise NotImplementedError()
-
+        
+    def delete_messenges_to(self,me:str,user:str=' ')-> bool:
+        raise NotImplementedError()
+        
     def database_serialize(self, database_id: int = -1) -> dict:
         raise NotImplementedError()
 
