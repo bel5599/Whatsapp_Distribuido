@@ -12,12 +12,15 @@ class DataBaseClient:
 
     # Contacts
     # Devuelve una lista:Contacts de todos los usuarios en la base datos
-    def get_contacts(self,mynickname:str):
+    def get_contacts(self,mynickname:str)->list[tuple[str,str]]:
+        result = []
         try:
             contacts = self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.name!="Unknown").all()
-            return contacts
+            for c in contacts:
+                result.append((c.nickname,c.name))
+            return result
         except:
-            return False
+            return result
         
     def add_contacts(self,mynickname_:str,nickname_:str,name_:str = "Unknown")->bool:
         if self.contain_contact(mynickname_,nickname_):
@@ -68,13 +71,16 @@ class DataBaseClient:
     
         
     # MESSENGER
-    def get_messages(self):
+    def get_messages(self)->list[tuple[int,str,str,str]]:
+        result = []
         try:
-            users = self.session.query(Messenge).all()
-            return users
+            messenge = self.session.query(Messenge).all()
+            for m in messenge:
+                result.append((m.messenge_id,m.user_id_from,m.user_id_to,m.value))
+            return result
         except:
-            return False
-        
+            return result
+
     def add_messenges(self,source:str,destiny:str,value_:str,id:int = -1)->bool:
         # Crear el chat si no existe y luego agregarselo a la tabla 
         self.add_chat(source,destiny)    

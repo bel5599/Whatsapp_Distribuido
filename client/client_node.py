@@ -34,7 +34,7 @@ class ClientNode:
 
     # Contacts
     def get_contacts(self):
-        return [(nickname, name) for (nickname,_, name) in self.database.get_contacts(self.user['nickname'])]
+        return [(nickname, name) for (nickname,name) in self.database.get_contacts(self.user['nickname'])]
     
     def add_contacts(self, nickname: str, name: str):
         return self.database.add_contacts(self.user['nickname'], nickname, name)
