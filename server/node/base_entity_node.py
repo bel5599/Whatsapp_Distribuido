@@ -40,25 +40,16 @@ class BaseEntityNode(BaseNode):
     def search_entity_node(self, nickname: str) -> Union["BaseEntityNode", None]:
         raise NotImplementedError()
 
-    def get_messages(self) -> list[tuple[int, str, str, str]]:
-        raise NotImplementedError()
-
-    def add_messenger(self, source: str, destiny: str, value: str, database_id: int) -> bool:
+    def add_messenges(self, source: str, destiny: str, value: str, database_id: int) -> bool:
         raise NotImplementedError()
 
     def delete_messenges(self, id_messenger: int, database_id: int) -> bool:
         raise NotImplementedError()
 
-    def search_messenger_from(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
+    def search_messenges_from(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
         raise NotImplementedError()
 
-    def search_messenger_to(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
-        raise NotImplementedError()
-
-    def delete_messenges_from(self, me: str, user: str,database_id: int) -> bool:
-        raise NotImplementedError()
-
-    def delete_messenges_to(self, me: str, user: str,database_id: int) -> bool:
+    def search_messenges_to(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
         raise NotImplementedError()
 
     def database_serialize(self, database_id: int) -> dict:
