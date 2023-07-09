@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Union, Any
+
 from data.model_entity import User, Messenge
 from data.database_entity import DataBaseUser
 from ..chord.node import Node as ChordNode
@@ -215,11 +216,7 @@ class EntityNode(ChordNode, BaseEntityNode):
             return db.get_ip_port(nickname)
         return None
 
-    # Estas funcion lo que hace es que hace un llamado a la otra funcion que es recursiva
-    # la idea es darle la vuelta al anillo de chord buscando el nodo entity que contenga
-    # ese user
     def nickname_entity_node(self, nickname: str, database_id: int):
-        # TODO: explicar que hace esta funcion
         if database_id == -1:
             if self.database.contain_user(nickname):
                 return self
@@ -229,7 +226,6 @@ class EntityNode(ChordNode, BaseEntityNode):
         return self.successor.nickname_entity_node_rec(nickname, self, database_id)
 
     def nickname_entity_node_rec(self, nickname: str, node, database_id: int):
-        # TODO: explicar que hace esta funcion
         if self.id == node.id:
             return None
 
