@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Union, Any
 
-from data.model_entity import User, Messenge
 from data.database_entity import DataBaseUser
 from ..chord.node import Node as ChordNode
 from ..util import generate_id
@@ -123,6 +122,119 @@ class EntityNode(ChordNode, BaseEntityNode):
                 "secondpred_replication_data"))
         ]
 
+    def _get_database(self, database_id: int = -1):
+        if database_id == -1:
+            return self.database
+
+        for replica in self.replicas:
+            owner = replica.owner
+            if owner and owner.id == database_id:
+                return replica.db
+
+    # region USER
+
+    def get_users(self, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.get_users()
+
+        return []
+
+    def add_user(self, nickname: str, password: str, ip: str, port: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.add_user(nickname, password, ip, port)
+
+        return False
+
+    def get_pasword(self, nickname: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.get_password(nickname)
+
+        return ""
+
+    def delete_user(self, nickname: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.delete_user(nickname)
+
+        return False
+
+    def update_user(self, nickname: str, ip: str, port: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.update_user(nickname, ip, port)
+
+        return False
+
+    def get_ip_port(self, nickname: str, database_id: int = -1):
+        db = self._get_database(database_id)
+        if db:
+            return db.get_ip_port(nickname)
+
+        return ""
+
+    def _nickname_entity_node_rec(self, nickname: str, node, database_id: int):
+        if self.id == node.id:
+            return None
+
+        if database_id == -1:
+            if self.database.contain_user(nickname):
+                return self
+        if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
+            return self
+        return self.successor._nickname_entity_node_rec(nickname, node, database_id)
+
+    def nickname_entity_node(self, nickname: str, database_id: int):
+        if database_id == -1:
+            if self.database.contain_user(nickname):
+                return self
+        if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
+            return self
+
+        return self.successor._nickname_entity_node_rec(nickname, self, database_id)
+
+    def search_entity_node(self, nickname: str):
+        id = generate_id(nickname, self.network_capacity())
+        return self.find_successor(id)
+
+    # endregion
+
+    # region MESSAGES
+
+    def add_messenges(self, source: str, destiny: str, value: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.add_messenges(source, destiny, value)
+
+        return False
+
+    def delete_messenges(self, id_messenger: int, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.delete_messenges(id_messenger)
+
+        return False
+
+    def search_messenges_from(self, me: str, user: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.search_messenges_from(me, user)
+
+        return []
+
+    def search_messenges_to(self, me: str, user: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.search_messenges_to(me, user)
+
+        return []
+
+    # endregion
+
+    # region REPLICATION
+
     def database_serialize(self, database_id: int = -1):
         database = self._get_database(database_id)
 
@@ -161,108 +273,7 @@ class EntityNode(ChordNode, BaseEntityNode):
                 my_database.add_messenges(
                     messenge['user_id_from'], messenge['user_id_to'], messenge['value'])
 
-    def _get_database(self, database_id: int = -1):
-        if database_id == -1:
-            return self.database
-
-        for replica in self.replicas:
-            owner = replica.owner
-            if owner and owner.id == database_id:
-                return replica.db
-
-    # User
-    def add_user(self, nickname: str, password: str, ip: str, port: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.add_user(nickname, password, ip, port)
-
-        return False
-
-    def get_users(self, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.get_users()
-
-        return False
-
-    def get_pasword(self, nickname: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.get_password(nickname)
-
-        return False
-
-    def delete_user(self, nickname: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.delete_user(nickname)
-
-        return False
-
-    def update_user(self, nickname: str, ip: str, port: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.update_user(nickname, ip, port)
-
-    def get_ip_port(self, nickname: str, database_id: int = -1):
-        db = self._get_database(database_id)
-        if db:
-            return db.get_ip_port(nickname)
-        return None
-
-    def nickname_entity_node(self, nickname: str, database_id: int):
-        if database_id == -1:
-            if self.database.contain_user(nickname):
-                return self
-        if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
-            return self
-
-        return self.successor.nickname_entity_node_rec(nickname, self, database_id)
-
-    def nickname_entity_node_rec(self, nickname: str, node, database_id: int):
-        if self.id == node.id:
-            return None
-
-        if database_id == -1:
-            if self.database.contain_user(nickname):
-                return self
-        if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
-            return self
-        return self.successor.nickname_entity_node_rec(nickname, node, database_id)
-
-    def search_entity_node(self, nickname: str):
-        id = generate_id(nickname, self.network_capacity())
-        return self.find_successor(id)
-
-    # MESSENGES
-
-    def add_messenges(self, source: str, destiny: str, value: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.add_messenges(source, destiny, value)
-
-        return False
-
-    def search_messenges_from(self, me: str, user: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.search_messenges_from(me, user)
-
-        return None
-
-    def search_messenges_to(self, me: str, user: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.search_messenges_to(me, user)
-
-        return None
-
-    def delete_messenges(self, id_messenger: int, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.delete_messenges(id_messenger)
-
-        return False
+    # endregion
 
     def fix_replications(self):
         # como EntityNode mantiene referencias de RemoteNodes que no se actualizan
