@@ -1,6 +1,5 @@
 from typing import Any
 
-from data.database_entity import DataBaseUser
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
@@ -14,45 +13,100 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         return result_node
     # endregion
 
-    # User
-    def add_user(self, nickname: str, pasword: str,  ip: str, port: str, database_id: int):
+    # region USER
+
+    def get_users(self, database_id: int = -1):
         try:
-            response = self._manager.put(
-            "/user/add", data={"nickname": nickname, "pasword": pasword, "ip": ip, "port": port, "database_id": database_id})
+            response = self._manager.get(
+                "/info/users", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json()
+                result: list = response.json()["users"]
                 return result
 
             print("ERROR:", response.json()["detail"])
+
+        return []
+
+    def add_user(self, nickname: str, pasword: str,  ip: str, port: str, database_id: int):
+        try:
+            response = self._manager.put(
+                "/user/add", data={"nickname": nickname, "pasword": pasword, "ip": ip, "port": port, "database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: bool = response.json()["success"]
+                return result
+
+            print("ERROR:", response.json()["detail"])
+
+        return False
 
     def get_pasword(self, nickname: str, database_id: int):
         try:
             response = self._manager.get(
-            f"/user/pasword/{nickname}", data={"database_id": database_id})
+                f"/user/pasword/{nickname}", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json()
+                result: str = response.json()["pasword"]
                 return result
 
             print("ERROR:", response.json()["detail"])
+
+        return ""
 
     def delete_user(self, nickname: str, database_id: int):
         try:
             response = self._manager.delete(
-            f"/user/delete/{nickname}", data={"database_id": database_id})
+                f"/user/delete/{nickname}", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json()
+                result: bool = response.json()["success"]
                 return result
 
             print("ERROR:", response.json()["detail"])
+
+        return False
+
+    def update_user(self, nickname: str, ip: str, port: str, database_id: int):
+        # FIXME: discordancia entre el los datos del request a /user/update
+        # y el handler de esa ruta
+
+        try:
+            response = self._manager.put(
+                f"/user/update/{nickname}", data={"ip": ip, "port": port, "database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: bool = response.json()["success"]
+                return result
+
+            print("ERROR:", response.json()["detail"])
+
+        return False
+
+    def get_ip_port(self, nickname: str, database_id: int):
+        try:
+            response = self._manager.get(
+                f"/user/ip_port/{nickname}", data={"database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: str = response.json()["ip_port"]
+                return result
+
+            print("ERROR:", response.json()["detail"])
+
+        return ""
 
     def nickname_entity_node(self, nickname: str, database_id: int):
         try:
@@ -79,90 +133,44 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
             print("ERROR:", response.json()["detail"])
 
-    def get_ip_port(self, nickname: str, database_id: int) -> str:
-        try:
-            response = self._manager.get(
-                f"/user/ip_port/{nickname}", data={"database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: dict = response.json()
-                return result
-            
-            print("ERROR:", response.json()["detail"])
+    # endregion
 
-    def get_users(self, database_id: int = -1):
-        try:
-            response = self._manager.get(
-                "/info/users", data={"database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: dict = response.json()
-                return result
-            
-            print("ERROR:", response.json()["detail"])
-
-    def update_user(self, nickname: str, ip: str, port: str, database_id: int):
-        try:
-            response = self._manager.put(
-                f"/user/update/{nickname}", data={"ip": ip, "port": port, "database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: dict = response.json()
-                return result
-            
-            print("ERROR:", response.json()["detail"])
-
-    # MESSENGES
+    # region MESSAGES
 
     def add_messenges(self, source: str, destiny: str, value: str, database_id: int):
         try:
             response = self._manager.put("/messenger/add",
-                                     data={"source": source, "destiny": destiny, "value": value, "database_id": database_id})
+                                         data={"source": source, "destiny": destiny, "value": value, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json()
+                result: bool = response.json()["success"]
                 return result
 
             print("ERROR:", response.json()["detail"])
+
+        return False
 
     def delete_messenges(self, id: int, database_id: int):
         try:
             response = self._manager.delete(
-            f"/messenger/delete/{id}", data={"database_original": database_id})
+                f"/messenger/delete/{id}", data={"database_original": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json()
+                result: bool = response.json()["success"]
                 return result
 
             print("ERROR:", response.json()["detail"])
+
+        return False
 
     def search_messenges_from(self, me: str, user: str, database_id: int):
         try:
             response = self._manager.get("/messenger/from",
-                                     data={"me": me, "user": user, "database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: dict = response.json()
-                return result
-
-            print("ERROR:", response.json()["detail"])
-
-    def search_messenges_to(self, me: str, user: str, database_id: int):
-        try:
-            response = self._manager.get("/messenger/to",
-                                     data={"me": me, "user": user, "database_id": database_id})
+                                         data={"me": me, "user": user, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -172,30 +180,52 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
             print("ERROR:", response.json()["detail"])
 
-    # DATABASE
+        return []
+
+    def search_messenges_to(self, me: str, user: str, database_id: int):
+        try:
+            response = self._manager.get("/messenger/to",
+                                         data={"me": me, "user": user, "database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: list = response.json()
+                return result
+
+            print("ERROR:", response.json()["detail"])
+
+        return []
+
+    # endregion
+
+    # region REPLICATION
 
     def database_serialize(self, database_id: int):
+        # FIXME: falta el handler de esta ruta
         try:
             response = self._manager.get(
-            "/database_serialize", data={"database_id": database_id})
+                "/database_serialize", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
                 result: dict = response.json()
                 return result
-            
+
             print("ERROR:", response.json()["detail"])
 
     def copy_database(self, source: DataBaseUserModel, database_id: int):
         try:
             response = self._manager.get(
-            "/copy_database", data={"source": source.serialize(), "database_id": database_id})
+                "/info/copy_database", data={"source": source.serialize(), "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
                 result: dict = response.json()
                 return result
-            
+
             print("ERROR:", response.json()["detail"])
+
+    # endregion
