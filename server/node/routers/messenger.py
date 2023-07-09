@@ -10,7 +10,7 @@ def search_messenges_from(model: SearchMessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.search_messenger_from(
+        result = node.search_messenges_from(
             model.source, model.destiny, model.database_id)
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
@@ -23,7 +23,7 @@ def search_messenges_to(model: SearchMessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.search_messenger_to(
+        result = node.search_messenges_to(
             model.source, model.destiny, model.database_id)
     except:
         raise HTTPException(status_code=404, detail="messenges not found!")
@@ -36,7 +36,7 @@ def add_messenges(model: MessengerModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.add_messenger(
+        result = node.add_messenges(
             model.source, model.destiny, model.value, model.database_id)
     except:
         raise HTTPException(
@@ -50,7 +50,7 @@ def delete_messenges(id: int, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result = node.delete_messenger(id, model.database_id)
+        result = node.delete_messenges(id, model.database_id)
     except:
         raise HTTPException(
             status_code=500, detail="delete messenger failed!")
