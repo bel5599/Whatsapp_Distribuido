@@ -161,12 +161,6 @@ class EntityNode(ChordNode, BaseEntityNode):
                 my_database.add_messenges(
                     messenge['user_id_from'], messenge['user_id_to'], messenge['value'])
 
-        # if database_id == -1:
-        #     return self.database.copy_database(source)
-        # if self.predecessor_replica[0] == database_id:
-        #     return self.predecessor_replica[1].copy_database(source)
-        # return self.second_predecessor_replica[1].copy_database(source)
-
     def _get_database(self, database_id: int = -1):
         if database_id == -1:
             return self.database
