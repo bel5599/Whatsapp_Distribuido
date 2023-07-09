@@ -59,7 +59,7 @@ def get_ip_port(nickname: str, model: DataBaseModel, request: Request):
         return {"ip_port": ip_port}
 
 
-@router.put("update")
+@router.put("/update")
 def update_user(model: UserModel, request: Request):
     node: EntityNode = request.state.node
 

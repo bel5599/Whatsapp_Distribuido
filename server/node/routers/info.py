@@ -41,7 +41,7 @@ def copy_database(model: CopyDataBaseModel, request: Request):
             status_code=500, detail="copy database failed!")
 
 
-@router.get("users")
+@router.get("/users")
 def get_users(model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
