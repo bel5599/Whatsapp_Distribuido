@@ -1,3 +1,4 @@
+# type: ignore
 from datetime import*
 from sqlalchemy.ext.declarative import declarative_base
 from typing import List

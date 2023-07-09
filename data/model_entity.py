@@ -1,3 +1,4 @@
+# type: ignore
 from datetime import*
 from sqlalchemy.ext.declarative import declarative_base
 from typing import List
@@ -24,8 +25,8 @@ class Messenge(Base):
     __tablename__ = "messenges"
     
     messenge_id: Mapped[int] = Column(Integer,primary_key=True)
-    user_id_from: Mapped[int] = Column(ForeignKey("contacts.nickname"))
-    user_id_to:   Mapped[int] = Column(ForeignKey("contacts.nickname"))
+    user_id_from: Mapped[int] = Column(ForeignKey("user_account.nickname"))
+    user_id_to:   Mapped[int] = Column(ForeignKey("user_account.nickname"))
     value:        Mapped[str] = Column(String)
     #date:         Mapped[datetime] = Column(DATETIME)
 
