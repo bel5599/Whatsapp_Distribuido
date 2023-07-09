@@ -168,7 +168,7 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return False
 
-    def get_ip_port(self, nickname: str, database_id: int = -1):
+    def get_ip_port(self, nickname: str, database_id: int):
         db = self._get_database(database_id)
         if db:
             return db.get_ip_port(nickname)
