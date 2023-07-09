@@ -44,7 +44,7 @@ def delete_user(nickname: str, model: DataBaseModel, request: Request):
     else:
         return {"success": result}
     
-@router.get("/get_ip_port/{nickname}")
+@router.get("/ip_port/{nickname}")
 def get_ip_port(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
@@ -56,3 +56,17 @@ def get_ip_port(nickname: str, model: DataBaseModel, request: Request):
         )
     else:
         return {"ip_port": ip_port}
+    
+    
+@router.put("update")
+def update_user(model: UserModel, request:Request):
+    node: EntityNode = request.state.node
+
+    try: 
+        user = node.update_user(model.nickname, model.ip, model.port, model.database_id)
+    except:
+        raise HTTPException(
+            status_code=500, detail="update user failed!"
+        )
+    else:
+        return {"success": user}

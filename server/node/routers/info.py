@@ -38,5 +38,18 @@ def copy_database(model: CopyDataBaseModel, request: Request):
     except:
         raise HTTPException(
             status_code=500, detail="copy database failed!")
+    
+@router.get("users")
+def get_users(model: DataBaseModel, request: Request):
+    node: EntityNode = request.state.node
+
+    try: 
+        users = node.get_users(model.database_id)
+    except:
+        raise HTTPException(
+            status_code=500, detail="get users failed!"
+        )
+    else:
+        return {"users": users}
 
 
