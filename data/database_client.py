@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models_client import*
-
+from typing import Union
 
 class DataBaseClient:
     def __init__(self,name:str = 'client_data'):
@@ -19,7 +19,7 @@ class DataBaseClient:
         except:
             return False
         
-    def add_contacts(self,mynickname_:str,nickname_:str,name_:str = "Unknown"):
+    def add_contacts(self,mynickname_:str,nickname_:str,name_:str = "Unknown")->bool:
         if self.contain_contact(mynickname_,nickname_):
             return False
         try: 
@@ -34,15 +34,19 @@ class DataBaseClient:
         except:
             return False
     
-    def update_contact(self,mynickname:str,nickname:str,name:str):
-        self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.nickname == nickname).update({Contacts.name: name})
-        self.session.commit()
+    def update_contact(self,mynickname:str,nickname:str,name:str)->bool:
+        try:
+            self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.nickname == nickname).update({Contacts.name: name})
+            self.session.commit()
+            return True
+        except:
+            return False
         
-    def contain_contact(self,mynickname:str,nickname:str):
+    def contain_contact(self,mynickname:str,nickname:str)->bool:
         contain = self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.nickname == nickname).first()
         return contain is not None 
                            
-    def delete_contact(self,mynickname:str,nickname:str):
+    def delete_contact(self,mynickname:str,nickname:str)->bool:
         contain = self.session.query(Contacts).filter(Contacts.mynickname == mynickname and Contacts.nickname == nickname).first()
         if contain is not None:
             self.session.delete(contain) 
@@ -50,17 +54,17 @@ class DataBaseClient:
             return True
         return False
 
-    def get_name(self,mynickname:str,nickname:str):
-        name = self.session.query(Contacts.name).filter(Contacts.mynickname==mynickname and Contacts.nickname==nickname).one()
-        return name[0]
+    def get_name(self,mynickname:str,nickname:str)->str:
+        name = self.session.query(Contacts).filter(Contacts.mynickname==mynickname and Contacts.nickname==nickname).one()
+        return name.name
     
-    def get_nickname(self,mynickname:str,name:str):
-        nickname = self.session.query(Contacts.nickname).filter(Contacts.mynickname==mynickname and Contacts.name==name).one()
-        return nickname[0]
+    def get_nickname(self,mynickname:str,name:str)->str:
+        nickname = self.session.query(Contacts).filter(Contacts.mynickname==mynickname and Contacts.name==name).one()
+        return nickname.nickname
     
-    def get_id(self,mynickname:str,name:str):
-        id = self.session.query(Contacts.id_contact).filter(Contacts.mynickname==mynickname and Contacts.name==name).one()
-        return id[0]
+    def get_id(self,mynickname:str,name:str)->int:
+        id = self.session.query(Contacts).filter(Contacts.mynickname==mynickname and Contacts.name==name).one()
+        return id.id_contact
     
         
     # MESSENGER
@@ -71,7 +75,7 @@ class DataBaseClient:
         except:
             return False
         
-    def add_messenges(self,source:str,destiny:str,value_:str,id:int = -1):
+    def add_messenges(self,source:str,destiny:str,value_:str,id:int = -1)->bool:
         # Crear el chat si no existe y luego agregarselo a la tabla 
         self.add_chat(source,destiny)    
         idChat = self.search_chat_id(source,destiny)
@@ -99,7 +103,7 @@ class DataBaseClient:
                    
         # Se podria coger la fecha y hora de la computadora en el momento que se usa el m\'etodo
         
-    def delete_messenges(self,id_messenge:int):
+    def delete_messenges(self,id_messenge:int)->bool:
         messenge = self.session.query(Messenge).get(id_messenge)
         if messenge is not None:
             self.session.delete(messenge) 
@@ -109,31 +113,38 @@ class DataBaseClient:
 
     # Todos los sms que envie, o que envie a user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_from(self,me:str, user:str = None):
+    def search_messenges_from(self,me:str, user:str = '')-> list[tuple[str,str]]:
+        result = []
         try:
-            if user is None:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_from == me).all()
+            if user == ' ':
+                query = self.session.query(Messenge).filter(Messenge.user_id_from == me).all()
             else:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_from == me and Messenge.user_id_to == user).all()
-            
-            return result
+                query = self.session.query(Messenge).filter(Messenge.user_id_from == me and Messenge.user_id_to == user).all()
+            for q in query:
+                    result.append((q.user_id_from,q.value))
+            return result        
         except:
-            return []    
+            return result    
+
 
     # Todos los sms que me enviaron , o los que me envio user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_to(self,me:str,user:str=None):
+    def search_messenges_to(self,me:str,user:str=' ')-> list[tuple[str,str]]:
+        result=[]
         try:
-            if user is None:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_to == me).all()       
+            if user == ' ':
+                query = self.session.query(Messenge).filter(Messenge.user_id_to == me).all()       
             else:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_from == user and Messenge.user_id_to == me).all()
-                return result
+                query = self.session.query(Messenge).filter(Messenge.user_id_from == user and Messenge.user_id_to == me).all()
+            for q in query:
+                    result.append((q.user_id_from,q.value))
+            
+            return result
         except:
             return []   
     
     # CHAT
-    def add_chat(self,user_id_1_:str,user_id_2_:str):
+    def add_chat(self,user_id_1_:str,user_id_2_:str)->bool:
         #if  self.search_chat_id(user_id_1_,user_id_2_) is False:
         try:
             with self.session:
@@ -147,7 +158,7 @@ class DataBaseClient:
         except:
             return False
 
-    def search_chat_id(self,user_id_1:str,user_id_2:str):
+    def search_chat_id(self,user_id_1:str,user_id_2:str)->int:
         try:
             chat = self.session.query(Chat).filter(Chat.user_id_1 == user_id_1 and Chat.user_id_2==user_id_2 ).one()
             return chat.chat_id
@@ -156,9 +167,9 @@ class DataBaseClient:
                 chat = self.session.query(Chat).filter(Chat.user_id_1 == user_id_2 and Chat.user_id_2==user_id_1 ).one()
                 return chat.chat_id
             except:
-                return False
-               
-    def delete_chat(self,user_id_1:str,user_id_2:str):
+                return -1       
+    
+    def delete_chat(self,user_id_1:str,user_id_2:str)->bool:
         chat_id = self.search_chat_id(user_id_1,user_id_2)
         if chat_id is not False:
             # Elimina todos los sms del chat
@@ -171,11 +182,12 @@ class DataBaseClient:
             return True
         return False
 
-    def search_chat(self,user_id_1:str,user_id_2:str):
+    def search_chat(self,user_id_1:str,user_id_2:str)-> list[tuple[str,str]]:
         chat_id = self.search_chat_id(user_id_1,user_id_2)
-        if chat_id is not False:
-            try:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.chat_id==chat_id).all()
-                return result
-            except:
-                return []
+        result = []
+        if chat_id !=-1:
+                query = self.session.query(Messenge).filter(Messenge.chat_id==chat_id).all()
+                if query:
+                    for q in query:
+                        result.append((q.user_id_from,q.value))
+        return result
