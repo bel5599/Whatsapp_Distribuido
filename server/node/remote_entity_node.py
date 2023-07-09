@@ -72,37 +72,39 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def get_ip_port(self, nickname: str, database_id: int = -1) -> str:
         try:
-            response = self._manager.get(f"/user/ip_port/{nickname}", data = {"database_id": database_id})
+            response = self._manager.get(
+                f"/user/ip_port/{nickname}", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json() 
+                result: dict = response.json()
                 return result
             print("ERROR:", response.json()["detail"])
 
     def get_users(self, database_id: int = -1):
         try:
-            response = self._manager.get("/info/users", data={"database_id": database_id})
+            response = self._manager.get(
+                "/info/users", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json() 
+                result: dict = response.json()
                 return result
             print("ERROR:", response.json()["detail"])
 
     def update_user(self, nickname: str, ip: str, port: str, database_id: int = -1):
         try:
-            response = self._manager.put(f"/user/update/{nickname}", data={"ip": ip, "port": port, "database_id": database_id})
+            response = self._manager.put(
+                f"/user/update/{nickname}", data={"ip": ip, "port": port, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: dict = response.json() 
+                result: dict = response.json()
                 return result
             print("ERROR:", response.json()["detail"])
-
 
     # MESSENGES
 
@@ -145,9 +147,9 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             return result
 
         raise Exception(response.json()["detail"])
-    
 
-    #DATABASE
+    # DATABASE
+
     def database_serialize(self, database_id: int = -1):
         response = self._manager.get(
             "/database_serialize", data={"database_id": database_id})
@@ -163,4 +165,3 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         if response.status_code == 200:
             result: dict = response.json()
             return result
-

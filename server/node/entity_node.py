@@ -124,7 +124,7 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     def database_serialize(self, database_id: int = -1):
         database = self._get_database(database_id)
-        
+
         user_serialize = []
         messenge_serialize = []
         # lista de tupla con las propiedades de user
@@ -132,7 +132,8 @@ class EntityNode(ChordNode, BaseEntityNode):
             users = database.get_users()
             if users is not False:
                 for user in users:
-                    user_serialize.append(UsersModel(nickname=user[0],password=user[1],ip=user[2],port=user[3]).serialize())
+                    user_serialize.append(UsersModel(
+                        nickname=user[0], password=user[1], ip=user[2], port=user[3]).serialize())
 
             messenges_ = database.get_messages()
             if messenges_ != False:
@@ -150,7 +151,7 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         my_database = self._get_database(database_id)
         if my_database:
-        # Cada user es de tipo usermodel serializado
+            # Cada user es de tipo usermodel serializado
             for user in users_serialize:
                 my_database.add_user(
                     user['nickname'], user['password'], user['ip'], user['port'])
@@ -214,9 +215,9 @@ class EntityNode(ChordNode, BaseEntityNode):
             return db.get_ip_port(nickname)
         return None
 
-    #Estas funcion lo que hace es que hace un llamado a la otra funcion que es recursiva
-    #la idea es darle la vuelta al anillo de chord buscando el nodo entity que contenga
-    #ese user
+    # Estas funcion lo que hace es que hace un llamado a la otra funcion que es recursiva
+    # la idea es darle la vuelta al anillo de chord buscando el nodo entity que contenga
+    # ese user
     def nickname_entity_node(self, nickname: str, database_id: int):
         # TODO: explicar que hace esta funcion
         if database_id == -1:
@@ -256,14 +257,14 @@ class EntityNode(ChordNode, BaseEntityNode):
         db = self._get_database(database_id)
         if db:
             return db.search_messenges_from(me, user)
-        
+
         return None
 
     def search_messenges_to(self, me: str, user: str, database_id: int):
         db = self._get_database(database_id)
         if db:
             return db.search_messenges_to(me, user)
-        
+
         return None
 
     def delete_messenges(self, id_messenger: int, database_id: int):

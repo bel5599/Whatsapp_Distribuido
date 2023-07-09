@@ -29,6 +29,7 @@ def search_entity_node(nickname: str, request: Request):
     raise HTTPException(
         status_code=500, detail="node search failed!")
 
+
 @router.get("/copy_database")
 def copy_database(model: CopyDataBaseModel, request: Request):
     node: EntityNode = request.state.node
@@ -38,12 +39,13 @@ def copy_database(model: CopyDataBaseModel, request: Request):
     except:
         raise HTTPException(
             status_code=500, detail="copy database failed!")
-    
+
+
 @router.get("users")
 def get_users(model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
-    try: 
+    try:
         users = node.get_users(model.database_id)
     except:
         raise HTTPException(
@@ -51,5 +53,3 @@ def get_users(model: DataBaseModel, request: Request):
         )
     else:
         return {"users": users}
-
-
