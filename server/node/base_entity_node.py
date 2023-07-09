@@ -16,6 +16,7 @@ class BaseEntityNode(BaseNode):
         raise NotImplementedError()
     # endregion
 
+    # region USER
     def get_users(self, database_id: int = -1) -> list[tuple[str, str, str, str]]:
         raise NotImplementedError()
 
@@ -39,7 +40,9 @@ class BaseEntityNode(BaseNode):
 
     def search_entity_node(self, nickname: str) -> Union["BaseEntityNode", None]:
         raise NotImplementedError()
+    # endregion
 
+    # region MESSAGES
     def add_messenges(self, source: str, destiny: str, value: str, database_id: int) -> bool:
         raise NotImplementedError()
 
@@ -51,9 +54,12 @@ class BaseEntityNode(BaseNode):
 
     def search_messenges_to(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
         raise NotImplementedError()
+    # endregion
 
+    # region REPLICATION
     def database_serialize(self, database_id: int) -> dict:
         raise NotImplementedError()
 
     def copy_database(self, source: DataBaseUser, database_id: int) -> None:
         raise NotImplementedError()
+    # endregion
