@@ -55,10 +55,10 @@ class BaseEntityNode(BaseNode):
     def search_messenger_to(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
         raise NotImplementedError()
 
-    def delete_messenges_from(self, me: str, user: str) -> bool:
+    def delete_messenges_from(self, me: str, user: str,database_id: int) -> bool:
         raise NotImplementedError()
 
-    def delete_messenges_to(self, me: str, user: str) -> bool:
+    def delete_messenges_to(self, me: str, user: str,database_id: int) -> bool:
         raise NotImplementedError()
 
     def database_serialize(self, database_id: int) -> dict:
