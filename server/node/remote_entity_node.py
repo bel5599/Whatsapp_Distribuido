@@ -70,6 +70,31 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
             print("ERROR:", response.json()["detail"])
 
+    def get_ip_port(self, nickname: str, database_id: int = -1) -> str:
+        try:
+            response = self._manager.get(f"/ip_port/{nickname}", data = {"database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: dict = response.json() 
+                return result
+            print("ERROR:", response.json()["detail"])
+
+    def get_users(self, database_id: int = -1) -> list[tuple[str, str, str, str]]:
+        try:
+            response = self._manager.get("/get_users", data={"database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: dict = response.json() 
+                return result
+            print("ERROR:", response.json()["detail"])
+
+    
+
+
     # MESSENGES
 
     def add_messenges(self, source: str, destiny: str, value: str, database_id: int = -1):
@@ -111,7 +136,9 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             return result
 
         raise Exception(response.json()["detail"])
+    
 
+    #DATABASE
     def database_serialize(self, database_id: int = -1):
         response = self._manager.get(
             "/database_serialize", data={"database_id": database_id})
@@ -127,3 +154,13 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         if response.status_code == 200:
             result: dict = response.json()
             return result
+    
+    def get_database(self, database_id: int):
+        try:
+            response = self._manager.get("/get_database", data={"database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: dict = response.json()
+                return result    

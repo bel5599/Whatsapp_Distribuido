@@ -214,11 +214,14 @@ class EntityNode(ChordNode, BaseEntityNode):
             return db.get_ip_port(nickname)
         return None
 
+    #Estas funcion lo que hace es que hace un llamado a la otra funcion que es recursiva
+    #la idea es darle la vuelta al anillo de chord buscando el nodo entity que contenga
+    #ese user
     def nickname_entity_node(self, nickname: str, database_id: int):
         # TODO: explicar que hace esta funcion
         if database_id == -1:
-            self.database.contain_user(nickname)
-            return self
+            if self.database.contain_user(nickname):
+                return self
         if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
             return self
 
@@ -230,8 +233,8 @@ class EntityNode(ChordNode, BaseEntityNode):
             return None
 
         if database_id == -1:
-            self.database.contain_user(nickname)
-            return self
+            if self.database.contain_user(nickname):
+                return self
         if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
             return self
         return self.successor.nickname_entity_node_rec(nickname, node, database_id)

@@ -43,3 +43,16 @@ def delete_user(nickname: str, model: DataBaseModel, request: Request):
             status_code=500, detail="delete user failed!")
     else:
         return {"success": result}
+    
+@router.get("/get_ip_port/{nickname}")
+def get_ip_port(nickname: str, model: DataBaseModel, request: Request):
+    node: EntityNode = request.state.node
+
+    try: 
+        ip_port = node.get_ip_port(nickname, model.database_id)
+    except:
+        raise HTTPException(
+            status_code=500, detail="get ip and port failed!"
+        )
+    else:
+        return {"ip_port": ip_port}
