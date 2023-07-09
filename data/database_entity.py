@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model_entity import*
 from typing import Union
+from model_entity import User, Messenge
 
 class DataBaseUser:
     def __init__(self,name:str = 'user_data'):
@@ -13,11 +14,14 @@ class DataBaseUser:
     # USER 
     # Devuelve una lista:user de todos los usuarios de la base datos 
     def get_users(self) -> list[tuple[str,str,str,str]]:
+        result = []
         try:
             users = self.session.query(User).all()
-            return users
+            for user in users:
+                result.append((user.nickname,user.password,user.ip,user.port))
+            return result
         except:
-            return []
+            return result
         
     def add_user(self,nickname_:str,password_:str,ip_:str,port_:str)-> bool:
         try:
@@ -47,8 +51,13 @@ class DataBaseUser:
         return False
 
     def get_password(self,nickname:str)-> str:
-        password = self.session.query(User.password).filter(User.nickname==nickname).one()
-        return password[0]
+        try:
+            password = self.session.query(User).filter(User.nickname==nickname).one()
+            if password: 
+                return password.password
+            return ' '
+        except:
+            return ' '
     
     def update_user(self,nickname:str,ip:str,port:str)-> bool:
         try:
@@ -59,16 +68,19 @@ class DataBaseUser:
             return False
         
     def get_ip_port(self,nickname:str)-> str:
-        password = self.session.query(User.ip,User.port).filter(User.nickname==nickname).one()
-        return password[0]+password[1]
+        user = self.session.query(User).filter(User.nickname==nickname).one()
+        return user.ip+':'+user.port
 
     # MESSENGES
-    def get_messages(self)-> list[tuple]:
+    def get_messages(self)-> list[tuple[int,str,str,str]]:
+        result = []
         try:
-            users = self.session.query(Messenge).all()
-            return users
+            messenge = self.session.query(Messenge).all()
+            for m in messenge:
+                result.append((m.messenge_id,m.user_id_from,m.user_id_to,m.value))
+            return result
         except:
-            return []
+            return result
         
     def add_messenges(self,source:str,destiny:str,value_:str)-> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla 
@@ -97,35 +109,40 @@ class DataBaseUser:
 
     # Todos los sms que envie, o que envie a user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_from(self,me:str, user:str = None)-> list:
+    def search_messenges_from(self,me:str, user:str = '')-> list[tuple[str,str]]:
+        result = []
         try:
-            if user is None:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_from == me).all()
+            if user == ' ':
+                query = self.session.query(Messenge).filter(Messenge.user_id_from == me).all()
             else:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_from == me and Messenge.user_id_to == user).all()
-            
-            return result
+                query = self.session.query(Messenge).filter(Messenge.user_id_from == me and Messenge.user_id_to == user).all()
+            for q in query:
+                    result.append((q.user_id_from,q.value))
+            return result        
         except:
-            return []    
+            return result    
 
     # Todos los sms que me enviaron , o los que me envio user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_to(self,me:str,user:str=None)-> list:
+    def search_messenges_to(self,me:str,user:str=' ')-> list[tuple[str,str]]:
+        result=[]
         try:
-            if user is None:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_to == me).all()       
+            if user == ' ':
+                query = self.session.query(Messenge).filter(Messenge.user_id_to == me).all()       
             else:
-                result = self.session.query(Messenge.user_id_from,Messenge.value).filter(Messenge.user_id_from == user and Messenge.user_id_to == me).all()
-                return result
+                query = self.session.query(Messenge).filter(Messenge.user_id_from == user and Messenge.user_id_to == me).all()
+            for q in query:
+                    result.append((q.user_id_from,q.value))
+            
+            return result
         except:
             return []   
 
     def delete_messenges_to(self,me:str)->bool:
         try:
-                result = self.session.query(Messenge.messenge_id).filter(Messenge.user_id_to == me).all()
+                result = self.session.query(Messenge).filter(Messenge.user_id_to == me).all()
                 for r in result:
-                    self.delete_messenges(r[0])
-                    self.session.delete() 
+                    self.session.delete(r) 
                     self.session.commit()       
                 return True       
         except:
@@ -133,28 +150,27 @@ class DataBaseUser:
 
     def delete_messenges_from(self,me:str)->bool:
         try:
-            result = self.session.query(Messenge.messenge_id).filter(Messenge.user_id_from == me).all()
+            result = self.session.query(Messenge).filter(Messenge.user_id_from == me).all()
             for r in result:
-                self.delete_messenges(r[0])
-                self.session.delete() 
+                self.session.delete(r) 
                 self.session.commit()       
             return False    
         except:
             return False   
 
-    # copia los datos de la base datos source para self
-    def copy_database(self,source):
-        list_new_users =[]
-        # copiar los usuarios de origen para destino que no tiene
-        list_users = source.get_users()
-        for user in list_users:
-            if self.add_user(user.nickname,user.password):
-                list_new_users.append(user.nickname)
+    # # copia los datos de la base datos source para self
+    # def copy_database(self,source):
+    #     list_new_users =[]
+    #     # copiar los usuarios de origen para destino que no tiene
+    #     list_users = source.get_users()
+    #     for user in list_users:
+    #         if self.add_user(user.nickname,user.password):
+    #             list_new_users.append(user.nickname)
             
-        # copiar los mensajes de origen para destino que no tiene
-        list_messenges = source.get_messages()
-        for messenge in list_messenges:
-            if list_new_users.count(messenge.user_id_from) or list_new_users.count(messenge.user_id_to):
-                self.add_messenger(messenge.user_id_from,messenge.user_id_to,messenge.value)
+    #     # copiar los mensajes de origen para destino que no tiene
+    #     list_messenges = source.get_messages()
+    #     for messenge in list_messenges:
+    #         if list_new_users.count(messenge.user_id_from) or list_new_users.count(messenge.user_id_to):
+    #             self.add_messenger(messenge.user_id_from,messenge.user_id_to,messenge.value)
         
-        # copiar los chats de origen para destino que no tiene# copia los datos de la base datos source para self            
+    #     # copiar los chats de origen para destino que no tiene# copia los datos de la base datos source para self            

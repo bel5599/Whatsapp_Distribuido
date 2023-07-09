@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Union, Any
-
+from data.model_entity import User, Messenge
 from data.database_entity import DataBaseUser
 from ..chord.node import Node as ChordNode
 from ..util import generate_id
@@ -132,16 +132,15 @@ class EntityNode(ChordNode, BaseEntityNode):
             users = database.get_users()
             if users is not False:
                 for user in users:
-                    user_serialize.append(UsersModel(
-                        user[0], user[1], user[2], user[3]).serialize())
+                    user_serialize.append(UsersModel(nickname=user[0],password=user[1],ip=user[2],port=user[3]).serialize())
 
-            messenges = database.get_messages()
-            if messenges != False:
-                for messenge in messenges:
+            messenges_ = database.get_messages()
+            if messenges_ != False:
+                for messenge in messenges_:
                     messenge_serialize.append(MessengesModel(
-                        messenge[0], messenge[1], messenge[2], messenge[3]).serialize())
+                        messenge_id=messenge[0], user_id_from=messenge[1], user_id_to=messenge[2], value=messenge[3]).serialize())
 
-        return DataBaseUserModel(user_serialize, messenge_serialize).serialize()
+        return DataBaseUserModel(users=user_serialize, messenges=messenge_serialize).serialize()
         # return user_serialize,messenge_serialize
 
     def copy_database(self, dataBaseUserModel: dict, database_id: int):
