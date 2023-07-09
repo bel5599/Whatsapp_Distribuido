@@ -5,7 +5,7 @@ import requests
 # from fastapi_utils.tasks import repeat_every
 # from sqlalchemy import true
 from .client_node import ClientNode
-from .utils import*
+from .utils import *
 
 client_interface = FastAPI()
 client = ClientNode()
@@ -23,87 +23,90 @@ def register(nickname: str, password: str, server: str):
         node_data = server_node.nickname_entity_node(nickname)
     except:
         return "Wrong server"
-        
+
     if node_data.get('ip') is not None:
         return "You are already registered"
-    else: # Hashear el nickname para obtener un servidor
+    else:  # Hashear el nickname para obtener un servidor
         node_data = server_node.search_entity_node(nickname)
 
     # Guardar la informacion del usuario y replica la informacion
-    dict_successor,dict_successor_successor = replication_user(node_data,nickname,password,client.ip,client.port)
+    dict_successor, dict_successor_successor = replication_user(
+        node_data, nickname, password, client.ip, client.port)
     if dict_successor is False:
         return "Register failed"
-    
+
     # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
-    servers =[]
+    servers = []
     servers.append(server)
     servers.append(node_data['ip']+":"+node_data['port'])
     servers.append(dict_successor.ip+":"+dict_successor.port)
-    servers.append(dict_successor_successor.ip+":"+dict_successor_successor.port)
+    servers.append(dict_successor_successor.ip +
+                   ":"+dict_successor_successor.port)
     # Loguear al usuario
-    client.login_user(nickname,password,servers)
+    client.login_user(nickname, password, servers)
     return
 
+
 @client_interface.post("/Login")
-def login(nickname: str, password: str,server: str):
+def login(nickname: str, password: str, server: str):
     if client.login:
         return 'You Are Login'
-    
+
     # nodo servidor de entrada FALTA VALIDADCION DEL NODO
     ip = server.split(':')[0]
     port = server.split(':')[1]
-    
+
     server_node = RemoteEntityNode(-1, ip, port)
     # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
     try:
         node_data = server_node.nickname_entity_node(nickname)
     except:
         return "Wrong server"
-    
+
     if node_data.get('ip') is None:
         return "You are not registered"
 
     # obtener los nodos que tienen la informacion original y replicada del usuario
-    server_node_data,server_successor,server_successor_successor = get_entity_data(node_data)
+    server_node_data, server_successor, server_successor_successor = get_entity_data(
+        node_data)
     if server_successor is False:
         return "Login failed"
-    
+
     # Verificar contrasenna y retornar una notificacion
     try:
-        # verificar que no se ha caido el servidor 
-        password_server =server_node_data.get_pasword(nickname,True)
-        if password!=password_server :
+        # verificar que no se ha caido el servidor
+        password_server = server_node_data.get_pasword(nickname, True)
+        if password != password_server:
             return "Wrong password"
 
         # Si cambio el ip y el port actualizar estos valores
-        server_node_data.update_user(nickname,client.ip,client.port)
-        
+        server_node_data.update_user(nickname, client.ip, client.port)
+
         # Recivo los sms que tenia en espera
-        task_receive_message(client.user['nickname'],client.database,server_node_data,server_successor,server_successor_successor)
-        
+        task_receive_message(client.user['nickname'], client.database,
+                             server_node_data, server_successor, server_successor_successor)
+
     except:
         return "Login failed"
-             
-    
-    
-    
+
     # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
-    servers =[]
+    servers = []
     servers.append(server)
     servers.append(node_data['ip']+":"+node_data['port'])
     servers.append(server_successor.id+":"+server_successor.port)
-    servers.append(server_successor_successor.ip+":"+server_successor_successor.port)
+    servers.append(server_successor_successor.ip +
+                   ":"+server_successor_successor.port)
     # Loguear al usuario
-    client.login_user(nickname,password,servers)
+    client.login_user(nickname, password, servers)
     return
 
 
-#FALTA
+# FALTA
 @client_interface.post("/Logout")
 def logout():
-  client.logout_user()
-  # Tunvar el ciente FALTA
-  return
+    client.logout_user()
+    # Tunvar el ciente FALTA
+    return
 
 # # Permite ver los mensajes entre "my_nickname" y "nickname".
 # @client_interface.get("/Messages")
@@ -149,97 +152,102 @@ def logout():
 #             messages_format.append(message['user_id_from'] + ": " + message['value'])
 #     return messages_format
 
+
 @client_interface.get("/Messages")
 def messages(nickname: str):  # usuario de la conversacion conmigo
     # chequear que el usuario esté loggeado
     if not client.login:
         return "You are not logged in"
-    
+
     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
     servers = client.server_list()
-    
+
     # server que contiene informacion
-    if len(servers)==0:
+    if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
-    
+
     nickname_other_user = nickname
-    
-    #Lista de tupla de tipo(nickname,name)
+
+    # Lista de tupla de tipo(nickname,name)
     contacts = client.get_contacts()
     for contact in contacts:
         # si nickname es el nombre del contacto, actualizo el nickname del otro usuario
         if contact[1] == nickname:
             nickname_other_user = contact[0]
-    
+
     mynickname = client.user['nickname']
-    messenges = client.search_chat(mynickname,nickname_other_user)
-    
-    #Para ver mejor los mensajes
+    messenges = client.search_chat(mynickname, nickname_other_user)
+
+    # Para ver mejor los mensajes
     messages_format = []
     for message in messenges:
         if message['user_id_from'] == mynickname:
-            messages_format.append( 'me' + ": " + message['value'])
+            messages_format.append('me' + ": " + message['value'])
         else:
-            messages_format.append(nickname_other_user + ": " + message['value'])
+            messages_format.append(
+                nickname_other_user + ": " + message['value'])
     return messages_format
 
-            
+
 # para enviar mensajes a otro usuario
 @client_interface.post("/Send")
 def send(user: str, message: str):
     # se chequea que el usuario esté loggeado
     if not client.login:
         return "You are not logged in"
-        
+
     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
-    #client.update_servers()
+    # client.update_servers()
     servers = client.server_list()
-    
+
     # server que contiene informacion
-    if len(servers)==0:
+    if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
 
     inf_node = servers[0]
     ip = inf_node.split(':')[0]
     port = inf_node.split(':')[1]
-    
+
     try:
         node_data = RemoteEntityNode(-1, ip, port)
     except:
         return 'Broken Connection, you need to exit the login and login again'
-    
+
     # buscar el entity en que está almacenada la información del otro usuario
     dict_other_user = node_data.nickname_entity_node(user)
-    if  dict_other_user.get('ip') is None:
+    if dict_other_user.get('ip') is None:
         return user+"is not register"
-    
+
     my_nickname = client.user['nickname']
-    
+
     try:
-        server_other_user = RemoteEntityNode(-1,dict_other_user['port'],dict_other_user['port'])
+        server_other_user = RemoteEntityNode(
+            -1, dict_other_user['port'], dict_other_user['port'])
         url = server_other_user.get_ip_port(user)
-        requests.post('http://'+url+'/ReceiveMessage', params= {"nickname_from": my_nickname,'value':message })
-         
+        requests.post('http://'+url+'/ReceiveMessage',
+                      params={"nickname_from": my_nickname, 'value': message})
+
     except:
         # buscar el entity en que está almacenada la información del usuario
         dict_node_data = node_data.nickname_entity_node(my_nickname)
-        if  dict_node_data.get('ip') is None:
+        if dict_node_data.get('ip') is None:
             return "Your data has been lost"
 
-        
         # si la informacion de los usuarios no se guarda en la misma base datos, gurdarlo en la de el tambien
-        if dict_other_user['ip']!= dict_node_data['ip'] or dict_other_user['port']!= dict_node_data['port']:
-        # si su servidor está activo y no es mi mismo servidor hago lo mismo.
-            if replication_messenge(dict_other_user,client.user,user,message) is False:
+        if dict_other_user['ip'] != dict_node_data['ip'] or dict_other_user['port'] != dict_node_data['port']:
+            # si su servidor está activo y no es mi mismo servidor hago lo mismo.
+            if replication_messenge(dict_other_user, client.user, user, message) is False:
                 return 'send failed'
         # si mi server está activo le mando el mensaje para ser escrito y replico los datos
-        if replication_messenge(dict_node_data,client.user,user,message) is False:
+        if replication_messenge(dict_node_data, client.user, user, message) is False:
             return 'send failed'
     return
 
+
 @client_interface.post("/ReceiveMessage")
-def receive_message(nickname_from:str,value:str):
-    client.add_messenges(nickname_from,client.user['nickname'],value)
+def receive_message(nickname_from: str, value: str):
+    client.add_messenges(nickname_from, client.user['nickname'], value)
+
 
 @client_interface.get("/GetContacts")
 def get_contacts():
@@ -249,11 +257,13 @@ def get_contacts():
         result[contact[1]] = contact[0]
     return result
 
+
 @client_interface.post("/AddContacts")
-def add_contacts(name:str,nickname:str):
-    client.add_contacts(nickname,name)
+def add_contacts(name: str, nickname: str):
+    client.add_contacts(nickname, name)
+
 
 @client_interface.post("/DeleteContacts")
-def delete_contacts(name:str):
+def delete_contacts(name: str):
     client.delete_contact(name)
     pass
