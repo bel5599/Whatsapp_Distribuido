@@ -190,7 +190,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def copy_database(self, source: DataBaseUserModel, database_id: int):
         try:
             response = self._manager.get(
-            "/copy_database", data={"source": source, "database_id": database_id})
+            "/copy_database", data={"source": source.serialize(), "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
