@@ -137,6 +137,7 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return ""
 
+
     def _nickname_entity_node_rec(self, nickname: str, node, database_id: int):
         if self.id == node.id:
             return None
@@ -180,19 +181,20 @@ class EntityNode(ChordNode, BaseEntityNode):
             return success
         return False
 
-    def delete_messages(self, id_messenger: int, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.delete_messages(id_messenger)
 
-        return False
+    # def delete_messages(self, id_messenger: int, database_id: int):
+    #     db = self._get_database(database_id)
+    #     if db:
+    #         return db.delete_messages(id_messenger)
 
-    def search_messages_from(self, me: str, user: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.search_messages_from(me, user)
+    #     return False
 
-        return []
+    # def search_messages_from(self, me: str, user: str, database_id: int):
+    #     db = self._get_database(database_id)
+    #     if db:
+    #         return db.search_messages_from(me, user)
+
+    #     return []
 
     def search_messages_to(self, me: str, user: str, database_id: int):
         db = self._get_database(database_id)
@@ -201,12 +203,13 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return []
 
-    def get_messages(self, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.get_messages()
 
-        return []
+    # def get_messages(self, database_id: int):
+    #     db = self._get_database(database_id)
+    #     if db:
+    #         return db.get_messages()
+
+    #     return []
 
     def delete_messages_to(self, me: str, database_id: int):
         db = self._get_database(database_id)
@@ -221,18 +224,18 @@ class EntityNode(ChordNode, BaseEntityNode):
         
         return False
 
-    def delete_messages_from(self, me: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            success= db.delete_messages_from(me)
-            if success and database_id == -1:
-                # replicate
-                for successor in self._get_successors():
-                    if successor:
-                        successor.delete_messages_from(me,self.id)
-            return success
+    # def delete_messages_from(self, me: str, database_id: int):
+    #     db = self._get_database(database_id)
+    #     if db:
+    #         success= db.delete_messages_from(me)
+    #         if success and database_id == -1:
+    #             # replicate
+    #             for successor in self._get_successors():
+    #                 if successor:
+    #                     successor.delete_messages_from(me,self.id)
+    #         return success
         
-        return False
+    #     return False
 
     # endregion
 
