@@ -21,6 +21,6 @@ if __name__ == "__main__":
         # Levantar el hilo
         stabilize_task.start()
         # Correr el cliente
-        uvicorn.run(client_interface,host=ip, port=port)
+        uvicorn.run(client_interface,host=ip, port=int(port))
         
     typer_app()
