@@ -54,6 +54,15 @@ class BaseEntityNode(BaseNode):
 
     def search_messenges_to(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
         raise NotImplementedError()
+
+    def get_messages(self, database_id: int) -> list:
+        raise NotImplementedError()
+
+    def delete_messenges_to(self, me: str, database_id: int) -> bool:
+        raise NotImplementedError()
+
+    def delete_messenges_from(self, me: str, database_id: int) -> bool:
+        raise NotImplementedError()
     # endregion
 
     # region REPLICATION
