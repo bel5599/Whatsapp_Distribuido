@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from model_entity import *
 from typing import Union
-from model_entity import User, Messenge
+from .model_entity import*
+#from model_entity import User, Messenge
 
 
 class DataBaseUser:

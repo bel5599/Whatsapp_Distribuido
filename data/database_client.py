@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models_client import *
+from .models_client import *
 from typing import Union
 
 
