@@ -204,9 +204,27 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     # region REPLICATION
 
-    def database_serialize(self, database_id: int = -1):
-        database = self._get_database(database_id)
+    def replicate(self, data: DataBaseUserModel, database_id: int):
+        # lista de usermodel y lista de messengemodel
+        # dataBaseUserModel = model.serialize()
+        users_serialize = data.users
+        messages_serialize = data.messages
 
+        db = self._get_database(database_id)
+        if db:
+            # Cada user es de tipo usermodel serializado
+            for user in users_serialize:
+                db.add_user(
+                    user.nickname, user.password, user.ip, user.port)
+
+            for message in messages_serialize:
+                db.add_messages(
+                    message.user_id_from, message.user_id_to, message.value)
+
+    # endregion
+
+    @staticmethod
+    def _prepare_replication_data(database: DataBaseUser):
         user_serialize = []
         message_serialize = []
         # lista de tupla con las propiedades de user
@@ -224,35 +242,19 @@ class EntityNode(ChordNode, BaseEntityNode):
                         message_id=message[0], user_id_from=message[1], user_id_to=message[2], value=message[3]))
 
         return DataBaseUserModel(users=user_serialize, messages=message_serialize)
-        # return user_serialize,messenge_serialize
 
-    def copy_database(self, model: DataBaseUserModel, database_id: int):
-        # lista de usermodel y lista de messengemodel
-        # dataBaseUserModel = model.serialize()
-        users_serialize = model.users
-        messages_serialize = model.messages
-
-        my_database = self._get_database(database_id)
-        if my_database:
-            # Cada user es de tipo usermodel serializado
-            for user in users_serialize:
-                my_database.add_user(
-                    user.nickname, user.password, user.ip, user.port)
-
-            for message in messages_serialize:
-                my_database.add_messages(
-                    message.user_id_from, message.user_id_to, message.value)
-
-    # endregion
-
-    def _preserve_replicated_data(self):
+    def _preserve_replication_data(self):
         pred_replica = self.replicas[0]
         if not (pred_replica.owner and pred_replica.owner.heart()):
-            successor, second_successor = self._get_successors()
-            # 1- self.añade_a_mi_db(db)
-            # 2- self.successor().replicate(db, self.id)
-            # 3- self.successor().successor().replicate(db, self.id)
-            pass
+            if pred_replica.db:
+                data = self._prepare_replication_data(pred_replica.db)
+                self.replicate(data, -1)
+
+                successor, second_successor = self._get_successors()
+                if successor:
+                    successor.replicate(data, self.id)
+                if second_successor:
+                    second_successor.replicate(data, self.id)
 
     def update_replications(self):
         # como EntityNode mantiene referencias de RemoteNodes que no se actualizan
@@ -261,7 +263,7 @@ class EntityNode(ChordNode, BaseEntityNode):
         # pero antes tenemos que chekear si el nodo en predecessor_replica
         # se ha desconectado, porque habria entonces que guardar su información
         # como propia, y por tanto, replicarla
-        self._preserve_replicated_data()
+        self._preserve_replication_data()
 
         # hasta aqui ya salvamos la info replicada del nodo que se
         # ha desconectado, y la hemos replicado puesto que es propia ahora
