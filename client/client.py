@@ -17,6 +17,9 @@ def register(nickname: str, password: str, server: str):
     ip = server.split(':')[0]
     port = server.split(':')[1]
     server_node = RemoteEntityNode(-1, ip, port)
+    capacity = server_node.network_capacity()
+    server_node.id = generate_id(
+            f"{server_node.ip}:{server_node.port}", capacity)
 
     # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
     try:
@@ -30,18 +33,19 @@ def register(nickname: str, password: str, server: str):
         node_data = server_node.search_entity_node(nickname)
     
     servers = []
-    # Guardar la informacion del usuario y replica la informacion
+    # Guardar la informacion del usuario
     if node_data is not None:
-        dict_successor, dict_successor_successor = replication_user(
-            node_data, nickname, password, client.ip, client.port)
-        if dict_successor is False:
-           return "Register failed"
-
-        # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
+        success = register_user(node_data, nickname, password, client.ip, client.port)
         
+        if success is False:
+           return "Register failed"
+        
+        server_node_data,dict_successor, dict_successor_successor = get_entity_data(node_data)
+        
+        # Agregar el entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta al cliente
         servers.append(server)
         servers.append(node_data.ip+":"+node_data.port)
-        if dict_successor is not None:
+        if dict_successor is not False and dict_successor is not None:
             servers.append(dict_successor.ip+":"+dict_successor.port)
         if dict_successor_successor is not None and dict_successor_successor is not False :
             servers.append(dict_successor_successor.ip +
@@ -59,8 +63,11 @@ def login(nickname: str, password: str, server: str):
     # nodo servidor de entrada FALTA VALIDADCION DEL NODO
     ip = server.split(':')[0]
     port = server.split(':')[1]
-
     server_node = RemoteEntityNode(-1, ip, port)
+    capacity = server_node.network_capacity()
+    server_node.id = generate_id(
+            f"{server_node.ip}:{server_node.port}", capacity)
+
     # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
     try:
         node_data = server_node.nickname_entity_node(nickname,-1)
@@ -77,15 +84,15 @@ def login(nickname: str, password: str, server: str):
     if server_successor is False:
         return "Login failed"
 
-    # Verificar contrasenna y retornar una notificacion
-    try:
         # verificar que no se ha caido el servidor
-        if server_node_data is not False:
+    if server_node_data is not False:
+        try:
+            # Verificar contrasenna y retornar una notificacion
             password_server = server_node_data.get_pasword(nickname,-1)
             if password_server is not None and password != password_server:
                 return "Wrong password"
 
-            # Si cambio el ip y el port actualizar estos valores
+            # Si cambio el ip y el port actualizar estos valores y actualizar en los sucessores
             server_node_data.update_user(nickname, client.ip, client.port,-1)
 
             # Recivo los sms que tenia en espera
@@ -102,14 +109,14 @@ def login(nickname: str, password: str, server: str):
             # Loguear al usuario
             client.login_user(nickname, password, servers)
             return
-    except:
-        return "Login failed"
+        except:
+            return "Login failed"
 
 # FALTA
 @client_interface.post("/Logout")
 def logout():
     client.logout_user()
-    # Tunvar el ciente FALTA
+    # quitar el ciente FALTA
     return
 
 # # Permite ver los mensajes entre "my_nickname" y "nickname".
@@ -243,7 +250,7 @@ def send(user: str, message: str):
         # si la informacion de los usuarios no se guarda en la misma base datos, gurdarlo en la de el tambien
         #if dict_other_user['ip'] != dict_node_data['ip'] or dict_other_user['port'] != dict_node_data['port']:
             # si su servidor está activo y no es mi mismo servidor hago lo mismo.
-            if replication_messenge(dict_other_user, my_nickname, user, message) is False:
+            if add_messenge(dict_other_user, my_nickname, user, message) is False:
                 return 'send failed'
         # si mi server está activo le mando el mensaje para ser escrito y replico los datos
         # if replication_messenge(dict_node_data, client.user, user, message) is False:
