@@ -62,8 +62,8 @@ class DataBaseUserModel(BaseModel):
 
     def serialize(self):
         return {
-            'users': self.users,
-            'messenges': self.messenges
+            'users': [user.serialize() for user in self.users],
+            'messenges': [message.serialize() for message in self.messenges]
         }
 
 
