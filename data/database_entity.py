@@ -87,7 +87,7 @@ class DataBaseUser:
         except:
             return result
 
-    def add_messenges(self, source: str, destiny: str, value_: str) -> bool:
+    def add_messages(self, source: str, destiny: str, value_: str) -> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla
         try:
             with self.session:
@@ -104,7 +104,7 @@ class DataBaseUser:
 
         # Se podria coger la fecha y hora de la computadora en el momento que se usa el m\'etodo
 
-    def delete_messenges(self, id_messenge: int) -> bool:
+    def delete_messages(self, id_messenge: int) -> bool:
         messenger = self.session.query(Messenge).get(id_messenge)
         if messenger is not None:
             self.session.delete(messenger)
@@ -114,7 +114,7 @@ class DataBaseUser:
 
     # Todos los sms que envie, o que envie a user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_from(self, me: str, user: str = '') -> list[tuple[str, str]]:
+    def search_messages_from(self, me: str, user: str = '') -> list[tuple[str, str]]:
         result = []
         try:
             if user == ' ':
@@ -131,7 +131,7 @@ class DataBaseUser:
 
     # Todos los sms que me enviaron , o los que me envio user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_to(self, me: str, user: str = ' ') -> list[tuple[str, str]]:
+    def search_messages_to(self, me: str, user: str = ' ') -> list[tuple[str, str]]:
         result = []
         try:
             if user == ' ':
@@ -147,7 +147,7 @@ class DataBaseUser:
         except:
             return []
 
-    def delete_messenges_to(self, me: str) -> bool:
+    def delete_messages_to(self, me: str) -> bool:
         try:
             result = self.session.query(Messenge).filter(
                 Messenge.user_id_to == me).all()
@@ -158,7 +158,7 @@ class DataBaseUser:
         except:
             return False
 
-    def delete_messenges_from(self, me: str) -> bool:
+    def delete_messages_from(self, me: str) -> bool:
         try:
             result = self.session.query(Messenge).filter(
                 Messenge.user_id_from == me).all()
