@@ -161,7 +161,7 @@ class DataBaseClient:
             return []
 
     # CHAT
-    def get_chat(self,mynickname:str)->list[str]:
+    def get_chats(self,mynickname:str)->list[str]:
         result = []
         chats = self.session.query(Chat).filter(Chat.user_id_1 == mynickname or Chat.user_id_2 == mynickname).all()
         for chat in chats:

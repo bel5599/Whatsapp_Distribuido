@@ -72,8 +72,8 @@ class ClientNode:
         return self.database.search_messenges_to(me, user)
 
     # CHAT
-    def get_chat(self,mynickname:str):
-        return self.database.get_contacts(mynickname)
+    def get_chats(self,mynickname:str):
+        return self.database.get_chat(mynickname)
     
     def add_chat(self, user_id_1_: str, user_id_2_: str):
         return self.database.add_chat(user_id_1_, user_id_2_)
