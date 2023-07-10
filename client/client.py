@@ -258,6 +258,8 @@ def receive_message(nickname_from: str, value: str):
 
 @client_interface.get("/GetContacts")
 def get_contacts():
+    if not client.login:
+        return "You are not logged in"
     result = {}
     contacts = client.get_contacts()
     for contact in contacts:
@@ -267,16 +269,22 @@ def get_contacts():
 
 @client_interface.post("/AddContacts")
 def add_contacts(name: str, nickname: str):
+    if not client.login:
+        return "You are not logged in"
     client.add_contacts(nickname, name)
 
 
 @client_interface.post("/DeleteContacts")
 def delete_contacts(name: str):
+    if not client.login:
+        return "You are not logged in"
     client.delete_contact(name)
     pass
 
 @client_interface.get("/GetChats")
 def get_chats():
+    if not client.login:
+        return "You are not logged in"
     result = []
     contacts_nickname = []
     contacts_name = []
