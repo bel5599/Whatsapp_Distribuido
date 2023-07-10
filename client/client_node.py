@@ -1,6 +1,6 @@
 from service.heartbeat import HeartBeatManager
 from service.requests import RequestManager
-from data.database_client import *
+from data.database_client import DataBaseClient
 
 
 class ClientNode:
