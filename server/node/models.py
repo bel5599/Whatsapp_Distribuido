@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class MessengesModel(BaseModel):
+class MessagesModel(BaseModel):
     source: str
     destiny: str
     value: str
@@ -20,7 +20,7 @@ class DataBaseModel(BaseModel):
     database_id: int
 
 
-class SearchMessengesModel(BaseModel):
+class SearchMessagesModel(BaseModel):
     source: str
     destiny: str
     database_id: int
@@ -41,15 +41,15 @@ class DataUsersModel(BaseModel):
         }
 
 
-class DataMessengesModel(BaseModel):
-    messenge_id: int
+class DataMessagesModel(BaseModel):
+    message_id: int
     user_id_from: str
     user_id_to: str
     value: str
 
     def serialize(self):
         return {
-            'messenge_id': self.messenge_id,
+            'message_id': self.message_id,
             'user_id_from': self.user_id_from,
             'user_id_to': self.user_id_to,
             'value': self.value,
@@ -58,12 +58,12 @@ class DataMessengesModel(BaseModel):
 
 class DataBaseUserModel(BaseModel):
     users: list[DataUsersModel]
-    messenges: list[DataMessengesModel]
+    messages: list[DataMessagesModel]
 
     def serialize(self):
         return {
             'users': [user.serialize() for user in self.users],
-            'messenges': [message.serialize() for message in self.messenges]
+            'messages': [message.serialize() for message in self.messages]
         }
 
 
