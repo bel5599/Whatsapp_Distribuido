@@ -76,9 +76,6 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         return False
 
     def update_user(self, nickname: str, ip: str, port: str, database_id: int):
-        # FIXME: discordancia entre el los datos del request a /user/update
-        # y el handler de esa ruta
-
         try:
             response = self._manager.put("/user/update", data={'nickname':nickname,"ip": ip, "port": port, "database_id": database_id})
         except Exception as e:
