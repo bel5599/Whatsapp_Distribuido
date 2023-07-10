@@ -230,6 +230,27 @@ class EntityNode(ChordNode, BaseEntityNode):
             return db.search_messenges_to(me, user)
 
         return []
+    
+    def get_messages(self, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.get_messages()
+
+        return [] 
+    
+    def delete_messenges_to(self, me: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.delete_messenges_to(me)
+
+        return []
+
+    def delete_messenges_from(self, me: str, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.delete_messenges_from(me)
+
+        return []
 
     # endregion
 

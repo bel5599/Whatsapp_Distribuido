@@ -80,8 +80,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         # y el handler de esa ruta
 
         try:
-            response = self._manager.put(
-                f"/user/update/", data={'nickname':nickname,"ip": ip, "port": port, "database_id": database_id})
+            response = self._manager.put("/user/update", data={'nickname':nickname,"ip": ip, "port": port, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
