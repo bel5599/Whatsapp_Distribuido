@@ -149,35 +149,35 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         return False
 
-    def delete_messages(self, id: int, database_id: int):
-        try:
-            response = self._manager.delete(
-                f"/messages/delete/{id}", data={"database_original": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: bool = response.json()["success"]
-                return result
+    # def delete_messages(self, id: int, database_id: int):
+    #     try:
+    #         response = self._manager.delete(
+    #             f"/messages/delete/{id}", data={"database_original": database_id})
+    #     except Exception as e:
+    #         print("ERROR:", e)
+    #     else:
+    #         if response.status_code == 200:
+    #             result: bool = response.json()["success"]
+    #             return result
 
-            print("ERROR:", response.json()["detail"])
+    #         print("ERROR:", response.json()["detail"])
 
-        return False
+    #     return False
 
-    def search_messages_from(self, me: str, user: str, database_id: int):
-        try:
-            response = self._manager.get("/messages/from",
-                                         data={"me": me, "user": user, "database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: list = response.json()
-                return result
+    # def search_messages_from(self, me: str, user: str, database_id: int):
+    #     try:
+    #         response = self._manager.get("/messages/from",
+    #                                      data={"me": me, "user": user, "database_id": database_id})
+    #     except Exception as e:
+    #         print("ERROR:", e)
+    #     else:
+    #         if response.status_code == 200:
+    #             result: list = response.json()
+    #             return result
 
-            print("ERROR:", response.json()["detail"])
+    #         print("ERROR:", response.json()["detail"])
 
-        return []
+    #     return []
 
     def search_messages_to(self, me: str, user: str, database_id: int):
         try:
@@ -194,20 +194,20 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         return []
 
-    def get_messages(self, database_id: int):
-        try:
-            response = self._manager.get("/messages",
-                                         data={"database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: list = response.json()
-                return result
+    # def get_messages(self, database_id: int):
+    #     try:
+    #         response = self._manager.get("/messages",
+    #                                      data={"database_id": database_id})
+    #     except Exception as e:
+    #         print("ERROR:", e)
+    #     else:
+    #         if response.status_code == 200:
+    #             result: list = response.json()
+    #             return result
 
-            print("ERROR:", response.json()["detail"])
+    #         print("ERROR:", response.json()["detail"])
 
-        return []
+    #     return []
 
     def delete_messages_to(self, me: str, database_id: int):
         try:
@@ -224,20 +224,20 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         return False
 
-    def delete_messages_from(self, me: str, database_id: int):
-        try:
-            response = self._manager.delete(f"/messages/from/{me}",
-                                            data={"database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: bool = response.json()["success"]
-                return result
+    # def delete_messages_from(self, me: str, database_id: int):
+    #     try:
+    #         response = self._manager.delete(f"/messages/from/{me}",
+    #                                         data={"database_id": database_id})
+    #     except Exception as e:
+    #         print("ERROR:", e)
+    #     else:
+    #         if response.status_code == 200:
+    #             result: bool = response.json()["success"]
+    #             return result
 
-            print("ERROR:", response.json()["detail"])
+    #         print("ERROR:", response.json()["detail"])
 
-        return False
+    #     return False
 
     # endregion
 
