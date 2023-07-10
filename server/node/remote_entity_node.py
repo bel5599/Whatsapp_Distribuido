@@ -136,7 +136,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def add_messenges(self, source: str, destiny: str, value: str, database_id: int):
         try:
-            response = self._manager.put("/messenger/add",
+            response = self._manager.put("/messenges/add",
                                          data={"source": source, "destiny": destiny, "value": value, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
@@ -152,7 +152,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def delete_messenges(self, id: int, database_id: int):
         try:
             response = self._manager.delete(
-                f"/messenger/delete/{id}", data={"database_original": database_id})
+                f"/messenges/delete/{id}", data={"database_original": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -166,7 +166,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def search_messenges_from(self, me: str, user: str, database_id: int):
         try:
-            response = self._manager.get("/messenger/from",
+            response = self._manager.get("/messenges/from",
                                          data={"me": me, "user": user, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
@@ -181,7 +181,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def search_messenges_to(self, me: str, user: str, database_id: int):
         try:
-            response = self._manager.get("/messenger/to",
+            response = self._manager.get("/messenges/to",
                                          data={"me": me, "user": user, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
@@ -211,7 +211,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def delete_messenges_to(self, me: str, database_id: int):
         try:
-            response = self._manager.delete("/messenges/to/{me}",
+            response = self._manager.delete(f"/messenges/to/{me}",
                                             data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
@@ -226,7 +226,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def delete_messenges_from(self, me: str, database_id: int):
         try:
-            response = self._manager.delete("/messenges/from/{me}",
+            response = self._manager.delete(f"/messenges/from/{me}",
                                             data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
