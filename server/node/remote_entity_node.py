@@ -192,6 +192,51 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             print("ERROR:", response.json()["detail"])
 
         return []
+    
+    def get_messages(self, database_id: int):
+        try:
+            response = self._manager.get("/messenges",
+                                         data={"database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: list = response.json()
+                return result
+
+            print("ERROR:", response.json()["detail"])
+
+        return []
+    
+    def delete_messenges_to(self, me: str, database_id: int):
+        try:
+            response = self._manager.delete("/messenges",
+                                         data={"me": me, "database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: list = response.json()
+                return result
+
+            print("ERROR:", response.json()["detail"])
+
+        return []
+    
+    def delete_messenges_from(self, me: str, database_id: int):
+        try:
+            response = self._manager.delete("/messenges",
+                                         data={"me": me, "database_id": database_id})
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result: list = response.json()
+                return result
+
+            print("ERROR:", response.json()["detail"])
+
+        return []
 
     # endregion
 
