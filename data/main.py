@@ -7,7 +7,8 @@ from database_entity import DataBaseUser
 #     data1.add_contacts('Daniela','Ale',"el bobo")
 
 if __name__ == '__main__':
-    # data1 = DataBaseClient('data1')
+    data1 = DataBaseClient('client_data')
+    print( data1.get_messages())
     # data1.add_messenges('Fernanda','Ale','Hola')
     # f(data1)
     # #data1 = DataBaseClient('data1')
@@ -20,9 +21,9 @@ if __name__ == '__main__':
 
     # data1.delete_contact('Daniela','Ale')
     # data1.add_contacts('Daniela','Ale',"el bobo")
-    data2 = DataBaseUser('data2')
-    data2.add_user('Ale', '1234', '12344444', '9000')
-    #data2.delete_messenges_to('Ale')
+    # data2 = DataBaseUser('data2')
+    # data2.add_user('Ale', '1234', '12344444', '9000')
+    # #data2.delete_messenges_to('Ale')
     # data2.add_messenges('Fernanda','Ale','Hola')
     # for u in data2.search_messenges_to('Ale'):
     #     print(u[0])
