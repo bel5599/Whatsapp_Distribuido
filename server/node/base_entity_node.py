@@ -2,6 +2,7 @@ from typing import Union
 
 from data.database_entity import DataBaseUser
 from ..chord.base_node import BaseNode
+from .models import DataBaseUserModel
 
 
 class BaseEntityNode(BaseNode):
@@ -66,9 +67,6 @@ class BaseEntityNode(BaseNode):
     # endregion
 
     # region REPLICATION
-    def database_serialize(self, database_id: int) -> dict:
-        raise NotImplementedError()
-
-    def copy_database(self, source: DataBaseUser, database_id: int) -> None:
+    def replicate(self, data: DataBaseUserModel, database_id: int) -> None:
         raise NotImplementedError()
     # endregion
