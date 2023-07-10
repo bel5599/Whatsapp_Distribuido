@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, HTTPException
 
 from ..entity_node import EntityNode, UserModel, DataBaseModel
 
+
 router = APIRouter(prefix="/user", tags=["user"])
 
 

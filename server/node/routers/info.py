@@ -40,8 +40,9 @@ def copy_database(model: CopyDataBaseModel, request: Request):
         raise HTTPException(
             status_code=500, detail="copy database failed!")
 
+
 @router.get("/database_serialize")
-def database_serialize(model: DataBaseModel,request:Request):
+def database_serialize(model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     entity = node.database_serialize(model.database_id)

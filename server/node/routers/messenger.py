@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, HTTPException
 
 from ..entity_node import EntityNode, MessengerModel, SearchMessengerModel, DataBaseModel
 
+
 router = APIRouter(prefix="/messenges", tags=["messenges"])
 
 
@@ -30,7 +31,9 @@ def search_messenges_to(model: SearchMessengerModel, request: Request):
     else:
         return [{"user_id_from": user_id_from, "value": value} for (user_id_from, value) in result]
 
-#ARREGLAR result
+# ARREGLAR result
+
+
 @router.get("/")
 def get_messages(model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
@@ -68,7 +71,8 @@ def delete_messenges(id: int, model: DataBaseModel, request: Request):
             status_code=500, detail="delete messenger failed!")
     else:
         return {"success": result}
-    
+
+
 @router.delete("/delete/{me}")
 def delete_messenges_to(me: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
@@ -80,7 +84,8 @@ def delete_messenges_to(me: str, model: DataBaseModel, request: Request):
             status_code=500, detail="delete messenger failed!")
     else:
         return {"success": result}
-    
+
+
 @router.delete("/delete/{me}")
 def delete_messenges_from(me: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
