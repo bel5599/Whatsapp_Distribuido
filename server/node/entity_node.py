@@ -90,7 +90,16 @@ class EntityNode(ChordNode, BaseEntityNode):
     def add_user(self, nickname: str, password: str, ip: str, port: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.add_user(nickname, password, ip, port)
+            success = db.add_user(nickname, password, ip, port)
+
+            if success and database_id == -1:
+                # replicate
+                for successor in self._get_successors():
+                    if successor:
+                        successor.add_user(
+                            nickname, password, ip, port, self.id)
+
+            return success
 
         return False
 
