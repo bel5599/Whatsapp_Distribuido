@@ -1,4 +1,4 @@
-from typing import Union, Any
+from typing import Union, Any, Literal
 
 from data.database_entity import DataBaseUser
 from .models import DataBaseUserModel, MessengesModel, UsersModel
@@ -33,23 +33,41 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         self.database = DataBaseUser("data")
 
-        # get two predecessors and make sure both are different from self
+        # get two predecessors and create replicas
+        predecessor, second_predecessor = self._get_predecessors()
 
-        predecessor = self.predecessor()
-        if predecessor and predecessor == self:
-            predecessor = None
-
-        second_predecessor = predecessor and predecessor.predecessor()
-        if second_predecessor and second_predecessor == self:
-            second_predecessor = None
-
-        # then, create replicas
         self.replicas = [
             DatabaseReplica(predecessor, predecessor and DataBaseUser(
                 "pred_replication_data")),
             DatabaseReplica(second_predecessor, second_predecessor and DataBaseUser(
                 "secondpred_replication_data"))
         ]
+
+    def _get_two_nodes(self, direction: Union[Literal["before"], Literal["after"]]):
+        # get pred or succ
+        accessor_func = self.__class__.successor if direction == "after" else self.__class__.predecessor
+
+        first = accessor_func(self)
+        if first and first == self:
+            first = None
+
+        if not first:
+            return first, None
+
+        # get pred.pred or succ.succ
+        accessor_func = first.__class__.successor if direction == "after" else first.__class__.predecessor
+
+        second = accessor_func(first)
+        if second and second == self:
+            second = None
+
+        return first, second
+
+    def _get_predecessors(self):
+        return self._get_two_nodes("before")
+
+    def _get_successors(self):
+        return self._get_two_nodes("after")
 
     def _get_database(self, database_id: int = -1):
         if database_id == -1:
@@ -108,18 +126,19 @@ class EntityNode(ChordNode, BaseEntityNode):
         if self.id == node.id:
             return None
 
-        if database_id == -1:
-            if self.database.contain_user(nickname):
-                return self
-        if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
+        if database_id == -1 and self.database.contain_user(nickname):
             return self
+
+        if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
+            return self
+
         return self.successor._nickname_entity_node_rec(nickname, node, database_id)
 
     def nickname_entity_node(self, nickname: str, database_id: int):
-        if database_id == -1:
-            if self.database.contain_user(nickname):
-                return self
-        if self.database.contain_user(nickname) or self.predecessor_replica[1].contain_user(nickname) or self.second_predecessor_replica[1].contain_user(nickname):
+        if database_id == -1 and self.database.contain_user(nickname):
+            return self
+
+        if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
             return self
 
         return self.successor._nickname_entity_node_rec(nickname, self, database_id)
@@ -226,45 +245,55 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     # endregion
 
-    def fix_replications(self):
+    def _preserve_replicated_data(self):
+        pred_replica = self.replicas[0]
+        if not (pred_replica.owner and pred_replica.owner.heart()):
+            successor, second_successor = self._get_successors()
+            # 1- self.añade_a_mi_db(db)
+            # 2- self.successor().replicate(db, self.id)
+            # 3- self.successor().successor().replicate(db, self.id)
+            pass
+
+    def update_replications(self):
         # como EntityNode mantiene referencias de RemoteNodes que no se actualizan
         # con la estabilizacion, tenemos que actualizarlas nosotros
 
         # pero antes tenemos que chekear si el nodo en predecessor_replica
         # se ha desconectado, porque habria entonces que guardar su información
         # como propia, y por tanto, replicarla
-        old_predecessor, db = self.predecessor_replica
-        if not (old_predecessor and old_predecessor.heart()):
-            # 1- self.añade_a_mi_db(db)
-            # 2- self.successor().replicate(db, self.id)
-            # 3- self.successor().successor().replicate(db, self.id)
-            pass
+        self._preserve_replicated_data()
 
         # hasta aqui ya salvamos la info replicada del nodo que se
         # ha desconectado, y la hemos replicado puesto que es propia ahora
 
         # procedemos a actualizar las replicas
-        pred_replica = self.predecessor_replica
-        second_replica = self.second_predecessor_replica
+        old_predecessor, old_second_predecessor = [
+            replica.owner for replica in self.replicas]
+        old_predecessor_db, old_second_predecessor_db = [
+            replica.db for replica in self.replicas]
+        predecessor, second_predecessor = self._get_predecessors()
+        self.replicas[0].owner = predecessor
+        self.replicas[1].owner = second_predecessor
 
-        predecessor = self.predecessor()
-        second_predecessor = predecessor and predecessor.predecessor()
+        # decidir si crear/usar existente/borrar la db correspondiente
 
-        if predecessor and predecessor != pred_replica[0]:
-            # va a reemplazarlo, pero con cual db?
-            if predecessor == second_replica[0]:
-                self.predecessor_replica = (predecessor, second_replica[1])
+        if predecessor != old_predecessor:
+            if not predecessor:
+                # TODO: borrar la db existente
+                self.replicas[0].db = None
+            elif predecessor == old_second_predecessor:
+                self.replicas[0].db = old_second_predecessor_db
             else:
-                self.predecessor_replica = (predecessor, new_DB)
+                # TODO: borrar la db existente
+                self.replicas[0].db = DataBaseUser("pred_replication_data")
 
-        if second_predecessor and second_predecessor != second_replica[0]:
-            # va a reemplazarlo, pero con cual db?
-            if second_predecessor == pred_replica[0]:
-                self.second_predecessor_replica = (
-                    second_predecessor, pred_replica[1])
+        if second_predecessor != old_second_predecessor:
+            if not second_predecessor:
+                # TODO: borrar la db existente
+                self.replicas[1].db = None
+            elif second_predecessor == old_predecessor:
+                self.replicas[1].db = old_predecessor_db
             else:
-                self.second_predecessor_replica = (second_predecessor, new_DB)
-
-        # listo!
-
-        # TODO: implementar lo que falta en el metodo
+                # TODO: borrar la db existente
+                self.replicas[1].db = DataBaseUser(
+                    "secondpred_replication_data")
