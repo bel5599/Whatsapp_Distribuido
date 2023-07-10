@@ -172,14 +172,14 @@ class EntityNode(ChordNode, BaseEntityNode):
         if db:
             return db.delete_messenges_to(me)
 
-        return []
+        return False
 
     def delete_messenges_from(self, me: str, database_id: int):
         db = self._get_database(database_id)
         if db:
             return db.delete_messenges_from(me)
 
-        return []
+        return False
 
     # endregion
 

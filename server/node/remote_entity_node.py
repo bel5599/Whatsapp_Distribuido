@@ -217,12 +217,12 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: list = response.json()
+                result: bool = response.json()["success"]
                 return result
 
             print("ERROR:", response.json()["detail"])
 
-        return []
+        return False
 
     def delete_messenges_from(self, me: str, database_id: int):
         try:
@@ -232,12 +232,12 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: list = response.json()
+                result: bool = response.json()["success"]
                 return result
 
             print("ERROR:", response.json()["detail"])
 
-        return []
+        return False
 
     # endregion
 
