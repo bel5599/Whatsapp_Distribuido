@@ -31,27 +31,16 @@ def search_entity_node(nickname: str, request: Request):
         status_code=500, detail="node search failed!")
 
 
-@router.get("/copy_database")
-def copy_database(model: CopyDataBaseModel, request: Request):
+@router.get("/replicate")
+def replicate(model: CopyDataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
-        node.copy_database(model.source, model.database_id)
+        node.replicate(model.source, model.database_id)
+        return node.serialize()
     except:
         raise HTTPException(
-            status_code=500, detail="copy database failed!")
-
-
-@router.get("/database_serialize")
-def database_serialize(model: DataBaseModel, request: Request):
-    node: EntityNode = request.state.node
-
-    entity = node.database_serialize(model.database_id)
-    if entity:
-        return entity.serialize()
-
-    raise HTTPException(
-        status_code=500, detail="database serialize failed!")
+            status_code=500, detail="replicate database failed!")
 
 
 @router.get("/users")

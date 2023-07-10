@@ -183,31 +183,18 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     # region REPLICATION
 
-    def database_serialize(self, database_id: int):
-        # FIXME: falta el handler de esta ruta
+    def replicate(self, data: DataBaseUserModel, database_id: int):
+        body = {
+            "source": data.serialize(),
+            "database_id": database_id
+        }
+
         try:
-            response = self._manager.get(
-                "/info/database_serialize", data={"database_id": database_id})
+            response = self._manager.put("/info/replicate", data=body)
         except Exception as e:
             print("ERROR:", e)
         else:
-            if response.status_code == 200:
-                result: dict = response.json()
-                return result
-
-            print("ERROR:", response.json()["detail"])
-
-    def copy_database(self, source: DataBaseUserModel, database_id: int):
-        try:
-            response = self._manager.get(
-                "/info/copy_database", data={"source": source, "database_id": database_id})
-        except Exception as e:
-            print("ERROR:", e)
-        else:
-            if response.status_code == 200:
-                result: dict = response.json()
-                return result
-
-            print("ERROR:", response.json()["detail"])
+            if response.status_code != 200:
+                print("ERROR:", response.json()["detail"])
 
     # endregion
