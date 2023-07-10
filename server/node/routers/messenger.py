@@ -73,7 +73,7 @@ def delete_messenges(id: int, model: DataBaseModel, request: Request):
         return {"success": result}
 
 
-@router.delete("/delete/{me}")
+@router.delete("/delete/to/{me}")
 def delete_messenges_to(me: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
@@ -86,7 +86,7 @@ def delete_messenges_to(me: str, model: DataBaseModel, request: Request):
         return {"success": result}
 
 
-@router.delete("/delete/{me}")
+@router.delete("/delete/from/{me}")
 def delete_messenges_from(me: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
