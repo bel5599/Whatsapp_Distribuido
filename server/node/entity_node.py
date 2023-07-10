@@ -180,21 +180,8 @@ class EntityNode(ChordNode, BaseEntityNode):
 
             return success
         return False
-
-
-    # def delete_messages(self, id_messenger: int, database_id: int):
-    #     db = self._get_database(database_id)
-    #     if db:
-    #         return db.delete_messages(id_messenger)
-
-    #     return False
-
-    # def search_messages_from(self, me: str, user: str, database_id: int):
-    #     db = self._get_database(database_id)
-    #     if db:
-    #         return db.search_messages_from(me, user)
-
-    #     return []
+    
+    # endregion
 
     def search_messages_to(self, me: str, user: str, database_id: int):
         db = self._get_database(database_id)
@@ -203,13 +190,6 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return []
 
-
-    # def get_messages(self, database_id: int):
-    #     db = self._get_database(database_id)
-    #     if db:
-    #         return db.get_messages()
-
-    #     return []
 
     def delete_messages_to(self, me: str, database_id: int):
         db = self._get_database(database_id)
@@ -223,21 +203,6 @@ class EntityNode(ChordNode, BaseEntityNode):
             return success
         
         return False
-
-    # def delete_messages_from(self, me: str, database_id: int):
-    #     db = self._get_database(database_id)
-    #     if db:
-    #         success= db.delete_messages_from(me)
-    #         if success and database_id == -1:
-    #             # replicate
-    #             for successor in self._get_successors():
-    #                 if successor:
-    #                     successor.delete_messages_from(me,self.id)
-    #         return success
-        
-    #     return False
-
-    # endregion
 
     # region REPLICATION
 
