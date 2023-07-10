@@ -195,7 +195,7 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
 
 
 # para enviar mensajes a otro usuario
-@client_interface.post("/Send")
+@client_interface.post("/SendMessage")
 def send(user: str, message: str):
     # se chequea que el usuario esté loggeado
     if not client.login:
@@ -274,3 +274,25 @@ def add_contacts(name: str, nickname: str):
 def delete_contacts(name: str):
     client.delete_contact(name)
     pass
+
+@client_interface.get("/GetChats")
+def get_chats():
+    result = []
+    contacts_nickname = []
+    contacts_name = []
+    mynickname = client.user['nickname']
+    
+    contacts = client.get_contacts()
+    for contact in contacts:
+       contacts_nickname.append(contact[0])
+       contacts_name.append(contact[1])
+       
+    chats = client.get_chats(mynickname)
+    for chat in chats:
+        try:
+            i = contacts_nickname.index(chat)
+            result.append(contacts_name[i])
+        except:
+            result.append(chat)
+    
+    return result
