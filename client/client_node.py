@@ -73,7 +73,7 @@ class ClientNode:
 
     # CHAT
     def get_chats(self,mynickname:str):
-        return self.database.get_chat(mynickname)
+        return self.database.get_chats(mynickname)
     
     def add_chat(self, user_id_1_: str, user_id_2_: str):
         return self.database.add_chat(user_id_1_, user_id_2_)
