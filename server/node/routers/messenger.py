@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..entity_node import EntityNode, MessengerModel, SearchMessengerModel, DataBaseModel
+from ..entity_node import EntityNode
+from ..models import MessengerModel, SearchMessengerModel, DataBaseModel
 
 
 router = APIRouter(prefix="/messenges", tags=["messenges"])

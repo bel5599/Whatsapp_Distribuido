@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
-from ..entity_node import EntityNode, DataBaseModel, CopyDataBaseModel
+from ..entity_node import EntityNode
+from ..models import DataBaseModel, CopyDataBaseModel
 
 
 router = APIRouter(prefix="/info", tags=["info"])

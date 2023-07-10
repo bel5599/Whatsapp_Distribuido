@@ -3,7 +3,7 @@ from typing import Any
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
-from .entity_node import DataBaseUserModel
+from .models import DataBaseUserModel
 
 
 class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
