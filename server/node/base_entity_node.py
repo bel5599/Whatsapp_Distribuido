@@ -46,23 +46,24 @@ class BaseEntityNode(BaseNode):
     def add_messages(self, source: str, destiny: str, value: str, database_id: int) -> bool:
         raise NotImplementedError()
 
-    def delete_messages(self, id_messenger: int, database_id: int) -> bool:
-        raise NotImplementedError()
-
-    def search_messages_from(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
-        raise NotImplementedError()
-
     def search_messages_to(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
-        raise NotImplementedError()
-
-    def get_messages(self, database_id: int) -> list:
         raise NotImplementedError()
 
     def delete_messages_to(self, me: str, database_id: int) -> bool:
         raise NotImplementedError()
 
-    def delete_messages_from(self, me: str, database_id: int) -> bool:
-        raise NotImplementedError()
+
+    # def delete_messages(self, id_messenger: int, database_id: int) -> bool:
+    #     raise NotImplementedError()
+
+    # def search_messages_from(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
+    #     raise NotImplementedError()
+
+    # def get_messages(self, database_id: int) -> list:
+    #     raise NotImplementedError()
+    
+    # def delete_messages_from(self, me: str, database_id: int) -> bool:
+    #     raise NotImplementedError()
     # endregion
 
     # region REPLICATION
