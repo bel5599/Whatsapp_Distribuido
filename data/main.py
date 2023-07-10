@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # data1.add_contacts('Daniela','Ale',"el bobo")
     data2 = DataBaseUser('data2')
     data2.add_user('Ale', '1234', '12344444', '9000')
-    data2.delete_messenges_to('Ale')
+    #data2.delete_messenges_to('Ale')
     # data2.add_messenges('Fernanda','Ale','Hola')
     # for u in data2.search_messenges_to('Ale'):
     #     print(u[0])
