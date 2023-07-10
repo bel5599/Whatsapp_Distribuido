@@ -52,7 +52,6 @@ class BaseEntityNode(BaseNode):
     def delete_messages_to(self, me: str, database_id: int) -> bool:
         raise NotImplementedError()
 
-
     # def delete_messages(self, id_messenger: int, database_id: int) -> bool:
     #     raise NotImplementedError()
 
@@ -61,7 +60,7 @@ class BaseEntityNode(BaseNode):
 
     # def get_messages(self, database_id: int) -> list:
     #     raise NotImplementedError()
-    
+
     # def delete_messages_from(self, me: str, database_id: int) -> bool:
     #     raise NotImplementedError()
     # endregion

@@ -137,7 +137,6 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return ""
 
-
     def _nickname_entity_node_rec(self, nickname: str, node, database_id: int):
         if self.id == node.id:
             return None
@@ -180,8 +179,6 @@ class EntityNode(ChordNode, BaseEntityNode):
 
             return success
         return False
-    
-    # endregion
 
     def search_messages_to(self, me: str, user: str, database_id: int):
         db = self._get_database(database_id)
@@ -190,19 +187,20 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return []
 
-
     def delete_messages_to(self, me: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            success= db.delete_messages_to(me)
+            success = db.delete_messages_to(me)
             if success and database_id == -1:
                 # replicate
                 for successor in self._get_successors():
                     if successor:
-                        successor.delete_messages_to(me,self.id)
+                        successor.delete_messages_to(me, self.id)
             return success
-        
+
         return False
+
+    # endregion
 
     # region REPLICATION
 

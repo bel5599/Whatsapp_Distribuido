@@ -149,7 +149,6 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         return False
 
-
     def search_messages_to(self, me: str, user: str, database_id: int):
         try:
             response = self._manager.get("/messages/to",

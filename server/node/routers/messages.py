@@ -20,7 +20,6 @@ def search_messages_to(model: SearchMessengesModel, request: Request):
         return [{"user_id_from": user_id_from, "value": value} for (user_id_from, value) in result]
 
 
-
 @router.put("/add")
 def add_messages(model: MessengesModel, request: Request):
     node: EntityNode = request.state.node
@@ -35,7 +34,6 @@ def add_messages(model: MessengesModel, request: Request):
         return {"success": result}
 
 
-
 @router.delete("/delete/to/{me}")
 def delete_messages_to(me: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
@@ -47,4 +45,3 @@ def delete_messages_to(me: str, model: DataBaseModel, request: Request):
             status_code=500, detail="delete messages failed!")
     else:
         return {"success": result}
-
