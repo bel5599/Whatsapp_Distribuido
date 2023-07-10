@@ -120,8 +120,14 @@ class EntityNode(ChordNode, BaseEntityNode):
     def update_user(self, nickname: str, ip: str, port: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.update_user(nickname, ip, port)
-
+            success = db.update_user(nickname, ip, port)
+            if success and database_id == -1:
+                # replicate
+                for successor in self._get_successors():
+                    if successor:
+                        successor.update_user(
+                            nickname, ip, port, self.id)
+            return success
         return False
 
     def get_ip_port(self, nickname: str, database_id: int):
@@ -160,31 +166,38 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     # region MESSAGES
 
-    def add_messenges(self, source: str, destiny: str, value: str, database_id: int):
+    def add_messages(self, source: str, destiny: str, value: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.add_messenges(source, destiny, value)
+            success = db.add_messages(source, destiny, value)
+            if success and database_id == -1:
+                # replicate
+                for successor in self._get_successors():
+                    if successor:
+                        successor.add_messages(
+                            source, destiny, value, self.id)
+
+            return success
+        return False
+
+    def delete_messages(self, id_messenger: int, database_id: int):
+        db = self._get_database(database_id)
+        if db:
+            return db.delete_messages(id_messenger)
 
         return False
 
-    def delete_messenges(self, id_messenger: int, database_id: int):
+    def search_messages_from(self, me: str, user: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.delete_messenges(id_messenger)
-
-        return False
-
-    def search_messenges_from(self, me: str, user: str, database_id: int):
-        db = self._get_database(database_id)
-        if db:
-            return db.search_messenges_from(me, user)
+            return db.search_messages_from(me, user)
 
         return []
 
-    def search_messenges_to(self, me: str, user: str, database_id: int):
+    def search_messages_to(self, me: str, user: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.search_messenges_to(me, user)
+            return db.search_messages_to(me, user)
 
         return []
 
@@ -195,18 +208,30 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return []
 
-    def delete_messenges_to(self, me: str, database_id: int):
+    def delete_messages_to(self, me: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.delete_messenges_to(me)
-
+            success= db.delete_messages_to(me)
+            if success and database_id == -1:
+                # replicate
+                for successor in self._get_successors():
+                    if successor:
+                        successor.delete_messages_to(me,self.id)
+            return success
+        
         return False
 
-    def delete_messenges_from(self, me: str, database_id: int):
+    def delete_messages_from(self, me: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.delete_messenges_from(me)
-
+            success= db.delete_messages_from(me)
+            if success and database_id == -1:
+                # replicate
+                for successor in self._get_successors():
+                    if successor:
+                        successor.delete_messages_from(me,self.id)
+            return success
+        
         return False
 
     # endregion
@@ -249,7 +274,7 @@ class EntityNode(ChordNode, BaseEntityNode):
                     user.nickname, user.password, user.ip, user.port)
 
             for messenge in messenges_serialize:
-                my_database.add_messenges(
+                my_database.add_messages(
                     messenge.user_id_from, messenge.user_id_to, messenge.value)
 
     # endregion
