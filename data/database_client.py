@@ -161,6 +161,17 @@ class DataBaseClient:
             return []
 
     # CHAT
+    def get_chat(self,mynickname:str)->list[str]:
+        result = []
+        chats = self.session.query(Chat).filter(Chat.user_id_1 == mynickname or Chat.user_id_2 == mynickname).all()
+        for chat in chats:
+            if chat.user_id_1 != mynickname:
+                user = chat.user_id_1
+            else:
+                user = chat.user_id_2     
+            result.append(user)
+        return result
+    
     def add_chat(self, user_id_1_: str, user_id_2_: str) -> bool:
         # if  self.search_chat_id(user_id_1_,user_id_2_) is False:
         try:
