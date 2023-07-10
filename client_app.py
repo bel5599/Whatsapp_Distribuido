@@ -12,7 +12,7 @@ if __name__ == "__main__":
     @typer_app.command()
     def run(ip:str,port:str ='9000'):
         client.ip = ip
-        client.port = port
+        client.port = '8765'
         # Creacion de un hilo para este servicio
         def update():
             time.sleep(1)
@@ -22,5 +22,5 @@ if __name__ == "__main__":
         stabilize_task.start()
         # Correr el cliente
         uvicorn.run(client_interface,host=ip, port=int(port))
-        
+
     typer_app()
