@@ -1,7 +1,7 @@
 from typing import Union, Any, Literal
 
 from data.database_entity import DataBaseUser
-from .models import DataBaseUserModel, DataMessengesModel, DataUsersModel
+from .models import DataBaseUserModel, DataMessagesModel, DataUsersModel
 from ..chord.node import Node as ChordNode
 from ..util import generate_id
 from .base_entity_node import BaseEntityNode
@@ -208,7 +208,7 @@ class EntityNode(ChordNode, BaseEntityNode):
         database = self._get_database(database_id)
 
         user_serialize = []
-        messenge_serialize = []
+        message_serialize = []
         # lista de tupla con las propiedades de user
         if database:
             users = database.get_users()
@@ -217,20 +217,20 @@ class EntityNode(ChordNode, BaseEntityNode):
                     user_serialize.append(DataUsersModel(
                         nickname=user[0], password=user[1], ip=user[2], port=user[3]))
 
-            messenges_ = database.get_messages()
-            if messenges_ != False:
-                for messenge in messenges_:
-                    messenge_serialize.append(DataMessengesModel(
-                        messenge_id=messenge[0], user_id_from=messenge[1], user_id_to=messenge[2], value=messenge[3]))
+            messages_ = database.get_messages()
+            if messages_ != False:
+                for message in messages_:
+                    message_serialize.append(DataMessagesModel(
+                        message_id=message[0], user_id_from=message[1], user_id_to=message[2], value=message[3]))
 
-        return DataBaseUserModel(users=user_serialize, messenges=messenge_serialize)
+        return DataBaseUserModel(users=user_serialize, messages=message_serialize)
         # return user_serialize,messenge_serialize
 
     def copy_database(self, model: DataBaseUserModel, database_id: int):
         # lista de usermodel y lista de messengemodel
         # dataBaseUserModel = model.serialize()
         users_serialize = model.users
-        messenges_serialize = model.messenges
+        messages_serialize = model.messages
 
         my_database = self._get_database(database_id)
         if my_database:
@@ -239,9 +239,9 @@ class EntityNode(ChordNode, BaseEntityNode):
                 my_database.add_user(
                     user.nickname, user.password, user.ip, user.port)
 
-            for messenge in messenges_serialize:
+            for message in messages_serialize:
                 my_database.add_messages(
-                    messenge.user_id_from, messenge.user_id_to, messenge.value)
+                    message.user_id_from, message.user_id_to, message.value)
 
     # endregion
 
