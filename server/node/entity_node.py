@@ -1,7 +1,7 @@
 from typing import Union, Any, Literal
 
 from data.database_entity import DataBaseUser
-from .models import DataBaseUserModel, MessengesModel, UsersModel
+from .models import DataBaseUserModel, DataMessengesModel, DataUsersModel
 from ..chord.node import Node as ChordNode
 from ..util import generate_id
 from .base_entity_node import BaseEntityNode
@@ -251,13 +251,13 @@ class EntityNode(ChordNode, BaseEntityNode):
             users = database.get_users()
             if users is not False:
                 for user in users:
-                    user_serialize.append(UsersModel(
+                    user_serialize.append(DataUsersModel(
                         nickname=user[0], password=user[1], ip=user[2], port=user[3]))
 
             messenges_ = database.get_messages()
             if messenges_ != False:
                 for messenge in messenges_:
-                    messenge_serialize.append(MessengesModel(
+                    messenge_serialize.append(DataMessengesModel(
                         messenge_id=messenge[0], user_id_from=messenge[1], user_id_to=messenge[2], value=messenge[3]))
 
         return DataBaseUserModel(users=user_serialize, messenges=messenge_serialize)

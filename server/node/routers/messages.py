@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
 from ..entity_node import EntityNode
-from ..models import MessengerModel, SearchMessengerModel, DataBaseModel
+from ..models import MessengesModel, SearchMessengesModel, DataBaseModel
 
 
 router = APIRouter(prefix="/messages", tags=["messages"])
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/messages", tags=["messages"])
 
 
 @router.get("/to")
-def search_messages_to(model: SearchMessengerModel, request: Request):
+def search_messages_to(model: SearchMessengesModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
@@ -48,7 +48,7 @@ def search_messages_to(model: SearchMessengerModel, request: Request):
 
 
 @router.put("/add")
-def add_messages(model: MessengerModel, request: Request):
+def add_messages(model: MessengesModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
