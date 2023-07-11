@@ -165,23 +165,21 @@ class DataBaseUser:
             for r in result:
                 self.session.delete(r)
                 self.session.commit()
-            return False
+            return True
         except:
             return False
 
-    # # copia los datos de la base datos source para self
-    # def copy_database(self,source):
-    #     list_new_users =[]
-    #     # copiar los usuarios de origen para destino que no tiene
-    #     list_users = source.get_users()
-    #     for user in list_users:
-    #         if self.add_user(user.nickname,user.password):
-    #             list_new_users.append(user.nickname)
-
-    #     # copiar los mensajes de origen para destino que no tiene
-    #     list_messenges = source.get_messages()
-    #     for messenge in list_messenges:
-    #         if list_new_users.count(messenge.user_id_from) or list_new_users.count(messenge.user_id_to):
-    #             self.add_messenger(messenge.user_id_from,messenge.user_id_to,messenge.value)
-
-    #     # copiar los chats de origen para destino que no tiene# copia los datos de la base datos source para self
+    def clear(self)->bool:
+        try:
+            messages = self.session.query(Message).all()
+            users = self.session.query(User).all()
+            for m in messages:
+                self.session.delete(m)
+                self.session.commit()
+            for u in users:
+                self.session.delete(u)
+                self.session.commit()
+            return True
+        except:
+            return False    
+        
