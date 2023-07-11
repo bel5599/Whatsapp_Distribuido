@@ -7,8 +7,7 @@ import requests
 from .client_node import ClientNode
 from .utils import *
 
-#service = FastAPI(docs_url=None)
-service = FastAPI()
+service = FastAPI(docs_url=None)
 client_interface = FastAPI()
 client = ClientNode()
 
@@ -179,18 +178,21 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
     if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
 
-    nickname_other_user = nickname
-
-    # Lista de tupla de tipo(nickname,name)
-    contacts = client.get_contacts()
-    for contact in contacts:
-        # si nickname es el nombre del contacto, actualizo el nickname del otro usuario
-        if contact[1] == nickname:
-            nickname_other_user = contact[0]
+    nickname_other_user = client.get_nickname(nickname)
+    #Si no encontro ningun contacto con ese nombre
+    if nickname_other_user is None:
+        nickname_other_user = nickname
+     
+    # # Lista de tupla de tipo(nickname,name)
+    # contacts = client.get_contacts()
+    # for contact in contacts:
+    #     # si nickname es el nombre del contacto, actualizo el nickname del otro usuario
+    #     if contact[1] == nickname:
+    #         nickname_other_user = contact[0]
 
     mynickname = client.user['nickname']
     #Obtengo los sms de mi basedatos
-    messenges = client.search_chat(mynickname, nickname_other_user)
+    messenges = client.search_chat(nickname_other_user)
 
     # Para ver mejor los mensajes
     messages_format = []
@@ -217,11 +219,13 @@ def send(user: str, message: str):
     # server que contiene informacion
     if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
-    nickname_user =user
-    contacts = get_contacts()
-    if contacts != "You are not logged in":
-        if user in contacts and contacts.get(user) is not None:
-            nickname_user = str(contacts.get(user))
+    nickname_user =client.get_nickname(user)
+    if nickname_user is None:
+        nickname_user = user
+    # contacts = get_contacts()
+    # if contacts != "You are not logged in":
+    #     if user in contacts and contacts.get(user) is not None:
+    #         nickname_user = str(contacts.get(user))
     
     inf_node = servers[0]
     ip = inf_node.split(':')[0]
@@ -303,23 +307,25 @@ def get_chats():
     result = []
     contacts_nickname = []
     contacts_name = []
-    mynickname = client.user['nickname']
+    #mynickname = client.user['nickname']
     
-    contacts = client.get_contacts()
-    for contact in contacts:
-       contacts_nickname.append(contact[0])
-       contacts_name.append(contact[1])
+    # contacts = client.get_contacts()
+    # for contact in contacts:
+    #    contacts_nickname.append(contact[0])
+    #    contacts_name.append(contact[1])
        
-    chats = client.get_chats(mynickname)
+    chats = client.get_chats()
     for chat in chats:
-        try:
-            i = contacts_nickname.index(chat)
-            result.append(contacts_name[i])
-        except:
-            result.append(chat)
+        name = client.get_name(chat)
+        if name  is not None:
+            result.append(name)
+        else:
+            result.append(chat)    
+        # try:
+        #     i = contacts_nickname.index(chat)
+        #     result.append(contacts_name[i])
+        # except:
+        #     result.append(chat)
     
     return result
 
-@client_interface.get("/Prueba")
-def prueba():
-    return client.get_messages()
