@@ -163,13 +163,12 @@ class DataBaseClient:
     # CHAT
     def get_chats(self,mynickname:str)->list[str]:
         result = []
-        chats = self.session.query(Chat).filter(Chat.user_id_1 == mynickname or Chat.user_id_2 == mynickname).all()
-        for chat in chats:
-            if chat.user_id_1 != mynickname:
-                user = chat.user_id_1
-            else:
-                user = chat.user_id_2     
-            result.append(user)
+        chats1 = self.session.query(Chat).filter(Chat.user_id_1 == mynickname).all()
+        chats2 = self.session.query(Chat).filter(Chat.user_id_2 == mynickname).all()
+        for chat in chats1:
+            result.append(chat.user_id_2)
+        for chat in chats2:
+            result.append(chat.user_id_1)    
         return result
     
     def add_chat(self, user_id_1_: str, user_id_2_: str) -> bool:
@@ -186,6 +185,7 @@ class DataBaseClient:
             except:
                 return False
         return False
+    
     def search_chat_id(self, user_id_1: str, user_id_2: str) -> int:
         try:
             chat = self.session.query(Chat).filter(
