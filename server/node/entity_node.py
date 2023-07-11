@@ -137,26 +137,31 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         return ""
 
-    def _nickname_entity_node_rec(self, nickname: str, node, database_id: int):
-        if self.id == node.id:
+    # def _nickname_entity_node_rec(self, nickname: str, node, database_id: int):
+    #     if self.id == node.id:
+    #         return None
+
+    #     if database_id == -1 and self.database.contain_user(nickname):
+    #         return self
+
+    #     if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
+    #         return self
+    #     succesor = self.successor()
+    #     if succesor != None:
+    #         return succesor._nickname_entity_node_rec(nickname, node, database_id)
+
+    def nickname_entity_node(self, nickname: str, search_id: int, database_id: int):
+        if search_id == -1:
+            if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
+                return self
+        elif search_id == self.id:
             return None
-
-        if database_id == -1 and self.database.contain_user(nickname):
-            return self
-
-        if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
-            return self
-
-        return self.successor._nickname_entity_node_rec(nickname, node, database_id)
-
-    def nickname_entity_node(self, nickname: str, database_id: int):
-        if database_id == -1 and self.database.contain_user(nickname):
-            return self
-
-        if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
-            return self
-
-        return self.successor._nickname_entity_node_rec(nickname, self, database_id)
+        
+        node = self.find_successor(search_id)
+        if  node:
+            successor = node.successor()
+            if successor:
+                return successor.nickname_entity_node(nickname, successor.id, database_id)
 
     def search_entity_node(self, nickname: str):
         id = generate_id(nickname, self.network_capacity())

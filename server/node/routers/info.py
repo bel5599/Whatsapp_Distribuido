@@ -1,22 +1,23 @@
 from fastapi import APIRouter, Request, HTTPException
 
 from ..entity_node import EntityNode
-from ..models import DataBaseModel, CopyDataBaseModel
+from ..models import DataBaseModel, CopyDataBaseModel, NicknameEntityBaseModel
 
 
 router = APIRouter(prefix="/info", tags=["info"])
 
 
 @router.get("/entity/{nickname}")
-def nickname_entity_node(nickname: str, model: DataBaseModel, request: Request):
+def nickname_entity_node(nickname: str, model: NicknameEntityBaseModel, request: Request):
     node: EntityNode = request.state.node
 
-    entity = node.nickname_entity_node(nickname, model.database_id)
+    entity = node.nickname_entity_node(nickname, model.search_id, model.database_id)
     if entity:
         return entity.serialize()
 
     raise HTTPException(
         status_code=500, detail="node search failed!")
+
 
 
 @router.get("/search_entity/{nickname}")

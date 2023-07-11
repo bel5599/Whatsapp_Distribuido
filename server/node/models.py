@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from base_entity_node import BaseEntityNode
 
 
 class MessagesModel(BaseModel):
@@ -23,6 +24,10 @@ class DataBaseModel(BaseModel):
 class SearchMessagesModel(BaseModel):
     source: str
     destiny: str
+    database_id: int
+
+class NicknameEntityBaseModel(BaseModel):
+    search_id: int
     database_id: int
 
 

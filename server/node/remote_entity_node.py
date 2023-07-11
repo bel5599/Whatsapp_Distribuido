@@ -3,7 +3,7 @@ from typing import Any
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
-from .models import DataBaseUserModel
+from .models import DataBaseUserModel, NicknameEntityBaseModel
 
 
 class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
@@ -105,10 +105,10 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         return ""
 
-    def nickname_entity_node(self, nickname: str, database_id: int):
+    def nickname_entity_node(self, nickname: str, search_id: int, database_id: int):
         try:
             response = self._manager.get(
-                f"/info/entity/{nickname}", data={"database_id": database_id})
+                f"/info/entity/{nickname}", data={"search_id": search_id, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
