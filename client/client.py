@@ -8,7 +8,6 @@ from .client_node import ClientNode
 from .utils import *
 
 service = FastAPI(docs_url=None)
-#service = FastAPI()
 client_interface = FastAPI()
 client = ClientNode()
 
