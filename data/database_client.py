@@ -86,11 +86,11 @@ class DataBaseClient:
         except:
             return None
         
-    # MESSENGER
+    # MESSAGES
     def get_messages(self) -> list[tuple[int, str, str, str]]:
         result = []
         try:
-            message = self.session.query(Messenge).all()
+            message = self.session.query(Message).all()
             for m in message:
                 result.append((m.messager_id,m.user_id_from,m.user_id_to,m.value))
             return result

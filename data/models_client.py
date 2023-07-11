@@ -22,10 +22,10 @@ class Contacts(Base):
         return f"User(nickname={self.nickname!r},mynickname={self.mynickname!r},name_contact={self.name!r})"
 
 
-class Messenge(Base):
+class Message(Base):
     __tablename__ = "messenges"
 
-    messenger_id: Mapped[int] = Column(Integer, primary_key=True)
+    message_id: Mapped[int] = Column(Integer, primary_key=True)
     user_id_from: Mapped[str] = Column(String(30))
     user_id_to:   Mapped[str] = Column(String(30))
     chat_id:      Mapped[int] = Column(ForeignKey("chat.chat_id"))
