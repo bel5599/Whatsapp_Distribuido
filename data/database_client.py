@@ -7,7 +7,7 @@ from typing import Union
 
 class DataBaseClient:
     def __init__(self, name: str = 'client_data'):
-        engine = create_engine('sqlite:///'+name+'.sqlite')
+        engine = create_engine('sqlite:///'+name+'.sqlite',connect_args={"check_same_thread": False})
         Session = sessionmaker(bind=engine)
         self.session = Session()
         Base.metadata.create_all(engine)
