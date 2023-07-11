@@ -8,7 +8,7 @@ from client.client_node import ClientNode
 
 if __name__ == '__main__':
     
-    database = DataBaseClient("base de datos")
+    #database = DataBaseClient("base de datos")
 
 
     cliente = ClientNode()
@@ -24,9 +24,9 @@ if __name__ == '__main__':
     cliente.add_messenges("nick", "ferdi", "loco")
     cliente.add_messenges("alonso", "albert", "bonito")
 
-    for cont in cliente.get_contacts():
-        print(cont)
-    # print(cliente.get_contacts())
+    # for cont in cliente.get_contacts():
+    #     print(cont)
+    # # print(cliente.get_contacts())
 
     # for cont in cliente.get_messages():
     #     print(cont)
