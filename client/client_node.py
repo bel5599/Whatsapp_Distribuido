@@ -84,5 +84,5 @@ class ClientNode:
     def delete_chat(self, user_id_1: str, user_id_2: str):
         return self.database.delete_chat(user_id_1, user_id_2)
 
-    def search_chat(self, user_id_1: str, user_id_2: str):
-        return self.database.search_chat(user_id_1, user_id_2)
+    def search_chat(self, user_id_2: str):
+        return self.database.search_chat(self.user['nickname'], user_id_2)
