@@ -90,34 +90,34 @@ class DataBaseClient:
     def get_messages(self) -> list[tuple[int, str, str, str]]:
         result = []
         try:
-            messenge = self.session.query(Messenge).all()
-            for m in messenge:
-                result.append((m.messenger_id,m.user_id_from,m.user_id_to,m.value))
+            message = self.session.query(Messenge).all()
+            for m in message:
+                result.append((m.messager_id,m.user_id_from,m.user_id_to,m.value))
             return result
         except:
             return result
 
-    def add_messenges(self, source: str, destiny: str, value_: str, id: int = -1) -> bool:
+    def add_messages(self, source: str, destiny: str, value_: str, id: int = -1) -> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla
         self.add_chat(source, destiny)
         idChat = self.search_chat_id(source, destiny)
         try:
             with self.session:
                 if id != -1:
-                    messenger = Messenge(
-                        messenger_id=id,
+                    messages = Message(
+                        messager_id=id,
                         user_id_from=source,
                         user_id_to=destiny,
                         chat_id=idChat,
                         value=value_,)
                 else:
-                    messenger = Messenge(
+                    messages = Message(
                         user_id_from=source,
                         user_id_to=destiny,
                         chat_id=idChat,
                         value=value_,)
 
-                self.session.add_all([messenger])
+                self.session.add_all([messages])
                 self.session.commit()
                 return True
         except:
@@ -125,25 +125,25 @@ class DataBaseClient:
 
         # Se podria coger la fecha y hora de la computadora en el momento que se usa el m\'etodo
 
-    def delete_messenges(self, id_messenge: int) -> bool:
-        messenge = self.session.query(Messenge).get(id_messenge)
-        if messenge is not None:
-            self.session.delete(messenge)
+    def delete_messages(self, id_message: int) -> bool:
+        message = self.session.query(Message).get(id_message)
+        if message is not None:
+            self.session.delete(message)
             self.session.commit()
             return True
         return False
 
     # Todos los sms que envie, o que envie a user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_from(self, me: str, user: str = '') -> list[tuple[str, str]]:
+    def search_messages_from(self, me: str, user: str = '') -> list[tuple[str, str]]:
         result = []
         try:
             if user == ' ':
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == me).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_from == me).all()
             else:
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == me , Messenge.user_id_to == user).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_from == me , Message.user_id_to == user).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
             return result
@@ -152,15 +152,15 @@ class DataBaseClient:
 
     # Todos los sms que me enviaron , o los que me envio user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messenges_to(self, me: str, user: str = ' ') -> list[tuple[str, str]]:
+    def search_messages_to(self, me: str, user: str = ' ') -> list[tuple[str, str]]:
         result = []
         try:
             if user == ' ':
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_to == me).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_to == me).all()
             else:
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == user , Messenge.user_id_to == me).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_from == user , Message.user_id_to == me).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
 
@@ -211,7 +211,7 @@ class DataBaseClient:
         chat_id = self.search_chat_id(user_id_1, user_id_2)
         if chat_id is not False:
             # Elimina todos los sms del chat
-            for id in self.session.query(Messenge).filter(Messenge.chat_id == chat_id).all():
+            for id in self.session.query(Message).filter(Message.chat_id == chat_id).all():
                 self.session.delete(id)
 
             contain = self.session.query(Chat).get(chat_id)
@@ -224,8 +224,8 @@ class DataBaseClient:
         chat_id = self.search_chat_id(user_id_1, user_id_2)
         result = []
         if chat_id != -1:
-            query = self.session.query(Messenge).filter(
-                Messenge.chat_id == chat_id).all()
+            query = self.session.query(Message).filter(
+                Message.chat_id == chat_id).all()
             if query:
                 for q in query:
                     result.append((q.user_id_from, q.value))
