@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .models_client import *
+from models_client import *
 from typing import Union
 
 
@@ -83,8 +83,7 @@ class DataBaseClient:
         try:
             messenge = self.session.query(Messenge).all()
             for m in messenge:
-                result.append(
-                    (m.messenge_id, m.user_id_from, m.user_id_to, m.value))
+                result.append((m.messenger_id,m.user_id_from,m.user_id_to,m.value))
             return result
         except:
             return result
