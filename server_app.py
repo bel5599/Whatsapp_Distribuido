@@ -15,6 +15,7 @@ if __name__ == "__main__":
 
     from server.util import generate_id
     from server.chord.routers import router as chord_router, debug_router
+    from server.node.routers import router as entity_router
 
     from shared import get_ip, LOCAL_IP
 
@@ -29,6 +30,7 @@ if __name__ == "__main__":
 
     fastapi_app = FastAPI()
     fastapi_app.include_router(chord_router)
+    fastapi_app.include_router(entity_router)
 
     @typer_app.command()
     def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 5):
