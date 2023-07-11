@@ -173,28 +173,28 @@ class DataBaseClient:
         return result
     
     def add_chat(self, user_id_1_: str, user_id_2_: str) -> bool:
-        # if  self.search_chat_id(user_id_1_,user_id_2_) is False:
-        try:
-            with self.session:
-                chat = Chat(
-                    user_id_1=user_id_1_,
-                    user_id_2=user_id_2_,
-                )
-                self.session.add_all([chat])
-                self.session.commit()
-                return True
-        except:
-            return False
-
+        if  self.search_chat_id(user_id_1_,user_id_2_) ==-1:
+            try:
+                with self.session:
+                    chat = Chat(
+                        user_id_1=user_id_1_,
+                        user_id_2=user_id_2_,
+                    )
+                    self.session.add_all([chat])
+                    self.session.commit()
+                    return True
+            except:
+                return False
+        return False
     def search_chat_id(self, user_id_1: str, user_id_2: str) -> int:
         try:
             chat = self.session.query(Chat).filter(
-                Chat.user_id_1 == user_id_1 and Chat.user_id_2 == user_id_2).one()
+                Chat.user_id_1 == user_id_1, Chat.user_id_2 == user_id_2).one()
             return chat.chat_id
         except:
             try:
                 chat = self.session.query(Chat).filter(
-                    Chat.user_id_1 == user_id_2 and Chat.user_id_2 == user_id_1).one()
+                    Chat.user_id_1 == user_id_2 , Chat.user_id_2 == user_id_1).one()
                 return chat.chat_id
             except:
                 return -1
