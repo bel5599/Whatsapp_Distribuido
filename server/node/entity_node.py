@@ -156,9 +156,9 @@ class EntityNode(ChordNode, BaseEntityNode):
                 return self
         elif search_id == self.id:
             return None
-        
+
         node = self.find_successor(search_id)
-        if  node:
+        if node:
             successor = node.successor()
             if successor:
                 return successor.nickname_entity_node(nickname, successor.id, database_id)

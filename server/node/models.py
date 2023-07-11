@@ -26,6 +26,7 @@ class SearchMessagesModel(BaseModel):
     destiny: str
     database_id: int
 
+
 class NicknameEntityBaseModel(BaseModel):
     search_id: int
     database_id: int

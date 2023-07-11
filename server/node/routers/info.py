@@ -11,13 +11,13 @@ router = APIRouter(prefix="/info", tags=["info"])
 def nickname_entity_node(nickname: str, model: NicknameEntityBaseModel, request: Request):
     node: EntityNode = request.state.node
 
-    entity = node.nickname_entity_node(nickname, model.search_id, model.database_id)
+    entity = node.nickname_entity_node(
+        nickname, model.search_id, model.database_id)
     if entity:
         return entity.serialize()
 
     raise HTTPException(
         status_code=500, detail="node search failed!")
-
 
 
 @router.get("/search_entity/{nickname}")
@@ -55,4 +55,4 @@ def get_users(model: DataBaseModel, request: Request):
             status_code=500, detail="get users failed!"
         )
     else:
-        return [{"nickname": nickname, "pasword": pasword, "ip":ip, "port":port} for (nickname, pasword, ip, port) in users]
+        return [{"nickname": nickname, "pasword": pasword, "ip": ip, "port": port} for (nickname, pasword, ip, port) in users]
