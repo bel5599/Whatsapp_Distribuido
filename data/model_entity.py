@@ -24,14 +24,14 @@ class User(Base):
         return f"User(nickname={self.nickname!r},password={self.password!r},ip={self.ip!r},port={self.port!r})"
 
 
-class Messenge(Base):
+class Message(Base):
     __tablename__ = "messenges"
 
-    messenge_id: Mapped[int] = Column(Integer, primary_key=True)
+    message_id: Mapped[int] = Column(Integer, primary_key=True)
     user_id_from: Mapped[int] = Column(ForeignKey("user_account.nickname"))
     user_id_to:   Mapped[int] = Column(ForeignKey("user_account.nickname"))
     value:        Mapped[str] = Column(String)
     # date:         Mapped[datetime] = Column(DATETIME)
 
     def __repr__(self) -> str:
-        return f"Messenge(id={self.messenge_id!r}, user_id_from={self.user_id_from!r}, user_id_to={self.user_id_to!r},value={self.value!r})"
+        return f"Message(id={self.messenge_id!r}, user_id_from={self.user_id_from!r}, user_id_to={self.user_id_to!r},value={self.value!r})"
