@@ -18,7 +18,7 @@ class DataBaseClient:
         result = []
         try:
             contacts = self.session.query(Contacts).filter(
-                Contacts.mynickname == mynickname and Contacts.name != "Unknown").all()
+                Contacts.mynickname == mynickname , Contacts.name != "Unknown").all()
             for c in contacts:
                 result.append((c.nickname, c.name))
             return result
@@ -44,7 +44,7 @@ class DataBaseClient:
     def update_contact(self, mynickname: str, nickname: str, name: str) -> bool:
         try:
             self.session.query(Contacts).filter(
-                Contacts.mynickname == mynickname and Contacts.nickname == nickname).update({Contacts.name: name})
+                Contacts.mynickname == mynickname , Contacts.nickname == nickname).update({Contacts.name: name})
             self.session.commit()
             return True
         except:
@@ -56,7 +56,7 @@ class DataBaseClient:
 
     def delete_contact(self, mynickname: str, nickname: str) -> bool:
         contain = self.session.query(Contacts).filter(
-            Contacts.mynickname == mynickname and Contacts.nickname == nickname).first()
+            Contacts.mynickname == mynickname , Contacts.nickname == nickname).first()
         if contain is not None:
             self.session.delete(contain)
             self.session.commit()
@@ -65,17 +65,17 @@ class DataBaseClient:
 
     def get_name(self, mynickname: str, nickname: str) -> str:
         name = self.session.query(Contacts).filter(
-            Contacts.mynickname == mynickname and Contacts.nickname == nickname).one()
+            Contacts.mynickname == mynickname , Contacts.nickname == nickname).one()
         return name.name
 
     def get_nickname(self, mynickname: str, name: str) -> str:
         nickname = self.session.query(Contacts).filter(
-            Contacts.mynickname == mynickname and Contacts.name == name).one()
+            Contacts.mynickname == mynickname , Contacts.name == name).one()
         return nickname.nickname
 
     def get_id(self, mynickname: str, name: str) -> int:
         id = self.session.query(Contacts).filter(
-            Contacts.mynickname == mynickname and Contacts.name == name).one()
+            Contacts.mynickname == mynickname , Contacts.name == name).one()
         return id.id_contact
 
     # MESSENGER
@@ -135,7 +135,7 @@ class DataBaseClient:
                     Messenge.user_id_from == me).all()
             else:
                 query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == me and Messenge.user_id_to == user).all()
+                    Messenge.user_id_from == me , Messenge.user_id_to == user).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
             return result
@@ -152,7 +152,7 @@ class DataBaseClient:
                     Messenge.user_id_to == me).all()
             else:
                 query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == user and Messenge.user_id_to == me).all()
+                    Messenge.user_id_from == user , Messenge.user_id_to == me).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
 
