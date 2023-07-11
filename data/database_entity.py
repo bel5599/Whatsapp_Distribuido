@@ -79,8 +79,8 @@ class DataBaseUser:
     def get_messages(self) -> list[tuple[int, str, str, str]]:
         result = []
         try:
-            messenge = self.session.query(Messenge).all()
-            for m in messenge:
+            message = self.session.query(Message).all()
+            for m in message:
                 result.append(
                     (m.messenge_id, m.user_id_from, m.user_id_to, m.value))
             return result
@@ -91,12 +91,12 @@ class DataBaseUser:
         # Crear el chat si no existe y luego agregarselo a la tabla
         try:
             with self.session:
-                messenger = Messenge(
+                message = Message(
                     user_id_from=source,
                     user_id_to=destiny,
                     value=value_,
                 )
-                self.session.add_all([messenger])
+                self.session.add_all([message])
                 self.session.commit()
                 return True
         except:
@@ -104,10 +104,10 @@ class DataBaseUser:
 
         # Se podria coger la fecha y hora de la computadora en el momento que se usa el m\'etodo
 
-    def delete_messages(self, id_messenge: int) -> bool:
-        messenger = self.session.query(Messenge).get(id_messenge)
-        if messenger is not None:
-            self.session.delete(messenger)
+    def delete_messages(self, id_message: int) -> bool:
+        message = self.session.query(Message).get(id_message)
+        if message is not None:
+            self.session.delete(message)
             self.session.commit()
             return True
         return False
@@ -118,11 +118,11 @@ class DataBaseUser:
         result = []
         try:
             if user == ' ':
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == me).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_from == me).all()
             else:
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == me , Messenge.user_id_to == user).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_from == me , Message.user_id_to == user).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
             return result
@@ -135,11 +135,11 @@ class DataBaseUser:
         result = []
         try:
             if user == ' ':
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_to == me).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_to == me).all()
             else:
-                query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == user , Messenge.user_id_to == me).all()
+                query = self.session.query(Message).filter(
+                    Message.user_id_from == user , Message.user_id_to == me).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
 
@@ -149,8 +149,8 @@ class DataBaseUser:
 
     def delete_messages_to(self, me: str) -> bool:
         try:
-            result = self.session.query(Messenge).filter(
-                Messenge.user_id_to == me).all()
+            result = self.session.query(Message).filter(
+                Message.user_id_to == me).all()
             for r in result:
                 self.session.delete(r)
                 self.session.commit()
@@ -160,8 +160,8 @@ class DataBaseUser:
 
     def delete_messages_from(self, me: str) -> bool:
         try:
-            result = self.session.query(Messenge).filter(
-                Messenge.user_id_from == me).all()
+            result = self.session.query(Message).filter(
+                Message.user_id_from == me).all()
             for r in result:
                 self.session.delete(r)
                 self.session.commit()
