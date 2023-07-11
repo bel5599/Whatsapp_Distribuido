@@ -15,10 +15,35 @@ if __name__ == '__main__':
 
     cliente.login_user('bel', '1234', [])
 
-    cliente.add_contacts("nick", "nick2")
-    cliente.add_contacts("albert", "albert2")
-    cliente.add_contacts("ferdi", "ferdi2")
-    cliente.add_contacts("alonso", "alonso2")
+    #Contacts
+    # cliente.add_contacts("nick", "nick2")
+    # cliente.add_contacts("albert", "albert2")
+    # cliente.add_contacts("ferdi", "ferdi2")
+    # cliente.add_contacts("alonso", "alonso2")
+
+    # cliente.add_contacts("piruli", "piruli2")
+    # cliente.update_contact("piruli", "paleta")
+    # print(cliente.update_contact("new", "new2"))
+
+    # print(cliente.contain_contact("new"))
+    # print(cliente.contain_contact("piruli"))
+
+    # print(cliente.delete_contact("new"))
+    # print(cliente.delete_contact("nick"))
+
+    # print(cliente.get_name("new"))
+    # print(cliente.get_name("piruli"))
+
+    # print(cliente.get_id("new"))
+    # print(cliente.get_id())
+
+    #Messages
+    print(cliente.delete_messenges(48))
+    print(cliente.search_messenges_to("nick", 'bel'))
+    print(cliente.search_messenges_to("tw", "nick"))
+
+
+
 
     # cliente.add_messenges("nick", "alonso", "feo")
     # cliente.add_messenges("nick", "ferdi", "loco")
@@ -38,10 +63,10 @@ if __name__ == '__main__':
     # for c in chats:
     #     print(c)
         
-    # for cont in cliente.get_contacts():
-    #     print(cont)
-    # # print(cliente.get_contacts())
+    for cont in cliente.get_contacts():
+        print(cont)
+    # print(cliente.get_contacts())
 
-    # for cont in cliente.get_messages():
-    #     print(cont)
-    # # print(cliente.get_messages())
+    for cont in cliente.get_messages():
+        print(cont)
+    # print(cliente.get_messages())

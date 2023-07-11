@@ -27,7 +27,6 @@ class DataBaseClient:
 
     def add_contacts(self, mynickname_: str, nickname_: str, name_: str = "Unknown") -> bool:
         if self.contain_contact(mynickname_, nickname_):
-            print("Estoy aqui")
             return False
         try:
             with self.session:
