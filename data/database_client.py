@@ -51,8 +51,7 @@ class DataBaseClient:
             return False
 
     def contain_contact(self, mynickname: str, nickname: str) -> bool:
-        contain = self.session.query(Contacts).filter(
-            Contacts.mynickname == mynickname and Contacts.nickname == nickname).first()
+        contain = self.session.query(Contacts).filter(Contacts.mynickname == mynickname, Contacts.nickname == nickname).first()
         return contain is not None
 
     def delete_contact(self, mynickname: str, nickname: str) -> bool:
