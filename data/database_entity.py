@@ -122,7 +122,7 @@ class DataBaseUser:
                     Messenge.user_id_from == me).all()
             else:
                 query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == me and Messenge.user_id_to == user).all()
+                    Messenge.user_id_from == me , Messenge.user_id_to == user).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
             return result
@@ -139,7 +139,7 @@ class DataBaseUser:
                     Messenge.user_id_to == me).all()
             else:
                 query = self.session.query(Messenge).filter(
-                    Messenge.user_id_from == user and Messenge.user_id_to == me).all()
+                    Messenge.user_id_from == user , Messenge.user_id_to == me).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
 
