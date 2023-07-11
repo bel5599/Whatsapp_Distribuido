@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from base_entity_node import BaseEntityNode
 
 
 class MessagesModel(BaseModel):
