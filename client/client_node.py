@@ -59,7 +59,7 @@ class ClientNode:
     def get_messages(self):
         return self.database.get_messages()
 
-    def add_messenges(self, source: str, destiny: str, value: str, id: int):
+    def add_messenges(self, source: str, destiny: str, value: str, id: int = -1):
         return self.database.add_messenges(source, destiny, value, id)
 
     def delete_messenges(self, id_messenge: int):
