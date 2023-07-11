@@ -7,8 +7,12 @@ if __name__ == "__main__":
     from uvicorn import Config, Server
 
     # using this imports until node submodule is implemented
-    from server.chord.node import Node
-    from server.chord.remote_node import RemoteNode
+
+    # from server.chord.node import Node
+    # from server.chord.remote_node import RemoteNode
+    from server.node.entity_node import EntityNode as Node
+    from server.node.remote_entity_node import RemoteEntityNode as RemoteNode
+
     from server.util import generate_id
     from server.chord.routers import router as chord_router, debug_router
 
