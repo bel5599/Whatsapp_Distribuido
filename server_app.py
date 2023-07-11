@@ -45,7 +45,7 @@ if __name__ == "__main__":
         inject_node(fastapi_app, node)
 
         healthy_task = threading.Thread(
-            target=node.keep_healthy, args=(interval,), daemon=True)
+            target=node.keep_healthy, args=(interval, node.update_replications), daemon=True)
 
         config = Config(fastapi_app, host=ip, port=int(port))
         server = Server(config)
