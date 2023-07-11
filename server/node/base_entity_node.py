@@ -36,7 +36,7 @@ class BaseEntityNode(BaseNode):
     def get_ip_port(self, nickname: str, database_id: int) -> str:
         raise NotImplementedError()
 
-    def nickname_entity_node(self, nickname: str, search_id: int, database_id: int) -> Union["BaseEntityNode", None]:
+    def nickname_entity_node(self, nickname: str, search_id: int = -1) -> Union["BaseEntityNode", None]:
         raise NotImplementedError()
 
     def search_entity_node(self, nickname: str) -> Union["BaseEntityNode", None]:

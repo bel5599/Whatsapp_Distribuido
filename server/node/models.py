@@ -28,7 +28,6 @@ class SearchMessagesModel(BaseModel):
 
 class NicknameEntityBaseModel(BaseModel):
     search_id: int
-    database_id: int
 
 
 class DataUsersModel(BaseModel):

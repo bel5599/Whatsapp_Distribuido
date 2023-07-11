@@ -11,8 +11,7 @@ router = APIRouter(prefix="/info", tags=["info"])
 def nickname_entity_node(nickname: str, model: NicknameEntityBaseModel, request: Request):
     node: EntityNode = request.state.node
 
-    entity = node.nickname_entity_node(
-        nickname, model.search_id, model.database_id)
+    entity = node.nickname_entity_node(nickname, model.search_id)
     if entity:
         return entity.serialize()
 

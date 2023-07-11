@@ -150,18 +150,22 @@ class EntityNode(ChordNode, BaseEntityNode):
     #     if succesor != None:
     #         return succesor._nickname_entity_node_rec(nickname, node, database_id)
 
-    def nickname_entity_node(self, nickname: str, search_id: int, database_id: int):
-        if search_id == -1:
-            if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
-                return self
-        elif search_id == self.id:
+    def nickname_entity_node(self, nickname: str, search_id: int = -1):
+        # dio la vuelta y llego al nodo q empezo la busqueda
+        if search_id == self.id:
             return None
 
-        node = self.find_successor(search_id)
-        if node:
-            successor = node.successor()
-            if successor:
-                return successor.nickname_entity_node(nickname, successor.id, database_id)
+        # if search_id == -1 => self empieza la busqueda
+        # de lo contrario ya esta en la busqueda
+        search_id = self.id if search_id == -1 else search_id
+
+        # buscar en el nodo actual
+        if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
+            return self
+
+        # no lo encontramos aqui, buscar en el successor
+        successor = self.successor()
+        return successor and successor.nickname_entity_node(nickname, search_id)
 
     def search_entity_node(self, nickname: str):
         id = generate_id(nickname, self.network_capacity())
