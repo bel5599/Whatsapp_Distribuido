@@ -23,7 +23,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: list = response.json()["users"]
+                result: list = response.json()
                 return result
 
             print("ERROR:", response.json()["detail"])
