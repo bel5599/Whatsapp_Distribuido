@@ -21,7 +21,7 @@ def add_user(model: UserModel, request: Request):
         return {"success": result}
 
 
-@router.get("/pasword/{nickname}")
+@router.post("/pasword/{nickname}")
 def get_pasword(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
@@ -47,7 +47,7 @@ def delete_user(nickname: str, model: DataBaseModel, request: Request):
         return {"success": result}
 
 
-@router.get("/ip_port/{nickname}")
+@router.post("/ip_port/{nickname}")
 def get_ip_port(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 

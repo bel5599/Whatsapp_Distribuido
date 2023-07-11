@@ -7,7 +7,7 @@ from ..models import MessagesModel, SearchMessagesModel, DataBaseModel
 router = APIRouter(prefix="/messages", tags=["messages"])
 
 
-@router.get("/to")
+@router.post("/to")
 def search_messages_to(model: SearchMessagesModel, request: Request):
     node: EntityNode = request.state.node
 

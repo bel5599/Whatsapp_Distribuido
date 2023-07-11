@@ -7,7 +7,7 @@ from ..models import DataBaseModel, CopyDataBaseModel, NicknameEntityBaseModel
 router = APIRouter(prefix="/info", tags=["info"])
 
 
-@router.get("/entity/{nickname}")
+@router.post("/entity/{nickname}")
 def nickname_entity_node(nickname: str, model: NicknameEntityBaseModel, request: Request):
     node: EntityNode = request.state.node
 
@@ -31,7 +31,7 @@ def search_entity_node(nickname: str, request: Request):
         status_code=500, detail="node search failed!")
 
 
-@router.get("/replicate")
+@router.post("/replicate")
 def replicate(model: CopyDataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
@@ -43,7 +43,7 @@ def replicate(model: CopyDataBaseModel, request: Request):
             status_code=500, detail="replicate database failed!")
 
 
-@router.get("/users")
+@router.post("/users")
 def get_users(model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 

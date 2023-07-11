@@ -17,7 +17,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def get_users(self, database_id: int = -1):
         try:
-            response = self._manager.get(
+            response = self._manager.post(
                 "/info/users", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
@@ -47,7 +47,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def get_pasword(self, nickname: str, database_id: int):
         try:
-            response = self._manager.get(
+            response = self._manager.post(
                 f"/user/pasword/{nickname}", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
@@ -92,7 +92,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def get_ip_port(self, nickname: str, database_id: int):
         try:
-            response = self._manager.get(
+            response = self._manager.post(
                 f"/user/ip_port/{nickname}", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
@@ -107,7 +107,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def nickname_entity_node(self, nickname: str, search_id: int = -1):
         try:
-            response = self._manager.get(
+            response = self._manager.post(
                 f"/info/entity/{nickname}", data={"search_id": search_id})
         except Exception as e:
             print("ERROR:", e)
@@ -151,7 +151,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def search_messages_to(self, me: str, user: str, database_id: int):
         try:
-            response = self._manager.get("/messages/to",
+            response = self._manager.post("/messages/to",
                                          data={"me": me, "user": user, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
