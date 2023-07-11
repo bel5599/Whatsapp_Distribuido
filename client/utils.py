@@ -125,4 +125,4 @@ def task_receive_message(nickname: str, data: DataBaseClient, server_node_data:R
     server_node_data.delete_messages_to(nickname,-1)
     
     for messenge in messenges:
-        data.add_messenges(messenge[0], nickname, messenge[1])
+        data.add_messages(messenge[0], nickname, messenge[1])
