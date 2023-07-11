@@ -8,7 +8,7 @@ from .base_entity_node import BaseEntityNode
 
 
 class DatabaseReplica:
-    def __init__(self, owner: Union[BaseEntityNode, None], db: Union[DataBaseUser, None]):
+    def __init__(self, owner: Union[BaseEntityNode, None], db: DataBaseUser):
         self.owner = owner
         self.db = db
 
@@ -37,9 +37,9 @@ class EntityNode(ChordNode, BaseEntityNode):
         predecessor, second_predecessor = self._get_predecessors()
 
         self.replicas = [
-            DatabaseReplica(predecessor, predecessor and DataBaseUser(
+            DatabaseReplica(predecessor, DataBaseUser(
                 "pred_replication_data")),
-            DatabaseReplica(second_predecessor, second_predecessor and DataBaseUser(
+            DatabaseReplica(second_predecessor, DataBaseUser(
                 "secondpred_replication_data"))
         ]
 
@@ -246,15 +246,14 @@ class EntityNode(ChordNode, BaseEntityNode):
     def _preserve_replication_data(self):
         pred_replica = self.replicas[0]
         if not (pred_replica.owner and pred_replica.owner.heart()):
-            if pred_replica.db:
-                data = self._prepare_replication_data(pred_replica.db)
-                self.replicate(data, -1)
+            data = self._prepare_replication_data(pred_replica.db)
 
-                successor, second_successor = self._get_successors()
-                if successor:
-                    successor.replicate(data, self.id)
-                if second_successor:
-                    second_successor.replicate(data, self.id)
+            self.replicate(data, -1)
+            successor, second_successor = self._get_successors()
+            if successor:
+                successor.replicate(data, self.id)
+            if second_successor:
+                second_successor.replicate(data, self.id)
 
     def update_replications(self):
         # como EntityNode mantiene referencias de RemoteNodes que no se actualizan
@@ -267,35 +266,32 @@ class EntityNode(ChordNode, BaseEntityNode):
 
         # hasta aqui ya salvamos la info replicada del nodo que se
         # ha desconectado, y la hemos replicado puesto que es propia ahora
+        old_owners = [replica.owner for replica in self.replicas]
+        new_owners = [owner for owner in self._get_predecessors()]
 
-        # procedemos a actualizar las replicas
-        old_predecessor, old_second_predecessor = [
-            replica.owner for replica in self.replicas]
-        old_predecessor_db, old_second_predecessor_db = [
-            replica.db for replica in self.replicas]
-        predecessor, second_predecessor = self._get_predecessors()
-        self.replicas[0].owner = predecessor
-        self.replicas[1].owner = second_predecessor
+        new_replica_data_list: list[Union[DataBaseUserModel, None]] = []
 
-        # decidir si crear/usar existente/borrar la db correspondiente
+        for k, (new_owner, old_owner) in enumerate(zip(new_owners, old_owners)):
+            if new_owner != old_owner:
+                self.replicas[k].owner = new_owner
 
-        if predecessor != old_predecessor:
-            if not predecessor:
-                # TODO: borrar la db existente
-                self.replicas[0].db = None
-            elif predecessor == old_second_predecessor:
-                self.replicas[0].db = old_second_predecessor_db
-            else:
-                # TODO: borrar la db existente
-                self.replicas[0].db = DataBaseUser("pred_replication_data")
+                # current replica owner changed
+                # so its db data could be too
 
-        if second_predecessor != old_second_predecessor:
-            if not second_predecessor:
-                # TODO: borrar la db existente
-                self.replicas[1].db = None
-            elif second_predecessor == old_predecessor:
-                self.replicas[1].db = old_predecessor_db
-            else:
-                # TODO: borrar la db existente
-                self.replicas[1].db = DataBaseUser(
-                    "secondpred_replication_data")
+                if not new_owner:
+                    self.replicas[k].db.clear()
+
+                # decide which data will be in new owner replica
+                elif new_owner == old_owners[1-k]:
+                    # will be other owner replica data
+                    new_replica_data_list.append(
+                        self._prepare_replication_data(self.replicas[1-k].db))
+                    continue
+
+            new_replica_data_list.append(None)
+
+        # replica owners are set already
+        for replica, data in zip(self.replicas, new_replica_data_list):
+            if replica.owner and data:
+                replica.db.clear()
+                self.replicate(data, replica.owner.id)
