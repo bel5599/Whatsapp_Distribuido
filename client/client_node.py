@@ -55,21 +55,21 @@ class ClientNode:
     def get_nickname(self, name: str):
         return self.database.get_nickname(self.user['nickname'], name)
 
-    # MESSENGER
+    # MESSAGES
     def get_messages(self):
         return self.database.get_messages()
 
     def add_messenges(self, source: str, destiny: str, value: str, id: int = -1):
-        return self.database.add_messenges(source, destiny, value, id)
+        return self.database.add_messages(source, destiny, value, id)
 
     def delete_messenges(self, id_messenge: int):
-        return self.database.delete_messenges(id_messenge)
+        return self.database.delete_messages(id_messenge)
 
     def search_messenges_from(self, me: str, user: str):
-        return self.database.search_messenges_from(me, user)
+        return self.database.search_messages_from(me, user)
 
     def search_messenges_to(self, me: str, user: str):
-        return self.database.search_messenges_to(me, user)
+        return self.database.search_messages_to(me, user)
 
     # CHAT
     def get_chats(self):
