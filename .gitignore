@@ -1,3 +1,5 @@
 .vscode
 __pycache__
 data.sqlite
+pred_replication_data.sqlite
+secondpred_replication_data.sqlite
