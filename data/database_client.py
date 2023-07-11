@@ -63,21 +63,30 @@ class DataBaseClient:
             return True
         return False
 
-    def get_name(self, mynickname: str, nickname: str) -> str:
-        name = self.session.query(Contacts).filter(
+    def get_name(self, mynickname: str, nickname: str) -> Union[str,None]:
+        try:
+            name = self.session.query(Contacts).filter(
             Contacts.mynickname == mynickname , Contacts.nickname == nickname).one()
-        return name.name
-
-    def get_nickname(self, mynickname: str, name: str) -> str:
-        nickname = self.session.query(Contacts).filter(
+            return name.name
+        except: 
+            return None
+    
+    def get_nickname(self, mynickname: str, name: str) -> Union[str,None]:
+        try:
+            nickname = self.session.query(Contacts).filter(
             Contacts.mynickname == mynickname , Contacts.name == name).one()
-        return nickname.nickname
-
-    def get_id(self, mynickname: str, name: str) -> int:
-        id = self.session.query(Contacts).filter(
+            return nickname.nickname
+        except:
+            return None
+        
+    def get_id(self, mynickname: str, name: str) -> Union[str,None]:
+        try:
+            id = self.session.query(Contacts).filter(
             Contacts.mynickname == mynickname , Contacts.name == name).one()
-        return id.id_contact
-
+            return id.id_contact
+        except:
+            return None
+        
     # MESSENGER
     def get_messages(self) -> list[tuple[int, str, str, str]]:
         result = []
