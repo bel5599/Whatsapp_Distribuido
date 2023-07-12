@@ -20,8 +20,7 @@ class RequestManager:
         kwargs["data"] = dumps(data)
 
         params = kwargs.get("params", None)
-        if params is not None:
-            kwargs["params"] = dumps(params)
+        kwargs["params"] = dumps(params) if params is not None else params
 
         return get(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
@@ -30,8 +29,7 @@ class RequestManager:
         kwargs["data"] = dumps(data)
 
         params = kwargs.get("params", None)
-        if params is not None:
-            kwargs["params"] = dumps(params)
+        kwargs["params"] = dumps(params) if params is not None else params
 
         return put(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
@@ -40,8 +38,7 @@ class RequestManager:
         kwargs["data"] = dumps(data)
 
         params = kwargs.get("params", None)
-        if params is not None:
-            kwargs["params"] = dumps(params)
+        kwargs["params"] = dumps(params) if params is not None else params
 
         return post(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
@@ -50,7 +47,6 @@ class RequestManager:
         kwargs["data"] = dumps(data)
 
         params = kwargs.get("params", None)
-        if params is not None:
-            kwargs["params"] = dumps(params)
+        kwargs["params"] = dumps(params) if params is not None else params
 
         return delete(f"{self._url}{route}", timeout=self._timeout, **kwargs)
