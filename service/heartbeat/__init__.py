@@ -5,7 +5,7 @@ from ..requests import RequestManager
 
 class HeartBeatManager:
     def __init__(self):
-        self.request_manager_list = set()
+        self.request_manager_list: set[RequestManager] = set()
 
     def add_request_manager(self, request_manager: RequestManager):
         self.request_manager_list.add(request_manager)
@@ -23,6 +23,15 @@ class HeartBeatManager:
                         temp_set.add(request_manager)
 
             self.request_manager_list = self.request_manager_list - temp_set
-            print("RM left:", [rm for rm in self.request_manager_list])
+
+            # rellenar la lista
+            if len(self.request_manager_list):
+                try:
+                    rm = self.request_manager_list.pop()
+                    nodes: list[dict] = rm.get(f"/info/all/{-1}").json()
+                    self.request_manager_list = self.request_manager_list.union(
+                        [RequestManager(node["ip"], node["port"]) for node in nodes])
+                except:
+                    print("ERROR at refilling req manager list")
 
             sleep(interval)
