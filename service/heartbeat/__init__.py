@@ -10,7 +10,7 @@ class HeartBeatManager:
     def add_request_manager(self, request_manager: RequestManager):
         self.request_manager_list.add(request_manager)
 
-    def check_health(self, interval: float = 0.3):
+    def check_health(self, interval: float = 1):
         while True:
             temp_set = set()
             for request_manager in self.request_manager_list:
@@ -34,6 +34,5 @@ class HeartBeatManager:
                         [RequestManager(node["ip"], node["port"]) for node in nodes])
                 except:
                     print("ERROR at refilling req manager list")
-
 
             sleep(interval)

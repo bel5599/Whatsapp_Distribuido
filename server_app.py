@@ -33,7 +33,7 @@ if __name__ == "__main__":
     fastapi_app.include_router(entity_router)
 
     @typer_app.command()
-    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, interval: float = 0.3):
+    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, interval: float = 1):
         if debug:
             fastapi_app.include_router(debug_router)
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, interval: float = 0.3):
+    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, interval: float = 1):
         if debug:
             fastapi_app.include_router(debug_router)
 
