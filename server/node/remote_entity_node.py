@@ -15,6 +15,10 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     # region USER
 
+    @classmethod
+    def from_remote_node(cls, node: ChordRemoteNode):
+        return cls(node.id, node.ip, node.port)
+
     def get_users(self, database_id: int = -1):
         try:
             response = self._manager.post(
@@ -24,7 +28,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         else:
             if response.status_code == 200:
                 results: list = response.json()
-                
+
                 return [(result["nickname"], result["password"], result["ip"], result["port"]) for result in results]
 
             print("ERROR:", response.json()["detail"])
