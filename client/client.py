@@ -183,7 +183,7 @@ def send(user: str, message: str):
     # buscar el entity en que está almacenada la información del otro usuario
     dict_other_user = node_data.nickname_entity_node(nickname_user, -1)
     if dict_other_user is None:
-        return user+"is not register"
+        return user+" "+"is not register"
 
     my_nickname = client.user['nickname']
 
@@ -241,18 +241,26 @@ def add_contacts(name: str, nickname: str):
 
     dict_other_user = node_data.nickname_entity_node(nickname, -1)
     if dict_other_user is None:
-        return nickname+"is not register"
+        return nickname+" "+"is not register"
 
-    client.add_contacts(nickname, name)
-    return 'Add Contacts Successful'
+    if client.add_contacts(nickname, name):
+        return 'Add Contacts Successful'
+
 
 
 @client_interface.post("/DeleteContacts")
 def delete_contacts(name: str):
     if not client.login:
         return "You are not logged in"
-    client.delete_contact(name)
-    return 'Delete Contacts Successful'
+    
+    nickname = client.get_nickname(name)
+    if nickname is None:
+        nickname = name
+    
+    if client.delete_contact(nickname):
+        return 'Delete Contacts Successful'
+    else:
+        return "The contact"+" "+ name + " "+ "does not exist"
 
 
 @client_interface.get("/GetChats")
