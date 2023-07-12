@@ -10,7 +10,7 @@ class HeartBeatManager:
     def add_request_manager(self, request_manager: RequestManager):
         self.request_manager_list.add(request_manager)
 
-    def check_health(self, interval: int):
+    def check_health(self, interval: float = 0.3):
         while True:
             temp_set = set()
             for request_manager in self.request_manager_list:

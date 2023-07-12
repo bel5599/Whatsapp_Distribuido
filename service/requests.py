@@ -39,10 +39,9 @@ class RequestManager:
         kwargs["data"] = dumps(data)
 
         return delete(f"{self._url}{route}", timeout=self._timeout, **kwargs)
-    
-    def __eq__(self, value: object) -> bool:
+
+    def __eq__(self, value: "RequestManager") -> bool:
         return self.ip == value.ip and self.port == value.port
-    
+
     def __hash__(self) -> int:
         return int(sha256(self._url.encode()).hexdigest(), 16) % 2 ** 32
-            
