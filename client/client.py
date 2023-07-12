@@ -288,6 +288,29 @@ def get_contacts():
 def add_contacts(name: str, nickname: str):
     if not client.login:
         return "You are not logged in"
+
+    # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
+    servers = client.server_list()
+
+    # server que contiene informacion
+    if len(servers) == 0:
+        return 'Broken Connection, you need to exit the login and login again'
+    
+    inf_node = servers[0]
+    ip = inf_node.split(':')[0]
+    port = inf_node.split(':')[1]
+
+    try:
+        node_data = RemoteEntityNode(-1, ip, port)
+        capacity = node_data.network_capacity()
+        node_data.id = generate_id(f"{ip}:{port}", capacity)
+    except:
+        return 'Broken Connection, you need to exit the login and login again'
+    
+    dict_other_user = node_data.nickname_entity_node(nickname, -1)
+    if dict_other_user is None:
+        return nickname+"is not register"
+
     client.add_contacts(nickname, name)
 
 
@@ -296,23 +319,15 @@ def delete_contacts(name: str):
     if not client.login:
         return "You are not logged in"
     client.delete_contact(name)
-    pass
+    
 
 
 @client_interface.get("/GetChats")
 def get_chats():
     if not client.login:
         return "You are not logged in"
+    
     result = []
-    contacts_nickname = []
-    contacts_name = []
-    # mynickname = client.user['nickname']
-
-    # contacts = client.get_contacts()
-    # for contact in contacts:
-    #    contacts_nickname.append(contact[0])
-    #    contacts_name.append(contact[1])
-
     chats = client.get_chats()
     for chat in chats:
         name = client.get_name(chat)
@@ -320,10 +335,5 @@ def get_chats():
             result.append(name)
         else:
             result.append(chat)
-        # try:
-        #     i = contacts_nickname.index(chat)
-        #     result.append(contacts_name[i])
-        # except:
-        #     result.append(chat)
-
+        
     return result
