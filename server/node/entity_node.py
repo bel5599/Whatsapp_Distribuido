@@ -205,6 +205,9 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     # region REPLICATION
 
+    def get_replication_data(self):
+        return self._prepare_replication_data(self.database)
+
     def replicate(self, data: DataBaseUserModel, database_id: int):
         # lista de usermodel y lista de messengemodel
         # dataBaseUserModel = model.serialize()
@@ -270,6 +273,9 @@ class EntityNode(ChordNode, BaseEntityNode):
         old_owners = [replica.owner for replica in self.replicas]
         new_owners = [owner for owner in self._get_predecessors()]
 
+        print("OLD", old_owners)
+        print("NEW", new_owners)
+
         new_replica_data_list: list[Union[DataBaseUserModel, None]] = []
 
         for k, (new_owner, old_owner) in enumerate(zip(new_owners, old_owners)):
@@ -289,7 +295,14 @@ class EntityNode(ChordNode, BaseEntityNode):
                         self._prepare_replication_data(self.replicas[1-k].db))
                     continue
 
+                else:
+                    new_replica_data_list.append(
+                        new_owner.get_replication_data())
+                    continue
+
             new_replica_data_list.append(None)
+
+        print(new_replica_data_list)
 
         # replica owners are set already
         for replica, data in zip(self.replicas, new_replica_data_list):
