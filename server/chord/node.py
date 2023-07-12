@@ -145,6 +145,10 @@ class Node(BaseNode):
     def _check_successor(self):
         successor = self.successor()
         if not (successor and successor.heart()):
+            print(self, "FINDING NEW SUCCESSOR...")
+            # clear successor
+            self.set_successor(self)
+
             # try to find successor
             start = self.fingers[0].start
 
@@ -167,9 +171,6 @@ class Node(BaseNode):
                     if new_successor:
                         self.set_successor(new_successor)
                         return
-
-            # clear successor
-            self.set_successor(self)
 
     def _stabilize(self):
         old_successor = self.successor()
