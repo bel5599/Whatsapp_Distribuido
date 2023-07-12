@@ -96,8 +96,7 @@ def login(nickname: str, password: str, server: str):
 
             # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
             servers = []
-            servers.append(server)
-            servers.append(node_data.ip+":"+node_data.port)
+            servers = [f'{node.ip}:{node.port}' for node in node_data.all_nodes(-1)]
 
             # Loguear al usuario
             client.login_user(nickname, password, servers)
