@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
 from ..entity_node import EntityNode
-from ..models import DataBaseModel, CopyDataBaseModel, NicknameEntityBaseModel
+from ..models import DataBaseModel, CopyDataBaseModel, NicknameEntityBaseModel, DataBaseUserModel
 
 
 router = APIRouter(prefix="/info", tags=["info"])
@@ -38,6 +38,17 @@ def replicate(model: CopyDataBaseModel, request: Request):
     try:
         node.replicate(model.source, model.database_id)
         return node.serialize()
+    except:
+        raise HTTPException(
+            status_code=500, detail="replicate database failed!")
+    
+@router.get("/replication_data")
+def get_replication_data(request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        result= node.get_replication_data()
+        return result.serialize()
     except:
         raise HTTPException(
             status_code=500, detail="replicate database failed!")
