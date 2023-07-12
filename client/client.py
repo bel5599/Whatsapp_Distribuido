@@ -52,11 +52,11 @@ def register(nickname: str, password: str, server: str):
         # Agregar el entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta al cliente
         servers.append(server)
         servers.append(node_data.ip+":"+node_data.port)
-        if dict_successor is not False and dict_successor is not None:
-            servers.append(dict_successor.ip+":"+dict_successor.port)
-        if dict_successor_successor is not None and dict_successor_successor is not False:
-            servers.append(dict_successor_successor.ip +
-                           ":"+dict_successor_successor.port)
+        # if dict_successor is not False and dict_successor is not None:
+        #     servers.append(dict_successor.ip+":"+dict_successor.port)
+        # if dict_successor_successor is not None and dict_successor_successor is not False:
+        #     servers.append(dict_successor_successor.ip +
+        #                    ":"+dict_successor_successor.port)
     # Loguear al usuario
     client.login_user(nickname, password, servers)
     return
