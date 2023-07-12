@@ -13,7 +13,9 @@ def register_user(inf_nodo: BaseEntityNode, nickname: str, password: str, ip: st
         #     f"{inf_nodo.ip}:{inf_nodo.port}", capacity)
         server_node_data = inf_nodo
         # replica si puedes
-        return server_node_data.add_user(nickname, password, ip, port,-1)
+        result = server_node_data.add_user(nickname, password, ip, port,-1)
+        print(result)
+        return result
     except:
         return False
     #     return False, False
@@ -116,7 +118,7 @@ def add_messenge(inf_nodo:BaseEntityNode, source:str, destiny:str, messenge:str)
     #     return False
 
 
-def task_receive_message(nickname: str, data: DataBaseClient, server_node_data:RemoteEntityNode, server_successor: Union[RemoteEntityNode,None], server_successor_successor: Union[RemoteEntityNode,None,bool]):
+def task_receive_message(nickname: str, data: DataBaseClient, server_node_data:BaseEntityNode):
     # Lista de tupla de quien lo envio, value
     messenges = server_node_data.search_messages_to(nickname,'',-1)
     # if server_successor is not None:

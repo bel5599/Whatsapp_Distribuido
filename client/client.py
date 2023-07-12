@@ -104,7 +104,7 @@ def login(nickname: str, password: str, server: str):
 
             # Recivo los sms que tenia en espera
             task_receive_message(client.user['nickname'], client.database,
-                                 server_node_data, server_successor, server_successor_successor)
+                                 server_node_data)
             # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
             servers = []
             servers.append(server)
