@@ -31,7 +31,7 @@ def search_entity_node(nickname: str, request: Request):
         status_code=500, detail="node search failed!")
 
 
-@router.post("/replicate")
+@router.put("/replicate")
 def replicate(model: CopyDataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
