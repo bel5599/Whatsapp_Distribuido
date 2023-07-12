@@ -15,7 +15,7 @@ class HeartBeatManager:
             temp_set = set()
             for request_manager in self.request_manager_list:
                 try:
-                    response = request_manager.get("/heart")
+                    response = request_manager.get("/chord/heart")
                 except:
                     temp_set.add(request_manager)
                 else:
