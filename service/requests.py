@@ -5,6 +5,8 @@ from json import dumps
 class RequestManager:
     def __init__(self, ip: str, port: str, timeout: int = 5, headers: dict[str, str] = {}, secure=False):
         s = "s" if secure else ""
+        self.ip = ip
+        self.port = port
         self._url = f"http{s}://{ip}:{port}"
         self._headers = {
             "accept": "application/json",

@@ -223,9 +223,9 @@ def send(user: str, message: str):
     #     if user in contacts and contacts.get(user) is not None:
     #         nickname_user = str(contacts.get(user))
 
-    inf_node = servers[0]
-    ip = inf_node.split(':')[0]
-    port = inf_node.split(':')[1]
+    request_manager = servers[0]
+    ip = request_manager.ip
+    port = request_manager.port
 
     try:
         node_data = RemoteEntityNode(-1, ip, port)
@@ -244,11 +244,11 @@ def send(user: str, message: str):
     my_nickname = client.user['nickname']
 
     try:
-        server_other_user = RemoteEntityNode(-1,
-                                             dict_other_user.ip, dict_other_user.port)
-        server_other_user.id = generate_id(
-            f"{dict_other_user.ip}:{dict_other_user.port}", capacity)
-        url = server_other_user.get_ip_port(nickname_user, -1)
+        # server_other_user = RemoteEntityNode(-1,
+        #                                      dict_other_user.ip, dict_other_user.port)
+        # server_other_user.id = generate_id(
+        #     f"{dict_other_user.ip}:{dict_other_user.port}", capacity)
+        url = dict_other_user.get_ip_port(nickname_user, -1)
 
         requests.post('http://'+url+'/ReceiveMessage', params={
                       "nickname_from": my_nickname, "nickname_to": nickname_user, 'value': message})
