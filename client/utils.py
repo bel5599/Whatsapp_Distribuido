@@ -7,11 +7,11 @@ from typing import Union
 def register_user(inf_nodo: BaseEntityNode, nickname: str, password: str, ip: str, port: str):
     try:
         # nodo que va a guardar la informacion del user
-        server_node_data = RemoteEntityNode(-1,inf_nodo.ip, inf_nodo.port)
-        capacity = server_node_data.network_capacity()
-        server_node_data.id = generate_id(
-            f"{inf_nodo.ip}:{inf_nodo.port}", capacity)
-        
+        # server_node_data = RemoteEntityNode(-1,inf_nodo.ip, inf_nodo.port)
+        # capacity = server_node_data.network_capacity()
+        # server_node_data.id = generate_id(
+        #     f"{inf_nodo.ip}:{inf_nodo.port}", capacity)
+        server_node_data = inf_nodo
         # replica si puedes
         return server_node_data.add_user(nickname, password, ip, port,-1)
     except:
@@ -48,27 +48,28 @@ def register_user(inf_nodo: BaseEntityNode, nickname: str, password: str, ip: st
 def get_entity_data(inf_nodo: BaseEntityNode):
     # nodo que va a guardar la informacion del user
     try:
-        server_node_data = RemoteEntityNode(-1,
-                                            inf_nodo.ip, inf_nodo.port)
-        capacity = server_node_data.network_capacity()
-        server_node_data.id = generate_id(
-            f"{inf_nodo.ip}:{inf_nodo.port}", capacity)
-
+        # server_node_data = RemoteEntityNode(-1,
+        #                                     inf_nodo.ip, inf_nodo.port)
+        # capacity = server_node_data.network_capacity()
+        # server_node_data.id = generate_id(
+        #     f"{inf_nodo.ip}:{inf_nodo.port}", capacity)
+        server_node_data = inf_nodo
     except:
         return False, False, False
     # replicar la informacion del usuario en el nodo sucesor
     try:
         dict_successor = server_node_data.successor()
         if dict_successor is not None:
-            server_successor = RemoteEntityNode(-1,dict_successor.ip, dict_successor.port)
-            server_successor.id = generate_id(f"{dict_successor.ip}:{dict_successor.port}", capacity)
-
-            dict_successor_successor = server_successor.successor()
+            # server_successor = RemoteEntityNode(-1,dict_successor.ip, dict_successor.port)
+            # server_successor.id = generate_id(f"{dict_successor.ip}:{dict_successor.port}", capacity)
+            dict_successor_successor = dict_successor.successor()
+            #dict_successor_successor = server_successor.successor()
             if dict_successor_successor is not None:    
-                server_successor_successor = RemoteEntityNode(-1, dict_successor_successor.ip, dict_successor_successor.port)
-                server_successor_successor.id = generate_id(f"{server_successor_successor.ip}:{server_successor_successor.port}", capacity)
-                return server_node_data, server_successor, server_successor_successor        
-            return server_node_data,server_successor,None
+                # server_successor_successor = RemoteEntityNode(-1, dict_successor_successor.ip, dict_successor_successor.port)
+                # server_successor_successor.id = generate_id(f"{server_successor_successor.ip}:{server_successor_successor.port}", capacity)
+                #return server_node_data, server_successor, server_successor_successor        
+                return server_node_data,dict_successor,dict_successor_successor
+            return server_node_data,dict_successor,None
         return server_node_data,None,None  
     except:
         return False, False, False
@@ -77,12 +78,12 @@ def get_entity_data(inf_nodo: BaseEntityNode):
 def add_messenge(inf_nodo:BaseEntityNode, source:str, destiny:str, messenge:str):
     try:
         # nodo que va a guardar la informacion del user
-        server_node_data = RemoteEntityNode(-1,
-                                            inf_nodo.ip, inf_nodo.port)
-        capacity = server_node_data.network_capacity()
-        server_node_data.id = generate_id(
-            f"{inf_nodo.ip}:{inf_nodo.port}", capacity)
-
+        # server_node_data = RemoteEntityNode(-1,
+        #                                     inf_nodo.ip, inf_nodo.port)
+        # capacity = server_node_data.network_capacity()
+        # server_node_data.id = generate_id(
+        #     f"{inf_nodo.ip}:{inf_nodo.port}", capacity)
+        server_node_data = inf_nodo
         server_node_data.add_messages(source, destiny, messenge,-1)
     except:
         return False
