@@ -1,8 +1,4 @@
 from fastapi import FastAPI
-# import json
-# import os
-# from fastapi_utils.tasks import repeat_every
-# from sqlalchemy import true
 from service.requests import RequestManager
 from .client_node import ClientNode
 from .utils import *
@@ -50,7 +46,7 @@ def register(nickname: str, password: str, server: str):
         servers.append(node_data.ip+":"+node_data.port)
     # Loguear al usuario
     client.login_user(nickname, password, servers)
-    return
+    return 'Register Successful'
 
 
 @client_interface.post("/Login")
@@ -109,58 +105,10 @@ def login(nickname: str, password: str, server: str):
             return "Login failed"
 
 # FALTA
-
-
 @client_interface.post("/Logout")
 def logout():
     client.logout_user()
-    # quitar el ciente FALTA
-    return
-
-# # Permite ver los mensajes entre "my_nickname" y "nickname".
-# @client_interface.get("/Messages")
-# def messages(nickname: str):  # usuario de la conversacion conmigo
-#     # chequear que el usuario esté loggeado
-#     if not client.login:
-#         return "You are not logged in"
-#     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
-#     #client.update_servers()
-#     servers = client.server_list()
-#     # server que contiene informacion
-#     if len(servers)==0:
-#         return 'Broken Connection, you need to exit the login and login again'
-#     if len(servers)>1:
-#         inf_node = servers[1]
-#     else:
-#     # en caso de que no haya activo o guardado un nodo que tenga su informacion
-#         inf_node = servers[0]
-#         search = True
-
-#     ip = inf_node.split(':')[0]
-#     port = inf_node.split(':')[1]
-#     node_data = RemoteEntityNode(-1, ip, port)
-
-#     if search: #entonces hay que buscar el nodo con iformacion del usuario
-#         node_data = node_data.nickname_entity_node(client.user,True)
-#         #si no se encontro un nodo con informacion del usuario
-#         if node_data.get('ip') is None:
-#             return "Your data has been lost"
-#         # si se encontro un nodo, obtener el nodo para hacerle los pedidos
-#         node_data = RemoteEntityNode(-1, node_data['ip'], node_data['port'])
-#         messengers = node_data.search_chat(client.user,nickname,True)
-#     else:
-#         # mando a buscar los mensajes al servidor
-#         messengers = node_data.search_chat(client.user,nickname)
-
-#     # Para ver mejor los mensajes
-#     messages_format = []
-#     for message in messengers:
-#         if message['user_id_from'] == client.user:
-#             messages_format.append( 'me' + ": " + message['value'])
-#         else:
-#             messages_format.append(message['user_id_from'] + ": " + message['value'])
-#     return messages_format
-
+    return 'Logout Successful'
 
 @client_interface.get("/Messages")
 def messages(nickname: str):  # usuario de la conversacion conmigo
@@ -179,13 +127,6 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
     # Si no encontro ningun contacto con ese nombre
     if nickname_other_user is None:
         nickname_other_user = nickname
-
-    # # Lista de tupla de tipo(nickname,name)
-    # contacts = client.get_contacts()
-    # for contact in contacts:
-    #     # si nickname es el nombre del contacto, actualizo el nickname del otro usuario
-    #     if contact[1] == nickname:
-    #         nickname_other_user = contact[0]
 
     mynickname = client.user['nickname']
     # Obtengo los sms de mi basedatos
@@ -219,11 +160,7 @@ def send(user: str, message: str):
     nickname_user = client.get_nickname(user)
     if nickname_user is None:
         nickname_user = user
-    # contacts = get_contacts()
-    # if contacts != "You are not logged in":
-    #     if user in contacts and contacts.get(user) is not None:
-    #         nickname_user = str(contacts.get(user))
-
+    
     request_manager = servers[0]
     ip = request_manager.ip
     port = request_manager.port
@@ -237,7 +174,6 @@ def send(user: str, message: str):
         return 'Broken Connection, you need to logout and login again'
 
     # buscar el entity en que está almacenada la información del otro usuario
-
     dict_other_user = node_data.nickname_entity_node(nickname_user, -1)
     if dict_other_user is None:
         return user+"is not register"
@@ -245,30 +181,16 @@ def send(user: str, message: str):
     my_nickname = client.user['nickname']
 
     try:
-        # server_other_user = RemoteEntityNode(-1,
-        #                                      dict_other_user.ip, dict_other_user.port)
-        # server_other_user.id = generate_id(
-        #     f"{dict_other_user.ip}:{dict_other_user.port}", capacity)
         ip, port = dict_other_user.get_ip_port(nickname_user, -1).split(":")
         rm = RequestManager(ip, port)
         rm.post("/ReceiveMessage", params={
             "nickname_from": my_nickname, "nickname_to": nickname_user, 'value': message})
     except:
-        # buscar el entity en que está almacenada la información del usuario
-        # dict_node_data = node_data.nickname_entity_node(my_nickname)
-        # if dict_node_data is None:
-        #     return "Your data has been lost"
-
-        # si la informacion de los usuarios no se guarda en la misma base datos, gurdarlo en la de el tambien
-        # if dict_other_user['ip'] != dict_node_data['ip'] or dict_other_user['port'] != dict_node_data['port']:
-        # si su servidor está activo y no es mi mismo servidor hago lo mismo.
         if add_messenge(dict_other_user, my_nickname, nickname_user, message) is False:
             return 'send failed'
-        # si mi server está activo le mando el mensaje para ser escrito y replico los datos
-        # if replication_messenge(dict_node_data, client.user, user, message) is False:
-        #     return 'send failed'
+    
     client.add_messenges(my_nickname, nickname_user, message, -1)
-    return
+    return "Send Message"
 
 
 @service.post("/ReceiveMessage")
@@ -315,14 +237,14 @@ def add_contacts(name: str, nickname: str):
         return nickname+"is not register"
 
     client.add_contacts(nickname, name)
-
+    return 'Add Contacts Successful'
 
 @client_interface.post("/DeleteContacts")
 def delete_contacts(name: str):
     if not client.login:
         return "You are not logged in"
     client.delete_contact(name)
-
+    return 'Delete Contacts Successful'
 
 @client_interface.get("/GetChats")
 def get_chats():
@@ -337,5 +259,4 @@ def get_chats():
             result.append(name)
         else:
             result.append(chat)
-
     return result
