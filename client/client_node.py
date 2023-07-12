@@ -31,7 +31,7 @@ class ClientNode:
         self.login = False
 
     def update_servers(self):
-        self.manager.check_health(3)
+        self.manager.check_health(1)
 
     # Aqui van los metodos de la base datos desde el cliente
 
