@@ -3,7 +3,7 @@ from json import dumps
 
 
 class RequestManager:
-    def __init__(self, ip: str, port: str, timeout: int = 5, headers: dict[str, str] = {}, secure=False):
+    def __init__(self, ip: str, port: str, timeout: int = 1, headers: dict[str, str] = {}, secure=False):
         s = "s" if secure else ""
         self.ip = ip
         self.port = port
