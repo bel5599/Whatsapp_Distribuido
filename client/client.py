@@ -1,4 +1,8 @@
+from typing import Union
 from fastapi import FastAPI
+
+from server.node.remote_entity_node import RemoteEntityNode
+from server.util import generate_id
 from service.requests import RequestManager
 from .client_node import ClientNode
 from .utils import *
@@ -105,10 +109,13 @@ def login(nickname: str, password: str, server: str):
             return "Login failed"
 
 # FALTA
+
+
 @client_interface.post("/Logout")
 def logout():
     client.logout_user()
     return 'Logout Successful'
+
 
 @client_interface.get("/Messages")
 def messages(nickname: str):  # usuario de la conversacion conmigo
@@ -160,7 +167,7 @@ def send(user: str, message: str):
     nickname_user = client.get_nickname(user)
     if nickname_user is None:
         nickname_user = user
-    
+
     request_manager = servers[0]
     ip = request_manager.ip
     port = request_manager.port
@@ -188,7 +195,7 @@ def send(user: str, message: str):
     except:
         if add_messenge(dict_other_user, my_nickname, nickname_user, message) is False:
             return 'send failed'
-    
+
     client.add_messenges(my_nickname, nickname_user, message, -1)
     return "Send Message"
 
@@ -239,12 +246,14 @@ def add_contacts(name: str, nickname: str):
     client.add_contacts(nickname, name)
     return 'Add Contacts Successful'
 
+
 @client_interface.post("/DeleteContacts")
 def delete_contacts(name: str):
     if not client.login:
         return "You are not logged in"
     client.delete_contact(name)
     return 'Delete Contacts Successful'
+
 
 @client_interface.get("/GetChats")
 def get_chats():
