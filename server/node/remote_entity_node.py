@@ -30,10 +30,10 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         return []
 
-    def add_user(self, nickname: str, pasword: str,  ip: str, port: str, database_id: int):
+    def add_user(self, nickname: str, password: str,  ip: str, port: str, database_id: int):
         try:
             response = self._manager.put(
-                "/user/add", data={"nickname": nickname, "pasword": pasword, "ip": ip, "port": port, "database_id": database_id})
+                "/user/add", data={"nickname": nickname, "password": password, "ip": ip, "port": port, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
