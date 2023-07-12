@@ -23,5 +23,6 @@ class HeartBeatManager:
                         temp_set.add(request_manager)
 
             self.request_manager_list = self.request_manager_list - temp_set
+            print("RM left:", [rm for rm in self.request_manager_list])
 
             sleep(interval)
