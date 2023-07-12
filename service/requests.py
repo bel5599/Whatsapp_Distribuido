@@ -19,11 +19,17 @@ class RequestManager:
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
 
+        params = kwargs.get("params", {})
+        kwargs["params"] = dumps(params)
+
         return get(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
     def put(self, route: str, **kwargs):
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
+
+        params = kwargs.get("params", {})
+        kwargs["params"] = dumps(params)
 
         return put(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
@@ -31,10 +37,16 @@ class RequestManager:
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
 
+        params = kwargs.get("params", {})
+        kwargs["params"] = dumps(params)
+
         return post(f"{self._url}{route}", timeout=self._timeout, **kwargs)
 
     def delete(self, route: str, **kwargs):
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
+
+        params = kwargs.get("params", {})
+        kwargs["params"] = dumps(params)
 
         return delete(f"{self._url}{route}", timeout=self._timeout, **kwargs)
