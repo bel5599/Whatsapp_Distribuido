@@ -67,3 +67,11 @@ def get_users(model: DataBaseModel, request: Request):
         )
     else:
         return [{"nickname": nickname, "password": password, "ip": ip, "port": port} for (nickname, password, ip, port) in users]
+
+
+@router.get("/all/{search_id}")
+def get_all_nodes(search_id: int, request: Request):
+    node: EntityNode = request.state.node
+
+    nodes = node.all_nodes(search_id)
+    return [node.serialize() for node in nodes]

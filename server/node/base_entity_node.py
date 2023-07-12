@@ -73,3 +73,6 @@ class BaseEntityNode(BaseNode):
     def replicate(self, data: DataBaseUserModel, database_id: int) -> None:
         raise NotImplementedError()
     # endregion
+
+    def all_nodes(self, search_id: int = -1) -> list["BaseEntityNode"]:
+        raise NotImplementedError()

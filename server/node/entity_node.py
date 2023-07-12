@@ -309,3 +309,15 @@ class EntityNode(ChordNode, BaseEntityNode):
             if replica.owner and data:
                 replica.db.clear()
                 self.replicate(data, replica.owner.id)
+
+    def all_nodes(self, search_id: int = -1) -> list[BaseEntityNode]:
+        if search_id == self.id:
+            return []
+
+        search_id = self.id if search_id == -1 else search_id
+
+        successor = self.successor()
+        if successor and successor.heart():
+            return [self, *successor.all_nodes(search_id)]
+
+        return [self]

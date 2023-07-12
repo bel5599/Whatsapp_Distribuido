@@ -221,3 +221,15 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
                 return DataBaseUserModel(users=users, messages=messages)
 
     # endregion
+
+    def all_nodes(self, search_id: int = -1) -> list[BaseEntityNode]:
+        try:
+            response = self._manager.get(f"/info/all/{search_id}")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result = response.json()
+                return [self.__class__.from_base_model(BaseNodeModel(**node)) for node in result]
+
+        return []
