@@ -25,6 +25,7 @@ def register(nickname: str, password: str, server: str):
     # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
     try:
         node = server_node.search_entity_node(nickname)   
+        print(node.__class__)
     except:
         return "Wrong server"
     
@@ -32,8 +33,8 @@ def register(nickname: str, password: str, server: str):
         node_data = node.nickname_entity_node(nickname, -1)
         if node_data is not None:
             return "You are already registered"
-    else:  # Hashear el nickname para obtener un servidor
-        node_data = node
+        else:  # Hashear el nickname para obtener un servidor
+            node_data = node
     
     servers = []
     # Guardar la informacion del usuario
