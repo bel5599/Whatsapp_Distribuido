@@ -21,17 +21,18 @@ def register(nickname: str, password: str, server: str):
     capacity = server_node.network_capacity()
     server_node.id = generate_id(
         f"{server_node.ip}:{server_node.port}", capacity)
-
-    # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
+    
+    #Busca el posible nodo a guardar los datos de usuario
     try:
         node = server_node.search_entity_node(nickname)
     except:
         return "Wrong server"
 
     node_data: Union[BaseEntityNode, None] = None
-
+    
     if node is not None:
         node_data = node.nickname_entity_node(nickname, -1)
+        # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
         if node_data is not None:
             return "You are already registered"
         else:  # Hashear el nickname para obtener un servidor
@@ -40,23 +41,12 @@ def register(nickname: str, password: str, server: str):
     servers = []
     # Guardar la informacion del usuario
     if node_data is not None:
-        success = register_user(node_data, nickname,
-                                password, client.ip, client.port)
-
+        success = register_user(node_data, nickname,password, client.ip, client.port)
         if success is False:
             return "Register failed"
 
-        server_node_data, dict_successor, dict_successor_successor = get_entity_data(
-            node_data)
-
-        # Agregar el entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta al cliente
         servers.append(server)
         servers.append(node_data.ip+":"+node_data.port)
-        # if dict_successor is not False and dict_successor is not None:
-        #     servers.append(dict_successor.ip+":"+dict_successor.port)
-        # if dict_successor_successor is not None and dict_successor_successor is not False:
-        #     servers.append(dict_successor_successor.ip +
-        #                    ":"+dict_successor_successor.port)
     # Loguear al usuario
     client.login_user(nickname, password, servers)
     return
@@ -75,45 +65,40 @@ def login(nickname: str, password: str, server: str):
     server_node.id = generate_id(
         f"{server_node.ip}:{server_node.port}", capacity)
 
-    # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
+    #Busca el posible nodo a guardar los datos de usuario
     try:
-        node_data = server_node.nickname_entity_node(nickname, -1)
+        node = server_node.search_entity_node(nickname)
     except:
         return "Wrong server"
-
-    if node_data is None:
-        return "You are not registered"
-
-    # obtener los nodos que tienen la informacion original y replicada del usuario
-    server_node_data, server_successor, server_successor_successor = get_entity_data(
-        node_data)
-
-    if server_successor is False:
+    
+    node_data: Union[BaseEntityNode, None] = None
+    # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
+    try:
+        if node is not None:
+            node_data = node.nickname_entity_node(nickname, -1)
+            if node_data is None:
+                return "You are not registered"
+    except:
         return "Login failed"
-
-        # verificar que no se ha caido el servidor
-    if server_node_data is not False:
+    
+    # verificar que no se ha caido el servidor
+    if node_data is not None:
         try:
             # Verificar contrasenna y retornar una notificacion
-            password_server = server_node_data.get_pasword(nickname, -1)
+            password_server = node_data.get_pasword(nickname, -1)
             if password_server is not None and password != password_server:
                 return "Wrong password"
 
             # Si cambio el ip y el port actualizar estos valores y actualizar en los sucessores
-            server_node_data.update_user(nickname, client.ip, client.port, -1)
+            node_data.update_user(nickname, client.ip, client.port, -1)
 
             # Recivo los sms que tenia en espera
             task_receive_message(client.user['nickname'], client.database,
-                                 server_node_data)
+                                 node_data)
             # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
             servers = []
             servers.append(server)
             servers.append(node_data.ip+":"+node_data.port)
-            if server_successor is not None:
-                servers.append(server_successor.ip+":"+server_successor.port)
-            if server_successor_successor is not None and server_successor_successor is not False:
-                servers.append(str(server_successor_successor.ip) +
-                               ":"+server_successor_successor.port)
             # Loguear al usuario
             client.login_user(nickname, password, servers)
             return
