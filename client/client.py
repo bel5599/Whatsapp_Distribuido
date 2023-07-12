@@ -299,9 +299,9 @@ def add_contacts(name: str, nickname: str):
     if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
 
-    inf_node = servers[0]
-    ip = inf_node.split(':')[0]
-    port = inf_node.split(':')[1]
+    request_manager = servers[0]
+    ip = request_manager.ip
+    port = request_manager.port
 
     try:
         node_data = RemoteEntityNode(-1, ip, port)
