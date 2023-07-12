@@ -152,6 +152,9 @@ class Node(BaseNode):
                     finger.node.set_predecessor(self)
                     self.set_successor(finger.node)
                     break
+            else:
+                self.set_successor(self)
+                self.set_predecessor(self)
 
     def _stabilize(self):
         old_successor = self.successor()
