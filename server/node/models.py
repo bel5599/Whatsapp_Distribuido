@@ -27,7 +27,6 @@ class DataBaseModel(BaseModel):
 
 
 class SearchMessagesModel(BaseModel):
-    source: str
     destiny: str
     database_id: int
 

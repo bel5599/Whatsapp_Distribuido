@@ -176,10 +176,10 @@ class EntityNode(ChordNode, BaseEntityNode):
             return success
         return False
 
-    def search_messages_to(self, me: str, user: str, database_id: int):
+    def search_messages_to(self, me: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.search_messages_to(me, user)
+            return db.search_messages_to(me)
 
         return []
 
