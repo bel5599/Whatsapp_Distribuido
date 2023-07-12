@@ -92,7 +92,7 @@ class DataBaseClient:
         try:
             message = self.session.query(Message).all()
             for m in message:
-                result.append((m.messager_id,m.user_id_from,m.user_id_to,m.value))
+                result.append((m.message_id,m.user_id_from,m.user_id_to,m.value))
             return result
         except:
             return result
