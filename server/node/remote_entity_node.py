@@ -48,12 +48,12 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def get_pasword(self, nickname: str, database_id: int):
         try:
             response = self._manager.post(
-                f"/user/pasword/{nickname}", data={"database_id": database_id})
+                f"/user/password/{nickname}", data={"database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: str = response.json()["pasword"]
+                result: str = response.json()["password"]
                 return result
 
             print("ERROR:", response.json()["detail"])

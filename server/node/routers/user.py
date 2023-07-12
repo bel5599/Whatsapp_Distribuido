@@ -21,7 +21,7 @@ def add_user(model: UserModel, request: Request):
         return {"success": result}
 
 
-@router.post("/pasword/{nickname}")
+@router.post("/password/{nickname}")
 def get_pasword(nickname: str, model: DataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
@@ -29,9 +29,9 @@ def get_pasword(nickname: str, model: DataBaseModel, request: Request):
         pasw = node.get_pasword(nickname, model.database_id)
     except:
         raise HTTPException(
-            status_code=500, detail="get pasword failed!")
+            status_code=500, detail="get password failed!")
     else:
-        return {"pasword": pasw}
+        return {"password": pasw}
 
 
 @router.delete("/delete/{nickname}")
