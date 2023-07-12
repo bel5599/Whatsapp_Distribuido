@@ -148,10 +148,13 @@ class Node(BaseNode):
             print(self, "FINDING NEW SUCCESSOR...")
 
             for finger in self.fingers[1:]:
-                if finger.node and finger.node != successor:
-                    finger.node.set_predecessor(self)
-                    self.set_successor(finger.node)
-                    break
+                if finger.node:
+                    if finger.node == successor:
+                        finger.node = None
+                    else:
+                        finger.node.set_predecessor(self)
+                        self.set_successor(finger.node)
+                        break
             else:
                 self.set_successor(self)
                 self.set_predecessor(self)
