@@ -47,7 +47,7 @@ class BaseEntityNode(BaseNode):
     def add_messages(self, source: str, destiny: str, value: str, database_id: int) -> bool:
         raise NotImplementedError()
 
-    def search_messages_to(self, me: str, user: str, database_id: int) -> list[tuple[str, str]]:
+    def search_messages_to(self, me: str, database_id: int) -> list[tuple[str, str]]:
         raise NotImplementedError()
 
     def delete_messages_to(self, me: str, database_id: int) -> bool:

@@ -13,7 +13,7 @@ def search_messages_to(model: SearchMessagesModel, request: Request):
 
     try:
         result = node.search_messages_to(
-            model.source, model.destiny, model.database_id)
+            model.destiny, model.database_id)
     except:
         raise HTTPException(status_code=404, detail="messages not found!")
     else:

@@ -149,10 +149,10 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
         return False
 
-    def search_messages_to(self, me: str, user: str, database_id: int):
+    def search_messages_to(self, me: str, database_id: int):
         try:
             response = self._manager.post("/messages/to",
-                                         data={"source": me, "destiny": user, "database_id": database_id})
+                                         data={"destiny": me, "database_id": database_id})
         except Exception as e:
             print("ERROR:", e)
         else:
