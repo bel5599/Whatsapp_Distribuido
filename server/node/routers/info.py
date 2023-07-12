@@ -41,13 +41,14 @@ def replicate(model: CopyDataBaseModel, request: Request):
     except:
         raise HTTPException(
             status_code=500, detail="replicate database failed!")
-    
+
+
 @router.get("/replication_data")
 def get_replication_data(request: Request):
     node: EntityNode = request.state.node
 
     try:
-        result= node.get_replication_data()
+        result = node.get_replication_data()
         return result.serialize()
     except:
         raise HTTPException(

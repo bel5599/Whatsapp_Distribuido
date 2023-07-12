@@ -205,7 +205,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             if response.status_code != 200:
                 print("ERROR:", response.json()["detail"])
 
-    def get_replication_data(self) -> DataBaseUserModel:
+    def get_replication_data(self):
         try:
             response = self._manager.get("info/replication_data")
         except Exception as e:
@@ -214,8 +214,10 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             if response.status_code == 200:
                 results: dict = response.json()
 
-                users = [DataUsersModel(**result) for result in results["users"]]
-                messages = [DataMessagesModel(**result) for result in results["messages"]]
-                return DataBaseUserModel(users= users, messages= messages)
+                users = [DataUsersModel(**result)
+                         for result in results["users"]]
+                messages = [DataMessagesModel(**result)
+                            for result in results["messages"]]
+                return DataBaseUserModel(users=users, messages=messages)
 
     # endregion
