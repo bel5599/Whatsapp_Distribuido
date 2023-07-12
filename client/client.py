@@ -37,17 +37,18 @@ def register(nickname: str, password: str, server: str):
             return "You are already registered"
         else:  # Hashear el nickname para obtener un servidor
             node_data = node
-
+    
     servers = []
     # Guardar la informacion del usuario
     if node_data is not None:
         success = register_user(node_data, nickname,
                                 password, client.ip, client.port)
         if success is False:
-            return "Register failed"
-
-        servers.append(server)
-        servers.append(node_data.ip+":"+node_data.port)
+            return "Register failed"        
+        servers = [f'{node.ip}:{node.port}' for node in node_data.all_nodes(-1)]
+        print(servers)
+    #     servers.append(server)
+    #     servers.append(node_data.ip+":"+node_data.port)
     # Loguear al usuario
     client.login_user(nickname, password, servers)
     return 'Register Successful'
