@@ -14,14 +14,16 @@ class ClientNode:
         self.port = FIXED_PORT
         self.database = DataBaseClient()
 
-    def login_user(self, nickname: str, password: str, server: list):
+    def login_user(self, nickname: str, password: str):
         self.user['nickname'] = nickname
         self.user['password'] = password
         self.login = True
-        for s in server:
+        
+    def add_servers(self,servers:list):
+        for s in servers:
             ip, port = s.split(':')
             self.manager.add_request_manager(RequestManager(ip, port))
-
+    
     def server_list(self):
         return list(self.manager.request_manager_list)
 

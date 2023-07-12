@@ -21,14 +21,22 @@ def register(nickname: str, password: str, server: str):
     capacity = server_node.network_capacity()
     server_node.id = generate_id(
         f"{server_node.ip}:{server_node.port}", capacity)
-
-    # Busca el posible nodo a guardar los datos de usuario
+    
     try:
-        node = server_node.search_entity_node(nickname)
+        servers = [f'{node.ip}:{node.port}' for node in server_node.all_nodes(-1)]
+        client.add_servers(servers)
     except:
         return "Wrong server"
-
-    node_data: Union[BaseEntityNode, None] = None
+    
+    rm = client.server_list()[0]
+    server_node = RemoteEntityNode(-1, rm.ip, rm.port)
+    capacity = server_node.network_capacity()
+    server_node.id = generate_id(
+        f"{server_node.ip}:{server_node.port}", capacity)
+    
+    # Busca el posible nodo a guardar los datos de usuario
+    node = server_node.search_entity_node(nickname)
+    #node_data: Union[BaseEntityNode, None] = None
 
     if node is not None:
         node_data = node.nickname_entity_node(nickname, -1)
@@ -36,23 +44,16 @@ def register(nickname: str, password: str, server: str):
         if node_data is not None:
             return "You are already registered"
         else:  # Hashear el nickname para obtener un servidor
-            node_data = node
-    
-    servers = []
-    # Guardar la informacion del usuario
-    if node_data is not None:
-        success = register_user(node_data, nickname,
+            success = register_user(node, nickname,
                                 password, client.ip, client.port)
-        if success is False:
-            return "Register failed"        
-        servers = [f'{node.ip}:{node.port}' for node in node_data.all_nodes(-1)]
-        print(servers)
-    #     servers.append(server)
-    #     servers.append(node_data.ip+":"+node_data.port)
-    # Loguear al usuario
-    client.login_user(nickname, password, servers)
-    return 'Register Successful'
-
+            if success is False:
+                return "Register failed"        
+    
+            client.login_user(nickname, password)
+            return 'Register Successful'
+    else:
+        return "You need to register again"
+        
 
 @client_interface.post("/Login")
 def login(nickname: str, password: str, server: str):
@@ -67,6 +68,19 @@ def login(nickname: str, password: str, server: str):
     server_node.id = generate_id(
         f"{server_node.ip}:{server_node.port}", capacity)
 
+    try:
+        servers = [f'{node.ip}:{node.port}' for node in server_node.all_nodes(-1)]
+        client.add_servers(servers)
+    except:
+        return "Wrong server"
+    
+    rm = client.server_list()[0]
+    server_node = RemoteEntityNode(-1, rm.ip, rm.port)
+    capacity = server_node.network_capacity()
+    server_node.id = generate_id(
+        f"{server_node.ip}:{server_node.port}", capacity)
+    
+    
     # Busca el posible nodo a guardar los datos de usuario
     try:
         node = server_node.search_entity_node(nickname)
@@ -94,12 +108,8 @@ def login(nickname: str, password: str, server: str):
             # Si cambio el ip y el port actualizar estos valores y actualizar en los sucessores
             node_data.update_user(nickname, client.ip, client.port, -1)
 
-            # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
-            servers = []
-            servers = [f'{node.ip}:{node.port}' for node in node_data.all_nodes(-1)]
-
             # Loguear al usuario
-            client.login_user(nickname, password, servers)
+            client.login_user(nickname, password)
 
             # Recivo los sms que tenia en espera
             task_receive_message(client.user['nickname'], client.database,
@@ -160,10 +170,10 @@ def send(user: str, message: str):
     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
     # client.update_servers()
     servers = client.server_list()
-
     # server que contiene informacion
     if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
+    
     nickname_user = client.get_nickname(user)
     if nickname_user is None:
         nickname_user = user
@@ -171,14 +181,10 @@ def send(user: str, message: str):
     request_manager = servers[0]
     ip = request_manager.ip
     port = request_manager.port
-
-    try:
-        node_data = RemoteEntityNode(-1, ip, port)
-        capacity = node_data.network_capacity()
-        node_data.id = generate_id(f"{ip}:{port}", capacity)
-
-    except:
-        return 'Broken Connection, you need to logout and login again'
+    
+    node_data = RemoteEntityNode(-1, ip, port)
+    capacity = node_data.network_capacity()
+    node_data.id = generate_id(f"{ip}:{port}", capacity)
 
     # buscar el entity en que está almacenada la información del otro usuario
     dict_other_user = node_data.nickname_entity_node(nickname_user, -1)
@@ -237,7 +243,7 @@ def add_contacts(name: str, nickname: str):
         capacity = node_data.network_capacity()
         node_data.id = generate_id(f"{ip}:{port}", capacity)
     except:
-        return 'Broken Connection, you need to exit the login and login again'
+        return 'Broken Connection'
 
     dict_other_user = node_data.nickname_entity_node(nickname, -1)
     if dict_other_user is None:
