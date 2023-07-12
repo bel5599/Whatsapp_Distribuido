@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
 from ..entity_node import EntityNode
-from ..models import UserModel, DataBaseModel
+from ..models import UserModel, DataBaseModel, UserUpdate
 
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -62,7 +62,7 @@ def get_ip_port(nickname: str, model: DataBaseModel, request: Request):
 
 
 @router.put("/update")
-def update_user(model: UserModel, request: Request):
+def update_user(model: UserUpdate, request: Request):
     node: EntityNode = request.state.node
 
     try:

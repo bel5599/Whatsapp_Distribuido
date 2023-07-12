@@ -15,6 +15,12 @@ class UserModel(BaseModel):
     port: str
     database_id: int
 
+class UserUpdate(BaseModel):
+    nickname: str
+    ip: str
+    port: str
+    database_id: int
+
 
 class DataBaseModel(BaseModel):
     database_id: int

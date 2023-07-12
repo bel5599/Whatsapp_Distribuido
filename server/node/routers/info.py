@@ -54,4 +54,4 @@ def get_users(model: DataBaseModel, request: Request):
             status_code=500, detail="get users failed!"
         )
     else:
-        return [{"nickname": nickname, "password": pasword, "ip": ip, "port": port} for (nickname, pasword, ip, port) in users]
+        return [{"nickname": nickname, "password": password, "ip": ip, "port": port} for (nickname, password, ip, port) in users]
