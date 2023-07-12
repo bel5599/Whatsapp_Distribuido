@@ -92,6 +92,6 @@ def task_receive_message(nickname: str, data: DataBaseClient, server_node_data:B
     # if server_successor_successor is not None and server_successor_successor is not False and  server_successor_successor is not True:
     #     server_successor_successor.delete_messenges_to(nickname,server_node_data.id)
     server_node_data.delete_messages_to(nickname,-1)
-    print("delete")
+    
     for messenge in messenges:
         data.add_messages(messenge[0], nickname, messenge[1])

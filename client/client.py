@@ -103,10 +103,8 @@ def login(nickname: str, password: str, server: str):
             # Recivo los sms que tenia en espera
             task_receive_message(client.user['nickname'], client.database,
                                  node_data)
-            return
+            return 'Login Successful'
         except Exception as e:
-            
-            print(" error del exception:",e)
             return "Login failed"
 
 # FALTA
