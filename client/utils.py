@@ -1,7 +1,7 @@
 from data.database_client import DataBaseClient
 from server.node.base_entity_node import BaseEntityNode
 
-FIXED_PORT = 8765
+FIXED_PORT = "8765"
 
 
 def register_user(inf_nodo: BaseEntityNode, nickname: str, password: str, ip: str, port: str):
