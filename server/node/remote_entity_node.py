@@ -1,9 +1,11 @@
 from typing import Any
 
+from server.node.models import DataBaseUserModel
+
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
-from .models import DataBaseUserModel
+from .models import DataBaseUserModel, DataUsersModel, DataMessagesModel
 
 
 class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
@@ -202,5 +204,18 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         else:
             if response.status_code != 200:
                 print("ERROR:", response.json()["detail"])
+
+    def get_replication_data(self) -> DataBaseUserModel:
+        try:
+            response = self._manager.get("info/replication_data")
+        except Exception as e:
+            print("ERROR", e)
+        else:
+            if response.status_code == 200:
+                results: dict = response.json()
+
+                users = [DataUsersModel(**result) for result in results["users"]]
+                messages = [DataMessagesModel(**result) for result in results["messages"]]
+                return DataBaseUserModel(users= users, messages= messages)
 
     # endregion
