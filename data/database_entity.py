@@ -131,18 +131,14 @@ class DataBaseUser:
 
     # Todos los sms que me enviaron , o los que me envio user
     # Devuelve una lista de tuplas(user_from,Value)
-    def search_messages_to(self, me: str, user: str = ' ') -> list[tuple[str, str]]:
+    def search_messages_to(self, me: str) -> list[tuple[str, str]]:
         result = []
         try:
-            if user == ' ':
-                query = self.session.query(Message).filter(
+            query = self.session.query(Message).filter(
                     Message.user_id_to == me).all()
-            else:
-                query = self.session.query(Message).filter(
-                    Message.user_id_from == user , Message.user_id_to == me).all()
+            
             for q in query:
                 result.append((q.user_id_from, q.value))
-
             return result
         except:
             return []

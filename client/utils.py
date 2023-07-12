@@ -85,8 +85,9 @@ def add_messenge(inf_nodo:BaseEntityNode, source:str, destiny:str, messenge:str)
 
 def task_receive_message(nickname: str, data: DataBaseClient, server_node_data:BaseEntityNode):
     # Lista de tupla de quien lo envio, value
-    messenges = server_node_data.search_messages_to(nickname,'',-1)
-    
+    messenges = server_node_data.search_messages_to(nickname,-1)
+    print(nickname)
+    print(messenges)
     # if server_successor is not None:
     #     server_successor.delete_messenges_to(nickname,server_node_data.id)
     # if server_successor_successor is not None and server_successor_successor is not False and  server_successor_successor is not True:
