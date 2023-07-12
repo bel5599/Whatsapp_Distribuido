@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 
 from ..entity_node import EntityNode
-from ..models import DataBaseModel, CopyDataBaseModel, NicknameEntityBaseModel
+from ..models import DataBaseModel, CopyDataBaseModel, NicknameEntityBaseModel, DataBaseUserModel
 
 
 router = APIRouter(prefix="/info", tags=["info"])
@@ -31,13 +31,25 @@ def search_entity_node(nickname: str, request: Request):
         status_code=500, detail="node search failed!")
 
 
-@router.post("/replicate")
+@router.put("/replicate")
 def replicate(model: CopyDataBaseModel, request: Request):
     node: EntityNode = request.state.node
 
     try:
         node.replicate(model.source, model.database_id)
         return node.serialize()
+    except:
+        raise HTTPException(
+            status_code=500, detail="replicate database failed!")
+
+
+@router.get("/replication_data")
+def get_replication_data(request: Request):
+    node: EntityNode = request.state.node
+
+    try:
+        result = node.get_replication_data()
+        return result.serialize()
     except:
         raise HTTPException(
             status_code=500, detail="replicate database failed!")
@@ -55,3 +67,11 @@ def get_users(model: DataBaseModel, request: Request):
         )
     else:
         return [{"nickname": nickname, "password": password, "ip": ip, "port": port} for (nickname, password, ip, port) in users]
+
+
+@router.get("/all/{search_id}")
+def get_all_nodes(search_id: int, request: Request):
+    node: EntityNode = request.state.node
+
+    nodes = node.all_nodes(search_id)
+    return [node.serialize() for node in nodes]

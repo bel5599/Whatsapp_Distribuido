@@ -3,8 +3,10 @@ from typing import Union, Any, Literal
 from data.database_entity import DataBaseUser
 from .models import DataBaseUserModel, DataMessagesModel, DataUsersModel
 from ..chord.node import Node as ChordNode
+from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..util import generate_id
 from .base_entity_node import BaseEntityNode
+from .remote_entity_node import RemoteEntityNode
 
 
 class DatabaseReplica:
@@ -17,14 +19,23 @@ class EntityNode(ChordNode, BaseEntityNode):
     # region RETURN TYPE OVERLOAD
     def successor(self) -> Union[BaseEntityNode, None]:
         successor: Any = super().successor()
+        if isinstance(successor, ChordRemoteNode):
+            return RemoteEntityNode.from_remote_node(successor)
+
         return successor
 
     def predecessor(self) -> Union[BaseEntityNode, None]:
         predecessor: Any = super().predecessor()
+        if isinstance(predecessor, ChordRemoteNode):
+            return RemoteEntityNode.from_remote_node(predecessor)
+
         return predecessor
 
     def find_successor(self, id: int) -> Union[BaseEntityNode, None]:
         id_successor: Any = super().find_successor(id)
+        if isinstance(id_successor, ChordRemoteNode):
+            return RemoteEntityNode.from_remote_node(id_successor)
+
         return id_successor
     # endregion
 
@@ -44,20 +55,14 @@ class EntityNode(ChordNode, BaseEntityNode):
         ]
 
     def _get_two_nodes(self, direction: Union[Literal["before"], Literal["after"]]):
-        # get pred or succ
-        accessor_func = self.__class__.successor if direction == "after" else self.__class__.predecessor
-
-        first = accessor_func(self)
+        first = self.successor() if direction == "after" else self.predecessor()
         if first and first == self:
             first = None
 
         if not first:
             return first, None
 
-        # get pred.pred or succ.succ
-        accessor_func = first.__class__.successor if direction == "after" else first.__class__.predecessor
-
-        second = accessor_func(first)
+        second = first.successor() if direction == "after" else first.predecessor()
         if second and second == self:
             second = None
 
@@ -200,6 +205,9 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     # region REPLICATION
 
+    def get_replication_data(self):
+        return self._prepare_replication_data(self.database)
+
     def replicate(self, data: DataBaseUserModel, database_id: int):
         # lista de usermodel y lista de messengemodel
         # dataBaseUserModel = model.serialize()
@@ -265,6 +273,9 @@ class EntityNode(ChordNode, BaseEntityNode):
         old_owners = [replica.owner for replica in self.replicas]
         new_owners = [owner for owner in self._get_predecessors()]
 
+        print("OLD", old_owners)
+        print("NEW", new_owners)
+
         new_replica_data_list: list[Union[DataBaseUserModel, None]] = []
 
         for k, (new_owner, old_owner) in enumerate(zip(new_owners, old_owners)):
@@ -284,10 +295,29 @@ class EntityNode(ChordNode, BaseEntityNode):
                         self._prepare_replication_data(self.replicas[1-k].db))
                     continue
 
+                else:
+                    new_replica_data_list.append(
+                        new_owner.get_replication_data())
+                    continue
+
             new_replica_data_list.append(None)
+
+        print(new_replica_data_list)
 
         # replica owners are set already
         for replica, data in zip(self.replicas, new_replica_data_list):
             if replica.owner and data:
                 replica.db.clear()
                 self.replicate(data, replica.owner.id)
+
+    def all_nodes(self, search_id: int = -1) -> list[BaseEntityNode]:
+        if search_id == self.id:
+            return []
+
+        search_id = self.id if search_id == -1 else search_id
+
+        successor = self.successor()
+        if successor and successor.heart():
+            return [self, *successor.all_nodes(search_id)]
+
+        return [self]

@@ -82,7 +82,7 @@ class DataBaseUser:
             message = self.session.query(Message).all()
             for m in message:
                 result.append(
-                    (m.messenge_id, m.user_id_from, m.user_id_to, m.value))
+                    (m.message_id, m.user_id_from, m.user_id_to, m.value))
             return result
         except:
             return result

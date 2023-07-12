@@ -33,7 +33,7 @@ if __name__ == "__main__":
     fastapi_app.include_router(entity_router)
 
     @typer_app.command()
-    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 5):
+    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 1):
         if debug:
             fastapi_app.include_router(debug_router)
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 5):
+    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, interval: int = 1):
         if debug:
             fastapi_app.include_router(debug_router)
 
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         def join_network():
             time.sleep(1)
             node.join_network(remote_node)
-            node.keep_healthy(interval)
+            node.keep_healthy(interval, node.update_replications)
         join_task = threading.Thread(target=join_network, daemon=True)
 
         config = Config(fastapi_app, host=ip, port=int(port))

@@ -1,9 +1,11 @@
 from typing import Any
 
+from server.node.models import DataBaseUserModel
+
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..chord.base_node import BaseNodeModel
 from .base_entity_node import BaseEntityNode
-from .models import DataBaseUserModel
+from .models import DataBaseUserModel, DataUsersModel, DataMessagesModel
 
 
 class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
@@ -15,6 +17,10 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     # region USER
 
+    @classmethod
+    def from_remote_node(cls, node: ChordRemoteNode):
+        return cls(node.id, node.ip, node.port)
+
     def get_users(self, database_id: int = -1):
         try:
             response = self._manager.post(
@@ -24,7 +30,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         else:
             if response.status_code == 200:
                 results: list = response.json()
-                
+
                 return [(result["nickname"], result["password"], result["ip"], result["port"]) for result in results]
 
             print("ERROR:", response.json()["detail"])
@@ -199,4 +205,31 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             if response.status_code != 200:
                 print("ERROR:", response.json()["detail"])
 
+    def get_replication_data(self):
+        try:
+            response = self._manager.get("/info/replication_data")
+        except Exception as e:
+            print("ERROR", e)
+        else:
+            if response.status_code == 200:
+                results: dict = response.json()
+
+                users = [DataUsersModel(**result)
+                         for result in results["users"]]
+                messages = [DataMessagesModel(**result)
+                            for result in results["messages"]]
+                return DataBaseUserModel(users=users, messages=messages)
+
     # endregion
+
+    def all_nodes(self, search_id: int = -1) -> list[BaseEntityNode]:
+        try:
+            response = self._manager.get(f"/info/all/{search_id}")
+        except Exception as e:
+            print("ERROR:", e)
+        else:
+            if response.status_code == 200:
+                result = response.json()
+                return [self.__class__.from_base_model(BaseNodeModel(**node)) for node in result]
+
+        return []

@@ -60,8 +60,11 @@ class BaseNode:
     def __repr__(self):
         return f"{self.__class__.__name__}(id: {self.id})"
 
-    def __eq__(self, other: "BaseNode"):
+    def __eq__(self, other: Union["BaseNode", None]):
+        if not other:
+            return False
+
         return self.id == other.id and self.ip == other.ip and self.port == other.port
 
-    def __ne__(self, other: "BaseNode"):
+    def __ne__(self, other: Union["BaseNode", None]):
         return not self.__eq__(other)
