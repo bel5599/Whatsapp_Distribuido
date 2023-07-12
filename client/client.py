@@ -91,18 +91,22 @@ def login(nickname: str, password: str, server: str):
 
             # Si cambio el ip y el port actualizar estos valores y actualizar en los sucessores
             node_data.update_user(nickname, client.ip, client.port, -1)
-
-            # Recivo los sms que tenia en espera
-            task_receive_message(client.user['nickname'], client.database,
-                                 node_data)
+            
             # Agrega al entity que guarda los datos del cliente, sucesor, sucesor del sucesor y por el q se conecta
             servers = []
             servers.append(server)
             servers.append(node_data.ip+":"+node_data.port)
+            
             # Loguear al usuario
             client.login_user(nickname, password, servers)
+            
+            # Recivo los sms que tenia en espera
+            task_receive_message(client.user['nickname'], client.database,
+                                 node_data)
             return
-        except:
+        except Exception as e:
+            
+            print(" error del exception:",e)
             return "Login failed"
 
 # FALTA
