@@ -207,7 +207,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def get_replication_data(self):
         try:
-            response = self._manager.get("info/replication_data")
+            response = self._manager.get("/info/replication_data")
         except Exception as e:
             print("ERROR", e)
         else:
