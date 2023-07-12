@@ -28,12 +28,13 @@ class HeartBeatManager:
             if len(self.request_manager_list):
                 try:
                     rm = self.request_manager_list.pop()
+                    self.request_manager_list.add(rm)
                     nodes: list[dict] = rm.get(f"/info/all/{-1}").json()
                     self.request_manager_list = self.request_manager_list.union(
                         [RequestManager(node["ip"], node["port"]) for node in nodes])
                 except:
                     print("ERROR at refilling req manager list")
-                print(self.request_manager_list)
-                      
+
+            print(self.request_manager_list)
 
             sleep(interval)
