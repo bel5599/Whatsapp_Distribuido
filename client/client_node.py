@@ -1,6 +1,8 @@
 from service.heartbeat import HeartBeatManager
 from service.requests import RequestManager
 from data.database_client import DataBaseClient
+from shared import get_ip
+from .utils import FIXED_PORT
 
 
 class ClientNode:
@@ -8,8 +10,8 @@ class ClientNode:
         self.user = {}
         self.login = False
         self.manager = HeartBeatManager()
-        self.ip = ''
-        self.port = ''
+        self.ip = get_ip()
+        self.port = FIXED_PORT
         self.database = DataBaseClient()
 
     def login_user(self, nickname: str, password: str, server: list):
@@ -74,7 +76,7 @@ class ClientNode:
     # CHAT
     def get_chats(self):
         return self.database.get_chats(self.user['nickname'])
-    
+
     def add_chat(self, user_id_1_: str, user_id_2_: str):
         return self.database.add_chat(user_id_1_, user_id_2_)
 
