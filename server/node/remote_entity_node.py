@@ -23,8 +23,9 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: list = response.json()
-                return result
+                results: list = response.json()
+                
+                return [(result["nickname"], result["password"], result["ip"], result["port"]) for result in results]
 
             print("ERROR:", response.json()["detail"])
 
@@ -157,8 +158,9 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
             print("ERROR:", e)
         else:
             if response.status_code == 200:
-                result: list = response.json()
-                return result
+                results: list[dict] = response.json()
+
+                return [(result["user_id_from"], result["value"]) for result in results]
 
             print("ERROR:", response.json()["detail"])
 
