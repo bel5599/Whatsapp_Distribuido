@@ -35,6 +35,5 @@ class HeartBeatManager:
                 except:
                     print("ERROR at refilling req manager list")
 
-            print(self.request_manager_list)
 
             sleep(interval)
