@@ -33,5 +33,7 @@ class HeartBeatManager:
                         [RequestManager(node["ip"], node["port"]) for node in nodes])
                 except:
                     print("ERROR at refilling req manager list")
+                print(self.request_manager_list)
+                      
 
             sleep(interval)
