@@ -16,7 +16,8 @@ client = ClientNode()
 def register(nickname: str, password: str):
     # nodo servidor de entrada
 
-    server_node = RemoteEntityNode.from_base_node(client.manager.get_random_node())
+    server_node = RemoteEntityNode.from_base_node(
+        client.manager.get_random_node())
 
     try:
         nodes = server_node.all_nodes()
@@ -51,14 +52,15 @@ def login(nickname: str, password: str):
         return 'You Are Login'
 
     # nodo servidor de entrada FALTA VALIDADCION DEL NODO
-    server_node = RemoteEntityNode.from_base_node(client.manager.get_random_node())
+    server_node = RemoteEntityNode.from_base_node(
+        client.manager.get_random_node())
 
     try:
         nodes = server_node.all_nodes()
         client.manager.add_nodes(*nodes)
     except:
         return "Wrong server"
-    
+
     # Busca el posible nodo a guardar los datos de usuario
     try:
         node = server_node.search_entity_node(nickname)
@@ -156,7 +158,8 @@ def send(user: str, message: str):
     if nickname_user is None:
         nickname_user = user
 
-    node_data = RemoteEntityNode.from_base_node(client.manager.get_random_node())
+    node_data = RemoteEntityNode.from_base_node(
+        client.manager.get_random_node())
 
     # buscar el entity en que está almacenada la información del otro usuario
     dict_other_user = node_data.nickname_entity_node(nickname_user, -1)
@@ -206,7 +209,8 @@ def add_contacts(name: str, nickname: str):
     if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
 
-    node_data = RemoteEntityNode.from_base_node(client.manager.get_random_node())
+    node_data = RemoteEntityNode.from_base_node(
+        client.manager.get_random_node())
 
     dict_other_user = node_data.nickname_entity_node(nickname, -1)
     if dict_other_user is None:
