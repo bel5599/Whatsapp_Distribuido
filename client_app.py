@@ -5,14 +5,15 @@ if __name__ == "__main__":
     import time
     from typer import Typer
     from client.client import client_interface, client
-    from shared import LOCAL_IP
+    from shared import LOCAL_IP, CLIENT_PORT
 
     typer_app = Typer()
 
     @typer_app.command()
-    def run(port: str = '9050'):
+    def run(ip: str):
         client.insert_servers()
         # Creacion de un hilo para este servicio
+
         def update():
             time.sleep(1)
             client.update_servers()
@@ -20,6 +21,6 @@ if __name__ == "__main__":
         # Levantar el hilo
         stabilize_task.start()
         # Correr el cliente
-        uvicorn.run(client_interface, host=LOCAL_IP, port=int(port))
+        uvicorn.run(client_interface, host=LOCAL_IP, port=int(CLIENT_PORT))
 
     typer_app()
