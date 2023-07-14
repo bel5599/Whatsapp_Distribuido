@@ -6,10 +6,14 @@ if __name__ == "__main__":
     import time
     from typer import Typer
     from client.client import client_interface, client
+    from client.utils import SERVER_ADDRESSES_CACHE_FILENAME
     from shared import LOCAL_IP, CLIENT_PORT, SERVER_PORT
     from server.util import generate_id
     from server.node.remote_entity_node import RemoteEntityNode
     from server.chord.base_node import BaseNodeModel
+
+    # handle shutdown
+    client_interface.on_event("shutdown")(client.save_nodes)
 
     typer_app = Typer()
 
@@ -22,7 +26,7 @@ if __name__ == "__main__":
         servers: list[dict] = []
 
         try:
-            with open("server_addresses_cache.json", "r") as j:
+            with open(SERVER_ADDRESSES_CACHE_FILENAME, "r") as j:
                 servers = json.load(j)
         except:
             pass

@@ -1,6 +1,8 @@
 from data.database_client import DataBaseClient
 from server.node.base_entity_node import BaseEntityNode
 
+SERVER_ADDRESSES_CACHE_FILENAME = "server_addresses_cache.json"
+
 
 def register_user(inf_nodo: BaseEntityNode, nickname: str, password: str, ip: str, port: str):
     try:

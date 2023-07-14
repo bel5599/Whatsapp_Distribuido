@@ -3,6 +3,7 @@ import json
 from service.heartbeat import HeartBeatManager
 from data.database_client import DataBaseClient
 from shared import get_ip, CLIENT_PORT
+from .utils import SERVER_ADDRESSES_CACHE_FILENAME
 
 
 class ClientNode:
@@ -29,7 +30,7 @@ class ClientNode:
 
     def save_nodes(self):
         nodes = [node.serialize() for node in self.manager.get_nodes()]
-        self.save_info("server_addresses_cache.json", nodes)
+        self.save_info(SERVER_ADDRESSES_CACHE_FILENAME, nodes)
 
     def save_info(self, file_name, data: list):
         with open(file_name, "w") as j:
