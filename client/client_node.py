@@ -19,12 +19,12 @@ class ClientNode:
         self.user['nickname'] = nickname
         self.user['password'] = password
         self.login = True
-        
-    def add_servers(self,servers:list):
+
+    def add_servers(self, servers: list):
         for s in servers:
             ip, port = s.split(':')
             self.manager.add_request_manager(RequestManager(ip, port))
-    
+
     def server_list(self):
         return list(self.manager.request_manager_list)
 
@@ -41,7 +41,7 @@ class ClientNode:
         ip_ = ip.split(".", 1)
         ip = ip_[1][::-1]
 
-        data = {"ip": ip, "port":self.port}
+        data = {"ip": ip, "port": self.port}
         ip_port_list.append(data)
         self.save_infor("server_addresses_cache.json", data)
 
