@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     @typer_app.command()
     def run(port: str = '9050'):
-        cliente.insert_servers()
+        client.insert_servers()
         # Creacion de un hilo para este servicio
         def update():
             time.sleep(1)
