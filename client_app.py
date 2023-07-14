@@ -10,7 +10,7 @@ if __name__ == "__main__":
     typer_app = Typer()
 
     @typer_app.command()
-    def run(port: str = '9000'):
+    def run(port: str = '9050'):
         cliente.insert_servers()
         # Creacion de un hilo para este servicio
         def update():
