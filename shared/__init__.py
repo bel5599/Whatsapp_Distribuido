@@ -2,8 +2,11 @@ import socket
 
 
 LOCAL_IP = "127.0.0.1"
+
 CLIENT_PORT = "9050"
 SERVER_PORT = "4173"
+
+HEART_RESPONSE = "beat"
 
 
 def get_ip(local=False):

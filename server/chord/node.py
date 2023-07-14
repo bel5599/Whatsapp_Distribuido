@@ -5,6 +5,7 @@ import sys
 
 from .base_node import BaseNode
 from ..util import generate_id
+from shared import HEART_RESPONSE
 
 
 class Finger:
@@ -140,7 +141,7 @@ class Node(BaseNode):
     # region HEALTH
 
     def heart(self):
-        return "beat"
+        return HEART_RESPONSE
 
     def _check_successor(self):
         successor = self.successor()
