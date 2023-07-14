@@ -1,38 +1,40 @@
 from time import sleep
+from typing import Union
+from random import choice
 
-from ..requests import RequestManager
+from server.chord.base_node import BaseNode
+from shared import HEART_RESPONSE
 
 
 class HeartBeatManager:
     def __init__(self):
-        self.request_manager_list: set[RequestManager] = set()
+        self.nodes: set[BaseNode] = set()
 
-    def add_request_manager(self, request_manager: RequestManager):
-        self.request_manager_list.add(request_manager)
+    def add_nodes(self, *nodes: Union[BaseNode, None]):
+        for node in nodes:
+            if node:
+                self.nodes.add(node)
+
+    def get_nodes(self):
+        return list(self.nodes)
 
     def check_health(self, interval: float = 1):
         while True:
-            temp_set = set()
-            for request_manager in self.request_manager_list:
-                try:
-                    response = request_manager.get("/chord/heart")
-                except:
-                    temp_set.add(request_manager)
-                else:
-                    if response.status_code != 200:
-                        temp_set.add(request_manager)
+            temp_set: set[BaseNode] = set()
+            for node in self.nodes:
+                beat = node.heart()
+                if beat is None or beat != HEART_RESPONSE:
+                    temp_set.add(node)
 
-            self.request_manager_list = self.request_manager_list - temp_set
+            self.nodes = self.nodes - temp_set
 
             # rellenar la lista
-            if len(self.request_manager_list):
-                try:
-                    rm = self.request_manager_list.pop()
-                    self.request_manager_list.add(rm)
-                    nodes: list[dict] = rm.get(f"/info/all/{-1}").json()
-                    self.request_manager_list = self.request_manager_list.union(
-                        [RequestManager(node["ip"], node["port"]) for node in nodes])
-                except:
-                    print("ERROR at refilling req manager list")
+            if len(self.nodes):
+                node = choice(list(self.nodes))
+
+                first = node.successor()
+                second = first and first.successor()
+
+                self.add_nodes(first, second)
 
             sleep(interval)
