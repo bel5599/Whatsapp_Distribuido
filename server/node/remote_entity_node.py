@@ -3,7 +3,7 @@ from typing import Any
 from server.node.models import DataBaseUserModel
 
 from ..chord.remote_node import RemoteNode as ChordRemoteNode
-from ..chord.base_node import BaseNodeModel
+from ..chord.base_node import BaseNodeModel, BaseNode as ChordBaseNode
 from .base_entity_node import BaseEntityNode
 from .models import DataBaseUserModel, DataUsersModel, DataMessagesModel
 
@@ -18,7 +18,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     # region USER
 
     @classmethod
-    def from_remote_node(cls, node: ChordRemoteNode):
+    def from_base_node(cls, node: ChordBaseNode):
         return cls(node.id, node.ip, node.port)
 
     def get_users(self, database_id: int = -1):

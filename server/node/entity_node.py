@@ -20,21 +20,21 @@ class EntityNode(ChordNode, BaseEntityNode):
     def successor(self) -> Union[BaseEntityNode, None]:
         successor: Any = super().successor()
         if isinstance(successor, ChordRemoteNode):
-            return RemoteEntityNode.from_remote_node(successor)
+            return RemoteEntityNode.from_base_node(successor)
 
         return successor
 
     def predecessor(self) -> Union[BaseEntityNode, None]:
         predecessor: Any = super().predecessor()
         if isinstance(predecessor, ChordRemoteNode):
-            return RemoteEntityNode.from_remote_node(predecessor)
+            return RemoteEntityNode.from_base_node(predecessor)
 
         return predecessor
 
     def find_successor(self, id: int) -> Union[BaseEntityNode, None]:
         id_successor: Any = super().find_successor(id)
         if isinstance(id_successor, ChordRemoteNode):
-            return RemoteEntityNode.from_remote_node(id_successor)
+            return RemoteEntityNode.from_base_node(id_successor)
 
         return id_successor
     # endregion
