@@ -17,7 +17,7 @@ if __name__ == "__main__":
     from server.chord.routers import router as chord_router, debug_router
     from server.node.routers import router as entity_router
 
-    from shared import get_ip, LOCAL_IP
+    from shared import get_ip, LOCAL_IP, SERVER_PORT
 
     def inject_node(app: FastAPI, node: Node):
         async def middleware(request: Request, call_next):
@@ -33,46 +33,42 @@ if __name__ == "__main__":
     fastapi_app.include_router(entity_router)
 
     @typer_app.command()
-    def up(capacity: int = 64, port: str = "4173", local: bool = False, debug: bool = False, interval: float = 1):
+    def up(capacity: int = 64, local: bool = False, debug: bool = False, interval: float = 1):
         if debug:
             fastapi_app.include_router(debug_router)
 
         capacity = min(capacity, 256)
 
         ip = get_ip(local)
-        node = Node.create_network(ip, port, capacity)
+        node = Node.create_network(ip, SERVER_PORT, capacity)
 
         inject_node(fastapi_app, node)
 
         healthy_task = threading.Thread(
             target=node.keep_healthy, args=(interval, node.update_replications), daemon=True)
 
-        config = Config(fastapi_app, host=ip, port=int(port))
+        config = Config(fastapi_app, host=ip, port=int(SERVER_PORT))
         server = Server(config)
 
         healthy_task.start()
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(address: str, port: str = "4173", local: bool = False, debug: bool = False, interval: float = 1):
+    def join(remote_ip: str, local: bool = False, debug: bool = False, interval: float = 1):
         if debug:
             fastapi_app.include_router(debug_router)
 
-        if not local:
-            remote_ip, remote_port = address.split(
-                ":")
-        else:
+        if local:
             remote_ip = LOCAL_IP
-            remote_port = address
 
-        remote_node = RemoteNode(-1, remote_ip, remote_port)
+        remote_node = RemoteNode(-1, remote_ip, SERVER_PORT)
 
         capacity = remote_node.network_capacity()
 
         ip = get_ip(local)
-        node = Node(ip, port, capacity)
+        node = Node(ip, SERVER_PORT, capacity)
 
-        remote_node.id = generate_id(f"{remote_ip}:{remote_port}", capacity)
+        remote_node.id = generate_id(f"{remote_ip}:{SERVER_PORT}", capacity)
         remote_node.set_local_node(node)
 
         inject_node(fastapi_app, node)
@@ -83,7 +79,7 @@ if __name__ == "__main__":
             node.keep_healthy(interval, node.update_replications)
         join_task = threading.Thread(target=join_network, daemon=True)
 
-        config = Config(fastapi_app, host=ip, port=int(port))
+        config = Config(fastapi_app, host=ip, port=int(SERVER_PORT))
         server = Server(config)
 
         join_task.start()
