@@ -273,9 +273,6 @@ class EntityNode(ChordNode, BaseEntityNode):
         old_owners = [replica.owner for replica in self.replicas]
         new_owners = [owner for owner in self._get_predecessors()]
 
-        print("OLD", old_owners)
-        print("NEW", new_owners)
-
         new_replica_data_list: list[Union[DataBaseUserModel, None]] = []
 
         for k, (new_owner, old_owner) in enumerate(zip(new_owners, old_owners)):
@@ -301,8 +298,6 @@ class EntityNode(ChordNode, BaseEntityNode):
                     continue
 
             new_replica_data_list.append(None)
-
-        print(new_replica_data_list)
 
         # replica owners are set already
         for replica, data in zip(self.replicas, new_replica_data_list):
