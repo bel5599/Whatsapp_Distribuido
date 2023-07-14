@@ -4,7 +4,7 @@ if __name__ == "__main__":
     import uvicorn
     import threading
     import time
-    from typer import Typer
+    from typer import Typer, Argument
     from client.client import client_interface, client
     from client.utils import SERVER_ADDRESSES_CACHE_FILENAME
     from shared import LOCAL_IP, CLIENT_PORT, SERVER_PORT
@@ -18,28 +18,40 @@ if __name__ == "__main__":
     typer_app = Typer()
 
     @typer_app.command()
-    def run(ip: str):
-        server_node = RemoteEntityNode(-1, ip, SERVER_PORT)
-        capacity = server_node.network_capacity()
-        server_node.id = generate_id(
-            f"{server_node.ip}:{server_node.port}", capacity)
-        servers: list[dict] = []
+    def run(ip: str = Argument("")):
+        nodes: list[RemoteEntityNode] = []
 
+        # load nodes from cache
         try:
+            servers: list[dict] = []
             with open(SERVER_ADDRESSES_CACHE_FILENAME, "r") as j:
                 servers = json.load(j)
         except:
             pass
-        if len(servers):
-            nodes = [RemoteEntityNode.from_base_model(
-                BaseNodeModel(**n)) for n in servers]
         else:
-            nodes = server_node.all_nodes()
+            if len(servers):
+                nodes = [RemoteEntityNode.from_base_model(
+                    BaseNodeModel(**n)) for n in servers]
 
+        # create node from ip
+        if len(ip):
+            server_node = RemoteEntityNode(-1, ip, SERVER_PORT)
+            try:
+                capacity = server_node.network_capacity()
+            except:
+                pass
+            else:
+                server_node.id = generate_id(
+                    f"{server_node.ip}:{server_node.port}", capacity)
+                nodes.append(server_node)
+
+        # add nodes to client manager
         client.manager.add_nodes(*nodes)
 
-        # Creacion de un hilo para este servicio
+        if len(client.manager.get_nodes()) == 0:
+            raise Exception("Unable to find a server node to connect!")
 
+        # Creacion de un hilo para este servicio
         def update():
             time.sleep(1)
             client.update_servers()
