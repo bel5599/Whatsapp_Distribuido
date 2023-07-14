@@ -172,21 +172,32 @@ class Node(BaseNode):
         new_successor = self.successor()
         return new_successor and new_successor.notify(self)
 
-    def _fix_random_finger(self):
-        index = random.randint(1, self.network_capacity() - 1)
+    def _fix_fingers(self, index: int):
+        # fix fixed finger
         finger = self.fingers[index]
-
         finger.node = self.find_successor(finger.start)
 
+        # fix random finger if different from fixed
+        random_index = random.randint(1, self.network_capacity() - 1)
+        if random_index != index:
+            finger = self.fingers[random_index]
+            finger.node = self.find_successor(finger.start)
+
     def keep_healthy(self, interval: float, *tasks):
+        index = 1
         while True:
             time.sleep(interval)
 
             self._check_successor()
             self._stabilize()
-            self._fix_random_finger()
+            self._fix_fingers(index)
 
             for task in tasks:
                 task()
+
+            index += 1
+            if index == self.network_capacity():
+                # reset index
+                index = 1
 
     # endregion
