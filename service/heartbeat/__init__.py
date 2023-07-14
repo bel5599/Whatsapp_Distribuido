@@ -18,6 +18,11 @@ class HeartBeatManager:
     def get_nodes(self):
         return list(self.nodes)
 
+    def get_random_node(self):
+        node = choice(list(self.nodes))
+
+        return node
+
     def check_health(self, interval: float = 1):
         while True:
             temp_set: set[BaseNode] = set()
@@ -30,7 +35,7 @@ class HeartBeatManager:
 
             # rellenar la lista
             if len(self.nodes):
-                node = choice(list(self.nodes))
+                node = self.get_random_node()
 
                 first = node.successor()
                 second = first and first.successor()
