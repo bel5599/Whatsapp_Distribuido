@@ -2,7 +2,6 @@ from typing import Union
 from fastapi import FastAPI
 
 from server.node.remote_entity_node import RemoteEntityNode
-from server.util import generate_id
 from service.requests import RequestManager
 from .client_node import ClientNode
 from .utils import *
