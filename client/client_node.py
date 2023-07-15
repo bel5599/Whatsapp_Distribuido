@@ -1,9 +1,8 @@
 import json
+
 from service.heartbeat import HeartBeatManager
-from service.requests import RequestManager
 from data.database_client import DataBaseClient
-from shared import get_ip
-from .utils import FIXED_PORT
+from shared import get_ip, CLIENT_PORT
 
 
 class ClientNode:
@@ -12,21 +11,13 @@ class ClientNode:
         self.login = False
         self.manager = HeartBeatManager()
         self.ip = get_ip()
-        self.port = FIXED_PORT
+        self.port = CLIENT_PORT
         self.database = DataBaseClient()
 
     def login_user(self, nickname: str, password: str):
         self.user['nickname'] = nickname
         self.user['password'] = password
         self.login = True
-
-    def add_servers(self, servers: list):
-        for s in servers:
-            ip, port = s.split(':')
-            self.manager.add_request_manager(RequestManager(ip, port))
-
-    def server_list(self):
-        return list(self.manager.request_manager_list)
 
     def logout_user(self):
         self.user = {}
