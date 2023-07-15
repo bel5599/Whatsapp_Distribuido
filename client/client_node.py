@@ -36,12 +36,19 @@ class ClientNode:
     def update_servers(self):
         self.manager.check_health()
 
-    def save_ip(self):
-        ip = self.ip
+    def save_ip_port(self, ip_port_list: list):
+        ip = self.ip[::-1]
+        ip_ = ip.split(".", 1)
+        ip = ip_[1][::-1]
 
-    def save_customer_infor(self, file_name, data):
+        data = {"ip": ip, "port":self.port}
+        ip_port_list.append(data)
+        self.save_infor("server_addresses_cache.json", data)
+
+    def save_infor(self, file_name, data: list):
         with open(file_name, "w") as j:
             json.dumps(data, j)
+
     # Aqui van los metodos de la base datos desde el cliente
 
     # Contacts
