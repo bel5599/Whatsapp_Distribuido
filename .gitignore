@@ -4,3 +4,4 @@ data.sqlite
 pred_replication_data.sqlite
 secondpred_replication_data.sqlite
 client_data.sqlite
+server_addresses_cache.json
