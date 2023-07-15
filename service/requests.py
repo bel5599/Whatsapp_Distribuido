@@ -1,9 +1,10 @@
 from requests import get, put, delete, post
 from json import dumps
+from hashlib import sha256
 
 
 class RequestManager:
-    def __init__(self, ip: str, port: str, timeout: int = 5, headers: dict[str, str] = {}, secure=False):
+    def __init__(self, ip: str, port: str, timeout: int = 1, headers: dict[str, str] = {}, secure=False):
         s = "s" if secure else ""
         self.ip = ip
         self.port = port
@@ -38,3 +39,9 @@ class RequestManager:
         kwargs["data"] = dumps(data)
 
         return delete(f"{self._url}{route}", timeout=self._timeout, **kwargs)
+
+    def __eq__(self, value: "RequestManager") -> bool:
+        return self.ip == value.ip and self.port == value.port
+
+    def __hash__(self) -> int:
+        return int(sha256(self._url.encode()).hexdigest(), 16) % 2 ** 32

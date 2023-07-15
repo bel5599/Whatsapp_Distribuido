@@ -65,6 +65,9 @@ class BaseNode:
             return False
 
         return self.id == other.id and self.ip == other.ip and self.port == other.port
+    
+    def __hash__(self) -> int:
+        return self.id
 
     def __ne__(self, other: Union["BaseNode", None]):
         return not self.__eq__(other)
