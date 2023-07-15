@@ -13,27 +13,16 @@ client = ClientNode()
 
 
 @client_interface.post("/Register")
-def register(nickname: str, password: str, server: str):
+def register(nickname: str, password: str):
     # nodo servidor de entrada
-    ip = server.split(':')[0]
-    port = server.split(':')[1]
-    server_node = RemoteEntityNode(-1, ip, port)
-    capacity = server_node.network_capacity()
-    server_node.id = generate_id(
-        f"{server_node.ip}:{server_node.port}", capacity)
+
+    server_node = RemoteEntityNode.from_base_node(client.manager.get_random_node())
 
     try:
-        servers = [
-            f'{node.ip}:{node.port}' for node in server_node.all_nodes(-1)]
-        client.add_servers(servers)
+        nodes = server_node.all_nodes()
+        client.manager.add_nodes(*nodes)
     except:
         return "Wrong server"
-
-    rm = client.server_list()[0]
-    server_node = RemoteEntityNode(-1, rm.ip, rm.port)
-    capacity = server_node.network_capacity()
-    server_node.id = generate_id(
-        f"{server_node.ip}:{server_node.port}", capacity)
 
     # Busca el posible nodo a guardar los datos de usuario
     node = server_node.search_entity_node(nickname)
@@ -57,31 +46,19 @@ def register(nickname: str, password: str, server: str):
 
 
 @client_interface.post("/Login")
-def login(nickname: str, password: str, server: str):
+def login(nickname: str, password: str):
     if client.login:
         return 'You Are Login'
 
     # nodo servidor de entrada FALTA VALIDADCION DEL NODO
-    ip = server.split(':')[0]
-    port = server.split(':')[1]
-    server_node = RemoteEntityNode(-1, ip, port)
-    capacity = server_node.network_capacity()
-    server_node.id = generate_id(
-        f"{server_node.ip}:{server_node.port}", capacity)
+    server_node = RemoteEntityNode.from_base_node(client.manager.get_random_node())
 
     try:
-        servers = [
-            f'{node.ip}:{node.port}' for node in server_node.all_nodes(-1)]
-        client.add_servers(servers)
+        nodes = server_node.all_nodes()
+        client.manager.add_nodes(*nodes)
     except:
         return "Wrong server"
-
-    rm = client.server_list()[0]
-    server_node = RemoteEntityNode(-1, rm.ip, rm.port)
-    capacity = server_node.network_capacity()
-    server_node.id = generate_id(
-        f"{server_node.ip}:{server_node.port}", capacity)
-
+    
     # Busca el posible nodo a guardar los datos de usuario
     try:
         node = server_node.search_entity_node(nickname)
@@ -135,7 +112,7 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
         return "You are not logged in"
 
     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
-    servers = client.server_list()
+    servers = client.manager.get_nodes()
 
     # server que contiene informacion
     if len(servers) == 0:
@@ -170,7 +147,7 @@ def send(user: str, message: str):
 
     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
     # client.update_servers()
-    servers = client.server_list()
+    servers = client.manager.get_nodes()
     # server que contiene informacion
     if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
@@ -179,13 +156,7 @@ def send(user: str, message: str):
     if nickname_user is None:
         nickname_user = user
 
-    request_manager = servers[0]
-    ip = request_manager.ip
-    port = request_manager.port
-
-    node_data = RemoteEntityNode(-1, ip, port)
-    capacity = node_data.network_capacity()
-    node_data.id = generate_id(f"{ip}:{port}", capacity)
+    node_data = RemoteEntityNode.from_base_node(client.manager.get_random_node())
 
     # buscar el entity en que está almacenada la información del otro usuario
     dict_other_user = node_data.nickname_entity_node(nickname_user, -1)
@@ -229,22 +200,13 @@ def add_contacts(name: str, nickname: str):
         return "You are not logged in"
 
     # VERIFICAR QUE LOS SERVIDORES ESTEN ACTIVOS Y ACTUALIZAR LA LISTA DE SERVERS DEL USUARIO
-    servers = client.server_list()
+    servers = client.manager.get_nodes()
 
     # server que contiene informacion
     if len(servers) == 0:
         return 'Broken Connection, you need to exit the login and login again'
 
-    request_manager = servers[0]
-    ip = request_manager.ip
-    port = request_manager.port
-
-    try:
-        node_data = RemoteEntityNode(-1, ip, port)
-        capacity = node_data.network_capacity()
-        node_data.id = generate_id(f"{ip}:{port}", capacity)
-    except:
-        return 'Broken Connection'
+    node_data = RemoteEntityNode.from_base_node(client.manager.get_random_node())
 
     dict_other_user = node_data.nickname_entity_node(nickname, -1)
     if dict_other_user is None:
