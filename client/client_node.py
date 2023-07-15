@@ -1,3 +1,4 @@
+import json
 from service.heartbeat import HeartBeatManager
 from service.requests import RequestManager
 from data.database_client import DataBaseClient
@@ -35,6 +36,12 @@ class ClientNode:
     def update_servers(self):
         self.manager.check_health()
 
+    def save_ip(self):
+        ip = self.ip
+
+    def save_customer_infor(self, file_name, data):
+        with open(file_name, "w") as j:
+            json.dumps(data, j)
     # Aqui van los metodos de la base datos desde el cliente
 
     # Contacts
