@@ -34,7 +34,7 @@ class ClientNode:
 
     def save_info(self, file_name, data: list):
         with open(file_name, "w") as j:
-            json.dump(data, j)
+            json.dump(data, j, indent=2)
 
     # Aqui van los metodos de la base datos desde el cliente
 
