@@ -152,7 +152,7 @@ class EntityNode(ChordNode, BaseEntityNode):
         search_id = self.id if search_id == -1 else search_id
 
         # buscar en el nodo actual
-        if self.database.contain_user(nickname) or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
+        if self.database.contain_user(nickname): #or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
             return self
 
         # no lo encontramos aqui, buscar en el successor
