@@ -2,7 +2,7 @@ import json
 
 from service.heartbeat import HeartBeatManager
 from data.database_client import DataBaseClient
-from shared import get_ip, CLIENT_PORT
+from shared import get_ip, SERVICE_PORT
 from .utils import SERVER_ADDRESSES_CACHE_FILENAME
 
 
@@ -12,7 +12,7 @@ class ClientNode:
         self.login = False
         self.manager = HeartBeatManager()
         self.ip = get_ip()
-        self.port = CLIENT_PORT
+        self.port = SERVICE_PORT
         self.database = DataBaseClient()
 
     def login_user(self, nickname: str, password: str):
