@@ -2,7 +2,7 @@ import socket
 
 
 LOCAL_IP = "127.0.0.1"
-
+SERVICE_PORT ="8480"
 CLIENT_PORT = "9050"
 SERVER_PORT = "4173"
 
