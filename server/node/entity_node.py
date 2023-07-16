@@ -223,7 +223,7 @@ class EntityNode(ChordNode, BaseEntityNode):
 
             for message in messages_serialize:
                 db.add_messages(
-                    message.user_id_from, message.user_id_to, message.value)
+                    message.user_id_from, message.user_id_to, message.value,message.message_id)
 
     # endregion
 
