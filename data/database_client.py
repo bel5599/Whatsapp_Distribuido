@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from .models_client import *
 # from models_client import *
 from typing import Union
+import time
 
 
 class DataBaseClient:
@@ -25,7 +26,7 @@ class DataBaseClient:
         except:
             return result
 
-    def add_contacts(self, mynickname_: str, nickname_: str, name_: str = "Unknown") -> bool:
+    def add_contacts(self, mynickname_: str, nickname_: str, name_: str) -> bool:
         if self.contain_contact(mynickname_, nickname_):
             return False
         try:
@@ -96,27 +97,31 @@ class DataBaseClient:
             return result
         except:
             return result
+    
+    def contain_messages(self, id,source: str, destiny: str, value: str) -> bool:
+        contain = self.session.query(Message).filter(Message.message_id==id, Message.user_id_from ==source, Message.user_id_to ==destiny,Message.value ==value ).first()
+        return contain is not None
+
 
     def add_messages(self, source: str, destiny: str, value_: str, id: int = -1) -> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla
         self.add_chat(source, destiny)
         idChat = self.search_chat_id(source, destiny)
+        if id == -1:
+            id_ = int(time.time())
+        else:
+            id_ = id
+        if self.contain_messages(id_,source,destiny,value_):
+            return False
         try:
             with self.session:
-                if id != -1:
-                    messages = Message(
-                        messager_id=id,
+                messages = Message(
+                        message_id= id_ ,
                         user_id_from=source,
                         user_id_to=destiny,
                         chat_id=idChat,
                         value=value_,)
-                else:
-                    messages = Message(
-                        user_id_from=source,
-                        user_id_to=destiny,
-                        chat_id=idChat,
-                        value=value_,)
-
+                #if messages is Message:
                 self.session.add_all([messages])
                 self.session.commit()
                 return True
