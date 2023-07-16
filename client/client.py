@@ -14,6 +14,8 @@ client = ClientNode()
 @client_interface.post("/Register")
 def register(nickname: str, password: str):
     # nodo servidor de entrada
+    if client.login:
+        return "You are logged in"
 
     server_node = RemoteEntityNode.from_base_node(
         client.manager.get_random_node())
