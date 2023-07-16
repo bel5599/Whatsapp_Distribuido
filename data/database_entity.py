@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from typing import Union
 from .model_entity import *
 #from model_entity import User, Messenge
-
+import time
 
 class DataBaseUser:
     def __init__(self, name: str = 'user_data'):
@@ -11,6 +11,7 @@ class DataBaseUser:
         Session = sessionmaker(bind=engine)
         self.session = Session()
         Base.metadata.create_all(engine)
+        self.clear()
 
     # USER
     # Devuelve una lista:user de todos los usuarios de la base datos
@@ -86,17 +87,29 @@ class DataBaseUser:
             return result
         except:
             return result
+    def contain_messages(self, id,source: str, destiny: str, value: str) -> bool:
+        contain = self.session.query(Message).filter(Message.message_id==id, Message.user_id_from ==source, Message.user_id_to ==destiny,Message.value ==value ).first()
+        return contain is not None
 
-    def add_messages(self, source: str, destiny: str, value_: str) -> bool:
+    def add_messages(self, source: str, destiny: str, value_: str,id =-1) -> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla
+                # Crear el chat si no existe y luego agregarselo a la tabla
+        if id == -1:
+            id_ = int(time.time())
+        else:
+            id_ = id
+         
+        if self.contain_messages(id_,source,destiny,value_):
+            return False
         try:
             with self.session:
-                message = Message(
-                    user_id_from=source,
-                    user_id_to=destiny,
-                    value=value_,
-                )
-                self.session.add_all([message])
+                messages = Message(
+                        message_id= id_ ,
+                        user_id_from=source,
+                        user_id_to=destiny,
+                        value=value_,)
+                #if messages is Message:
+                self.session.add_all([messages])
                 self.session.commit()
                 return True
         except:
@@ -178,4 +191,4 @@ class DataBaseUser:
             return True
         except:
             return False    
-        
+   
