@@ -22,7 +22,7 @@ class ClientNode:
 
     def logout_user(self):
         self.user = {}
-        self.manager = HeartBeatManager()
+        #self.manager = HeartBeatManager()
         self.login = False
 
     def update_servers(self):
