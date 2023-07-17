@@ -39,6 +39,7 @@ class DataBaseUser:
                 self.session.commit()
                 return True
         except:
+            print("Buscar error en la base datos")
             return False
 
     def contain_user(self, nickname_: str) -> bool:
