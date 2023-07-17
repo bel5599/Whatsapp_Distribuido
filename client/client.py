@@ -1,8 +1,10 @@
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
 
 from server.node.remote_entity_node import RemoteEntityNode
 from service.requests import RequestManager
+from shared import SERVER_PORT
 from .client_node import ClientNode
 from .utils import *
 
@@ -186,11 +188,6 @@ def send(user: str, message: str):
     return "Send Message"
 
 
-@service.post("/ReceiveMessage")
-def receive_message(nickname_from: str, nickname_to: str, value: str):
-    client.add_messenges(nickname_from, nickname_to, value, -1)
-
-
 @client_interface.get("/GetContacts")
 def get_contacts():
     if not client.login:
@@ -254,3 +251,23 @@ def get_chats():
         else:
             result.append(chat)
     return result
+
+
+@service.post("/ReceiveMessage")
+def receive_message(nickname_from: str, nickname_to: str, value: str, request: Request):
+    client: ClientNode = request.state.client
+
+    client.add_messenges(nickname_from, nickname_to, value, -1)
+
+
+class ServerNodeModel(BaseModel):
+    id: int
+    ip: str
+
+
+@service.put("/register-server")
+def register_server(model: ServerNodeModel, request: Request):
+    client: ClientNode = request.state.client
+
+    node = RemoteEntityNode(model.id, model.ip, SERVER_PORT)
+    client.manager.add_nodes(node)
