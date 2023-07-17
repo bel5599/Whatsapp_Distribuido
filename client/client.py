@@ -29,8 +29,9 @@ def register(nickname: str, password: str):
     # Busca el posible nodo a guardar los datos de usuario
     node = server_node.search_entity_node(nickname)
     # node_data: Union[BaseEntityNode, None] = None
-
+    print(node)
     if node is not None:
+        print("entre")
         node_data = node.nickname_entity_node(nickname, -1)
         # verificar si el usuario ya esta en el sistema y validacion del servidor de entrada
         if node_data is not None:
@@ -166,11 +167,14 @@ def send(user: str, message: str):
     dict_other_user = node_data.nickname_entity_node(nickname_user, -1)
     if dict_other_user is None:
         return user+" "+"is not register"
-
+    print(dict_other_user)
     my_nickname = client.user['nickname']
 
+    print(nickname_user)
     try:
         ip, port = dict_other_user.get_ip_port(nickname_user, -1).split(":")
+        print(ip)
+        print(port)
         rm = RequestManager(ip, port)
         rm.post("/ReceiveMessage", params={
             "nickname_from": my_nickname, "nickname_to": nickname_user, 'value': message})
