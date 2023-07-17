@@ -6,6 +6,7 @@ class MessagesModel(BaseModel):
     destiny: str
     value: str
     database_id: int
+    id:int
 
 
 class UserModel(BaseModel):
