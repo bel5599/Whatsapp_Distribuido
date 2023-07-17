@@ -172,7 +172,7 @@ class EntityNode(ChordNode, BaseEntityNode):
         db = self._get_database(database_id)
         
         if id==-1:
-            id_ = int(time.time)
+            id_ = int(time.time())
         else :
             id_ = id
                 
