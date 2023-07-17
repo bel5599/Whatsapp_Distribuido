@@ -7,6 +7,7 @@ from ..chord.remote_node import RemoteNode as ChordRemoteNode
 from ..util import generate_id
 from .base_entity_node import BaseEntityNode
 from .remote_entity_node import RemoteEntityNode
+import time
 
 
 class DatabaseReplica:
@@ -96,7 +97,7 @@ class EntityNode(ChordNode, BaseEntityNode):
         db = self._get_database(database_id)
         if db:
             success = db.add_user(nickname, password, ip, port)
-
+            print('soy seccess del original' + str(success))
             if success and database_id == -1:
                 # replicate
                 for successor in self._get_successors():
@@ -167,20 +168,25 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     # region MESSAGES
 
-    def add_messages(self, source: str, destiny: str, value: str, database_id: int):
+    def add_messages(self, source: str, destiny: str, value: str,database_id: int,id:int = -1):
         db = self._get_database(database_id)
+        
+        if id==-1:
+            id_ = int(time.time)
+        else :
+            id_ = id
+                
         if db:
-            success = db.add_messages(source, destiny, value)
+            success = db.add_messages(source, destiny, value,id_)
             if success and database_id == -1:
                 # replicate
                 for successor in self._get_successors():
                     if successor:
                         successor.add_messages(
-                            source, destiny, value, self.id)
+                            source, destiny, value, self.id,id_)
 
             return success
         return False
-
     def search_messages_to(self, me: str, database_id: int):
         db = self._get_database(database_id)
         if db:
