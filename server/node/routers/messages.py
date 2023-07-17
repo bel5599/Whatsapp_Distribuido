@@ -26,7 +26,7 @@ def add_messages(model: MessagesModel, request: Request):
 
     try:
         result = node.add_messages(
-            model.source, model.destiny, model.value, model.database_id)
+            model.source, model.destiny, model.value, model.database_id,model.id)
     except:
         raise HTTPException(
             status_code=500, detail="add messages failed!")
