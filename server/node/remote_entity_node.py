@@ -128,7 +128,8 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def search_entity_node(self, nickname: str):
         try:
-            response = self._manager.get(f"/info/search_entity/{nickname}", timeout=3)
+            response = self._manager.get(
+                f"/info/search_entity/{nickname}", timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -199,7 +200,8 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         }
 
         try:
-            response = self._manager.put("/info/replicate", data=body, timeout=5)
+            response = self._manager.put(
+                "/info/replicate", data=body, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
