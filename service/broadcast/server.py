@@ -11,13 +11,16 @@ from . import BROADCAST_IP, BROADCAST_PORT, BROADCAST_MESSAGE, BROADCAST_SERVER_
 
 class IPBox:
     def __init__(self):
-        self.ips: list[str] = []
+        self._ips: set[str] = set()
 
     def add(self, ip: str):
-        self.ips.append(ip)
+        self._ips.add(ip)
+
+    def ips(self):
+        return list(self._ips)
 
 
-def broadcast_task(timeout: float = 5, limit: int = 10):
+def broadcast_task(timeout: float = 5, limit: int = 10, message_count: int = 3):
     # prepare app
 
     app = FastAPI()
@@ -28,8 +31,10 @@ def broadcast_task(timeout: float = 5, limit: int = 10):
     def find(request: Request):
         ip_box: IPBox = request.state.ip_box
         client = request.client
-        if client and len(ip_box.ips) < limit:
+        if client and len(ip_box.ips()) < limit:
             ip_box.add(client.host)
+
+        return ""
 
     app.get("/find")(find)
 
@@ -48,10 +53,12 @@ def broadcast_task(timeout: float = 5, limit: int = 10):
     # server_socket.settimeout(0.2)
 
     def _socket_task():
-        while True:
+        for _ in range(message_count):
             server_socket.sendto(
                 BROADCAST_MESSAGE, (BROADCAST_IP, int(BROADCAST_PORT)))
             time.sleep(0.1)
+
+        server_socket.close()
     socket_task = Thread(target=_socket_task, daemon=True)
 
     # run task
@@ -62,4 +69,4 @@ def broadcast_task(timeout: float = 5, limit: int = 10):
     app_task.join(timeout)
     socket_task.join(timeout)
 
-    return ip_box.ips
+    return ip_box.ips()
