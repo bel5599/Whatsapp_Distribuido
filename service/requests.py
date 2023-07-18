@@ -19,26 +19,34 @@ class RequestManager:
     def get(self, route: str, **kwargs):
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
+        timeout = kwargs.get("timeout", self._timeout)
+        kwargs["timeout"] = timeout
 
-        return get(f"{self._url}{route}", timeout=self._timeout, **kwargs)
+        return get(f"{self._url}{route}", **kwargs)
 
     def put(self, route: str, **kwargs):
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
+        timeout = kwargs.get("timeout", self._timeout)
+        kwargs["timeout"] = timeout
 
-        return put(f"{self._url}{route}", timeout=self._timeout, **kwargs)
+        return put(f"{self._url}{route}", **kwargs)
 
     def post(self, route: str, **kwargs):
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
+        timeout = kwargs.get("timeout", self._timeout)
+        kwargs["timeout"] = timeout
 
-        return post(f"{self._url}{route}", timeout=self._timeout, **kwargs)
+        return post(f"{self._url}{route}", **kwargs)
 
     def delete(self, route: str, **kwargs):
         data = kwargs.get("data", {})
         kwargs["data"] = dumps(data)
+        timeout = kwargs.get("timeout", self._timeout)
+        kwargs["timeout"] = timeout
 
-        return delete(f"{self._url}{route}", timeout=self._timeout, **kwargs)
+        return delete(f"{self._url}{route}", **kwargs)
 
     def __eq__(self, value: "RequestManager") -> bool:
         return self.ip == value.ip and self.port == value.port
