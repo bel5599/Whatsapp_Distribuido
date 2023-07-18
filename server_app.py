@@ -18,6 +18,8 @@ if __name__ == "__main__":
     from server.node.routers import router as entity_router
 
     from shared import get_ip, LOCAL_IP, SERVER_PORT
+    from service.broadcast.client import client_broadcast_task
+    from service.broadcast.server import broadcast_task
 
     def inject_node(app: FastAPI, node: Node):
         async def middleware(request: Request, call_next):
@@ -51,12 +53,20 @@ if __name__ == "__main__":
         server = Server(config)
 
         healthy_task.start()
+        client_broadcast_task()
         asyncio.run(server.serve())
 
     @typer_app.command()
-    def join(remote_ip: str, local: bool = False, debug: bool = False, interval: float = 1):
+    def join(local: bool = False, debug: bool = False, interval: float = 1):
         if debug:
             fastapi_app.include_router(debug_router)
+
+        ip_addresses = broadcast_task(1, 1, 3)
+        if not len(ip_addresses):
+            raise Exception(
+                "No server responded to broadcast service. Try again.")
+
+        remote_ip = ip_addresses[0]
 
         if local:
             remote_ip = LOCAL_IP
