@@ -62,11 +62,17 @@ def broadcast_task(timeout: float = 5, limit: int = 10, message_count: int = 3):
     socket_task = Thread(target=_socket_task, daemon=True)
 
     # run task
+    print("LOOKING FOR NETWORK NODES TO CONNECT...")
 
     app_task.start()
     socket_task.start()
 
     app_task.join(timeout)
     socket_task.join(timeout)
+
+    ips = ip_box.ips()
+    print("NODES FOUND:")
+    for ip in ips:
+        print(f"\tNODE AT {ip}")
 
     return ip_box.ips()
