@@ -35,11 +35,11 @@ if __name__ == "__main__":
     fastapi_app.include_router(entity_router)
 
     @typer_app.command()
-    def up(capacity: int = 64, local: bool = False, debug: bool = False, interval: float = 1):
+    def up(capacity: int = 32, local: bool = False, debug: bool = False, interval: float = 1):
         if debug:
             fastapi_app.include_router(debug_router)
 
-        capacity = min(capacity, 256)
+        capacity = min(capacity, 32)
 
         ip = get_ip(local)
         node = Node.create_network(ip, SERVER_PORT, capacity)
