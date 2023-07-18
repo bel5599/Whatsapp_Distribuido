@@ -121,7 +121,13 @@ class EntityNode(ChordNode, BaseEntityNode):
     def delete_user(self, nickname: str, database_id: int):
         db = self._get_database(database_id)
         if db:
-            return db.delete_user(nickname)
+            success = db.delete_user(nickname)
+            if success and database_id == -1:
+                # replicate
+                for successor in self._get_successors():
+                    if successor:
+                        successor.delete_user(nickname, self.id)
+            return success
 
         return False
 
@@ -136,6 +142,7 @@ class EntityNode(ChordNode, BaseEntityNode):
                         successor.update_user(
                             nickname, ip, port, self.id)
             return success
+
         return False
 
     def get_ip_port(self, nickname: str, database_id: int):
