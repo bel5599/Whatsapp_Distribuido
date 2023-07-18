@@ -14,7 +14,8 @@ client = ClientNode()
 
 
 @client_interface.post("/Register")
-def register(nickname: str, password: str):
+def register(nickname: str, password: str,request: Request):
+    client: ClientNode = request.state.client
     # nodo servidor de entrada
     if client.login:
         return "You are logged in"
@@ -51,7 +52,8 @@ def register(nickname: str, password: str):
 
 
 @client_interface.post("/Login")
-def login(nickname: str, password: str):
+def login(nickname: str, password: str,request: Request):
+    client: ClientNode = request.state.client
     if client.login:
         return 'You Are Login'
 
@@ -106,13 +108,15 @@ def login(nickname: str, password: str):
 
 
 @client_interface.post("/Logout")
-def logout():
+def logout(request: Request):
+    client: ClientNode = request.state.client
     client.logout_user()
     return 'Logout Successful'
 
 
 @client_interface.get("/Messages")
-def messages(nickname: str):  # usuario de la conversacion conmigo
+def messages(nickname: str,request: Request):  # usuario de la conversacion conmigo
+    client: ClientNode = request.state.client
     # chequear que el usuario esté loggeado
     if not client.login:
         return "You are not logged in"
@@ -146,7 +150,8 @@ def messages(nickname: str):  # usuario de la conversacion conmigo
 
 # para enviar mensajes a otro usuario
 @client_interface.post("/SendMessage")
-def send(user: str, message: str):
+def send(user: str, message: str,request: Request):
+    client: ClientNode = request.state.client
     # se chequea que el usuario esté loggeado
     if not client.login:
         return "You are not logged in"
@@ -189,7 +194,8 @@ def send(user: str, message: str):
 
 
 @client_interface.get("/GetContacts")
-def get_contacts():
+def get_contacts(request: Request):
+    client: ClientNode = request.state.client
     if not client.login:
         return "You are not logged in"
     result = {}
@@ -200,7 +206,9 @@ def get_contacts():
 
 
 @client_interface.post("/AddContacts")
-def add_contacts(name: str, nickname: str):
+def add_contacts(name: str, nickname: str,request: Request):
+    client: ClientNode = request.state.client
+    
     if not client.login:
         return "You are not logged in"
 
@@ -223,7 +231,8 @@ def add_contacts(name: str, nickname: str):
 
 
 @client_interface.post("/DeleteContacts")
-def delete_contacts(name: str):
+def delete_contacts(name: str,request: Request):
+    client: ClientNode = request.state.client
     if not client.login:
         return "You are not logged in"
 
@@ -238,7 +247,8 @@ def delete_contacts(name: str):
 
 
 @client_interface.get("/GetChats")
-def get_chats():
+def get_chats(request: Request):
+    client: ClientNode = request.state.client
     if not client.login:
         return "You are not logged in"
 
