@@ -24,7 +24,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def get_users(self, database_id: int = -1):
         try:
             response = self._manager.post(
-                "/info/users", data={"database_id": database_id})
+                "/info/users", data={"database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -40,7 +40,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def add_user(self, nickname: str, password: str,  ip: str, port: str, database_id: int):
         try:
             response = self._manager.put(
-                "/user/add", data={"nickname": nickname, "password": password, "ip": ip, "port": port, "database_id": database_id})
+                "/user/add", data={"nickname": nickname, "password": password, "ip": ip, "port": port, "database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -56,7 +56,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def get_pasword(self, nickname: str, database_id: int):
         try:
             response = self._manager.post(
-                f"/user/password/{nickname}", data={"database_id": database_id})
+                f"/user/password/{nickname}", data={"database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -71,7 +71,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def delete_user(self, nickname: str, database_id: int):
         try:
             response = self._manager.delete(
-                f"/user/delete/{nickname}", data={"database_id": database_id})
+                f"/user/delete/{nickname}", data={"database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -86,7 +86,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def update_user(self, nickname: str, ip: str, port: str, database_id: int):
         try:
             response = self._manager.put(
-                "/user/update", data={'nickname': nickname, "ip": ip, "port": port, "database_id": database_id})
+                "/user/update", data={'nickname': nickname, "ip": ip, "port": port, "database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -101,7 +101,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def get_ip_port(self, nickname: str, database_id: int):
         try:
             response = self._manager.post(
-                f"/user/ip_port/{nickname}", data={"database_id": database_id})
+                f"/user/ip_port/{nickname}", data={"database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -116,7 +116,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def nickname_entity_node(self, nickname: str, search_id: int = -1):
         try:
             response = self._manager.post(
-                f"/info/entity/{nickname}", data={"search_id": search_id})
+                f"/info/entity/{nickname}", data={"search_id": search_id}, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -128,7 +128,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def search_entity_node(self, nickname: str):
         try:
-            response = self._manager.get(f"/info/search_entity/{nickname}")
+            response = self._manager.get(f"/info/search_entity/{nickname}", timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -145,7 +145,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def add_messages(self, source: str, destiny: str, value: str, database_id: int, id: int):
         try:
             response = self._manager.put("/messages/add",
-                                         data={"source": source, "destiny": destiny, "value": value, "database_id": database_id, "id": id})
+                                         data={"source": source, "destiny": destiny, "value": value, "database_id": database_id, "id": id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -160,7 +160,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def search_messages_to(self, me: str, database_id: int):
         try:
             response = self._manager.post("/messages/to",
-                                          data={"destiny": me, "database_id": database_id})
+                                          data={"destiny": me, "database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -176,7 +176,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def delete_messages_to(self, me: str, database_id: int):
         try:
             response = self._manager.delete(f"/messages/delete/to/{me}",
-                                            data={"database_id": database_id})
+                                            data={"database_id": database_id}, timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -199,7 +199,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
         }
 
         try:
-            response = self._manager.put("/info/replicate", data=body)
+            response = self._manager.put("/info/replicate", data=body, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -208,7 +208,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def get_replication_data(self):
         try:
-            response = self._manager.get("/info/replication_data")
+            response = self._manager.get("/info/replication_data", timeout=3)
         except Exception as e:
             print("ERROR", e)
         else:
@@ -225,7 +225,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def all_nodes(self, search_id: int = -1) -> list[BaseEntityNode]:
         try:
-            response = self._manager.get(f"/info/all/{search_id}")
+            response = self._manager.get(f"/info/all/{search_id}", timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
