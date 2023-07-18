@@ -27,7 +27,8 @@ if __name__ == "__main__":
 
         nodes: list[RemoteEntityNode] = []
 
-        ip_addresses = broadcast_task(5, 10, 5)
+        ip_addresses = broadcast_task(
+            timeout=5, limit=10, message_count=5, from_client=True)
         if len(ip_addresses):
             first = RemoteEntityNode(-1, ip_addresses[0], SERVER_PORT)
             try:
