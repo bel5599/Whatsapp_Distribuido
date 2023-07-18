@@ -12,7 +12,7 @@ def client_broadcast_task():
 
     client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
-    client.bind(("", BROADCAST_PORT))
+    client.bind(("", int(BROADCAST_PORT)))
 
     def _socket_task():
         while True:
