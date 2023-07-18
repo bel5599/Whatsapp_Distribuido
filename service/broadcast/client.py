@@ -20,7 +20,10 @@ def client_broadcast_task():
             if data == BROADCAST_MESSAGE:
                 request_manager = RequestManager(
                     addr[0], BROADCAST_SERVER_PORT)
-                request_manager.get("/find")
+                try:
+                    request_manager.get("/find")
+                except:
+                    pass
     socket_task = Thread(target=_socket_task, daemon=True)
 
     socket_task.start()
