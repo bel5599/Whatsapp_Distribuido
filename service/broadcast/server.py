@@ -6,7 +6,8 @@ from fastapi import FastAPI, Request
 from uvicorn import Config, Server
 
 from shared import inject_to_state, get_ip
-from . import BROADCAST_IP, BROADCAST_PORT, BROADCAST_SERVER, BROADCAST_CLIENT
+from shared.ip_address import IPAddress
+from . import NET_MASK, BROADCAST_PORT, BROADCAST_SERVER, BROADCAST_CLIENT
 
 
 class IPBox:
@@ -22,6 +23,8 @@ class IPBox:
 
 def broadcast_task(from_client: bool = False, timeout: float = 5, limit: int = 10, message_count: int = 3):
     port, message = BROADCAST_CLIENT if from_client else BROADCAST_SERVER
+    ip = get_ip()
+
     # prepare app
 
     app = FastAPI()
@@ -40,12 +43,15 @@ def broadcast_task(from_client: bool = False, timeout: float = 5, limit: int = 1
     app.get("/find")(find)
 
     def _app_task():
-        config = Config(app, host=get_ip(), port=int(port))
+        config = Config(app, host=ip, port=int(port))
         server = Server(config)
         asyncio.run(server.serve())
     app_task = Thread(target=_app_task, daemon=True)
 
     # prepare broadcast socket
+
+    network_ip = IPAddress.from_string(ip) & NET_MASK
+    broadcast_ip = network_ip | (~NET_MASK)
 
     server_socket = socket.socket(
         socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -56,7 +62,7 @@ def broadcast_task(from_client: bool = False, timeout: float = 5, limit: int = 1
     def _socket_task():
         for _ in range(message_count):
             server_socket.sendto(
-                message, (BROADCAST_IP, int(BROADCAST_PORT)))
+                message, (broadcast_ip.to_string(), int(BROADCAST_PORT)))
             time.sleep(0.1)
 
         server_socket.close()
