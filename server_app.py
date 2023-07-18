@@ -61,7 +61,7 @@ if __name__ == "__main__":
         if debug:
             fastapi_app.include_router(debug_router)
 
-        ip_addresses = broadcast_task(1, 1, 3)
+        ip_addresses = broadcast_task(5, 1, 5)
         if not len(ip_addresses):
             raise Exception(
                 "No server responded to broadcast service. Try again.")
