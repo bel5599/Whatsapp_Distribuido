@@ -44,7 +44,7 @@ class BaseEntityNode(BaseNode):
     # endregion
 
     # region MESSAGES
-    def add_messages(self, source: str, destiny: str, value: str, database_id: int,id:int) -> bool:
+    def add_messages(self, source: str, destiny: str, value: str, database_id: int, id: int) -> bool:
         raise NotImplementedError()
 
     def search_messages_to(self, me: str, database_id: int) -> list[tuple[str, str]]:

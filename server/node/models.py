@@ -6,7 +6,7 @@ class MessagesModel(BaseModel):
     destiny: str
     value: str
     database_id: int
-    id:int
+    id: int
 
 
 class UserModel(BaseModel):
@@ -15,6 +15,7 @@ class UserModel(BaseModel):
     ip: str
     port: str
     database_id: int
+
 
 class UserUpdate(BaseModel):
     nickname: str

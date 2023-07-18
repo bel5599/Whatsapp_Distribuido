@@ -97,7 +97,8 @@ class EntityNode(ChordNode, BaseEntityNode):
         db = self._get_database(database_id)
         if db:
             success = db.add_user(nickname, password, ip, port)
-            print('soy seccess del original con id'+str(database_id) + str(success))
+            print('soy seccess del original con id' +
+                  str(database_id) + str(success))
             if success and database_id == -1:
                 # replicate
                 for successor in self._get_successors():
@@ -154,7 +155,8 @@ class EntityNode(ChordNode, BaseEntityNode):
         search_id = self.id if search_id == -1 else search_id
 
         # buscar en el nodo actual
-        if self.database.contain_user(nickname): #or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
+        # or any([replica.db and replica.db.contain_user(nickname) for replica in self.replicas]):
+        if self.database.contain_user(nickname):
             return self
 
         # no lo encontramos aqui, buscar en el successor
@@ -169,25 +171,26 @@ class EntityNode(ChordNode, BaseEntityNode):
 
     # region MESSAGES
 
-    def add_messages(self, source: str, destiny: str, value: str,database_id: int,id:int = -1):
+    def add_messages(self, source: str, destiny: str, value: str, database_id: int, id: int = -1):
         db = self._get_database(database_id)
-        
-        if id==-1:
+
+        if id == -1:
             id_ = int(time.time())
-        else :
+        else:
             id_ = id
-                
+
         if db:
-            success = db.add_messages(source, destiny, value,id_)
+            success = db.add_messages(source, destiny, value, id_)
             if success and database_id == -1:
                 # replicate
                 for successor in self._get_successors():
                     if successor:
                         successor.add_messages(
-                            source, destiny, value, self.id,id_)
+                            source, destiny, value, self.id, id_)
 
             return success
         return False
+
     def search_messages_to(self, me: str, database_id: int):
         db = self._get_database(database_id)
         if db:
@@ -230,7 +233,7 @@ class EntityNode(ChordNode, BaseEntityNode):
 
             for message in messages_serialize:
                 db.add_messages(
-                    message.user_id_from, message.user_id_to, message.value,message.message_id)
+                    message.user_id_from, message.user_id_to, message.value, message.message_id)
 
     # endregion
 

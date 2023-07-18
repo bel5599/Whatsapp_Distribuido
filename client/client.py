@@ -14,7 +14,7 @@ client = ClientNode()
 
 
 @client_interface.post("/Register")
-def register(nickname: str, password: str,request: Request):
+def register(nickname: str, password: str, request: Request):
     client: ClientNode = request.state.client
     # nodo servidor de entrada
     if client.login:
@@ -52,7 +52,7 @@ def register(nickname: str, password: str,request: Request):
 
 
 @client_interface.post("/Login")
-def login(nickname: str, password: str,request: Request):
+def login(nickname: str, password: str, request: Request):
     client: ClientNode = request.state.client
     if client.login:
         return 'You Are Login'
@@ -115,7 +115,7 @@ def logout(request: Request):
 
 
 @client_interface.get("/Messages")
-def messages(nickname: str,request: Request):  # usuario de la conversacion conmigo
+def messages(nickname: str, request: Request):  # usuario de la conversacion conmigo
     client: ClientNode = request.state.client
     # chequear que el usuario esté loggeado
     if not client.login:
@@ -150,7 +150,7 @@ def messages(nickname: str,request: Request):  # usuario de la conversacion conm
 
 # para enviar mensajes a otro usuario
 @client_interface.post("/SendMessage")
-def send(user: str, message: str,request: Request):
+def send(user: str, message: str, request: Request):
     client: ClientNode = request.state.client
     # se chequea que el usuario esté loggeado
     if not client.login:
@@ -206,9 +206,9 @@ def get_contacts(request: Request):
 
 
 @client_interface.post("/AddContacts")
-def add_contacts(name: str, nickname: str,request: Request):
+def add_contacts(name: str, nickname: str, request: Request):
     client: ClientNode = request.state.client
-    
+
     if not client.login:
         return "You are not logged in"
 
@@ -231,7 +231,7 @@ def add_contacts(name: str, nickname: str,request: Request):
 
 
 @client_interface.post("/DeleteContacts")
-def delete_contacts(name: str,request: Request):
+def delete_contacts(name: str, request: Request):
     client: ClientNode = request.state.client
     if not client.login:
         return "You are not logged in"

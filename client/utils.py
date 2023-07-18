@@ -28,7 +28,7 @@ def get_entity_data(inf_nodo: BaseEntityNode):
 
 def add_messenge(inf_nodo: BaseEntityNode, source: str, destiny: str, messenge: str):
     try:
-        inf_nodo.add_messages(source, destiny, messenge, -1,-1)
+        inf_nodo.add_messages(source, destiny, messenge, -1, -1)
     except:
         return False
 

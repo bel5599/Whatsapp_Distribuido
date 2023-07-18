@@ -142,10 +142,10 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     # region MESSAGES
 
-    def add_messages(self, source: str, destiny: str, value: str, database_id: int,id:int):
+    def add_messages(self, source: str, destiny: str, value: str, database_id: int, id: int):
         try:
             response = self._manager.put("/messages/add",
-                                         data={"source": source, "destiny": destiny, "value": value, "database_id": database_id,"id":id})
+                                         data={"source": source, "destiny": destiny, "value": value, "database_id": database_id, "id": id})
         except Exception as e:
             print("ERROR:", e)
         else:
