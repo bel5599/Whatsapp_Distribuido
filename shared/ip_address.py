@@ -5,6 +5,11 @@ class IPAddress:
 
         self._numbers = numbers
 
+    @classmethod
+    def from_string(cls, ip: str):
+        numbers = [int(n) for n in ip.split(".")]
+        return cls(*numbers)
+
     def __repr__(self):
         return ".".join([str(n) for n in self._numbers])
 
