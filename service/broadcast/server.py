@@ -54,15 +54,12 @@ def broadcast_task(timeout: float = 5, limit: int = 10):
             time.sleep(0.1)
     socket_task = Thread(target=_socket_task, daemon=True)
 
-    # prepare task
+    # run task
 
-    def task():
-        app_task.start()
-        socket_task.start()
+    app_task.start()
+    socket_task.start()
 
-        app_task.join(timeout)
-        socket_task.join(timeout)
+    app_task.join(timeout)
+    socket_task.join(timeout)
 
-        return ip_box
-
-    return task
+    return ip_box.ips
