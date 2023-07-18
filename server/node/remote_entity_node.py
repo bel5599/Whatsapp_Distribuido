@@ -40,7 +40,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def add_user(self, nickname: str, password: str,  ip: str, port: str, database_id: int):
         try:
             response = self._manager.put(
-                "/user/add", data={"nickname": nickname, "password": password, "ip": ip, "port": port, "database_id": database_id}, timeout=3)
+                "/user/add", data={"nickname": nickname, "password": password, "ip": ip, "port": port, "database_id": database_id}, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -71,7 +71,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def delete_user(self, nickname: str, database_id: int):
         try:
             response = self._manager.delete(
-                f"/user/delete/{nickname}", data={"database_id": database_id}, timeout=3)
+                f"/user/delete/{nickname}", data={"database_id": database_id}, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -86,7 +86,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def update_user(self, nickname: str, ip: str, port: str, database_id: int):
         try:
             response = self._manager.put(
-                "/user/update", data={'nickname': nickname, "ip": ip, "port": port, "database_id": database_id}, timeout=3)
+                "/user/update", data={'nickname': nickname, "ip": ip, "port": port, "database_id": database_id}, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -128,7 +128,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
 
     def search_entity_node(self, nickname: str):
         try:
-            response = self._manager.get(f"/info/search_entity/{nickname}", timeout=5)
+            response = self._manager.get(f"/info/search_entity/{nickname}", timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -145,7 +145,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def add_messages(self, source: str, destiny: str, value: str, database_id: int, id: int):
         try:
             response = self._manager.put("/messages/add",
-                                         data={"source": source, "destiny": destiny, "value": value, "database_id": database_id, "id": id}, timeout=3)
+                                         data={"source": source, "destiny": destiny, "value": value, "database_id": database_id, "id": id}, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -176,7 +176,7 @@ class RemoteEntityNode(ChordRemoteNode, BaseEntityNode):
     def delete_messages_to(self, me: str, database_id: int):
         try:
             response = self._manager.delete(f"/messages/delete/to/{me}",
-                                            data={"database_id": database_id}, timeout=3)
+                                            data={"database_id": database_id}, timeout=5)
         except Exception as e:
             print("ERROR:", e)
         else:
