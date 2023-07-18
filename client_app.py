@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     from client.client import client_interface, client, service
     from client.utils import SERVER_ADDRESSES_CACHE_FILENAME
-    from shared import LOCAL_IP, CLIENT_PORT, SERVER_PORT, inject_to_state, get_ip
+    from shared import LOCAL_IP, CLIENT_PORT, SERVICE_PORT, SERVER_PORT, inject_to_state, get_ip
     from server.util import generate_id
     from server.node.remote_entity_node import RemoteEntityNode
     from server.chord.base_node import BaseNodeModel
@@ -60,7 +60,7 @@ if __name__ == "__main__":
                 "Unable to find a server node to connect! Try again.")
 
         def _service_task():
-            config = Config(service, host=get_ip(), port=int(CLIENT_PORT))
+            config = Config(service, host=get_ip(), port=int(SERVICE_PORT))
             server = Server(config)
             asyncio.run(server.serve())
         service_task = Thread(target=_service_task, daemon=True)
