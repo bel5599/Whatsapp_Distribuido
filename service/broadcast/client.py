@@ -6,7 +6,8 @@ from service.requests import RequestManager
 
 
 def client_broadcast_task():
-    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    client = socket.socket(
+        socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -17,8 +18,9 @@ def client_broadcast_task():
         while True:
             data, addr = client.recvfrom(1024)
             if data == BROADCAST_MESSAGE:
-                request_manager = RequestManager(addr[0], BROADCAST_SERVER_PORT)
+                request_manager = RequestManager(
+                    addr[0], BROADCAST_SERVER_PORT)
                 request_manager.get("/find")
-    socket_task = Thread(target=_socket_task, daemon=True)      
+    socket_task = Thread(target=_socket_task, daemon=True)
 
     socket_task.start()
