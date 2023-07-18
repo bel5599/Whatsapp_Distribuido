@@ -25,7 +25,7 @@ class RemoteNode(BaseNode):
         self._local_node = node
 
     def network_capacity(self):
-        response = self._manager.get("/chord/capacity/")
+        response = self._manager.get("/chord/capacity/", timeout=1)
 
         if response.status_code == 200:
             capacity = int(response.json())
@@ -35,7 +35,7 @@ class RemoteNode(BaseNode):
 
     def successor(self):
         try:
-            response = self._manager.get("/chord/successor/")
+            response = self._manager.get("/chord/successor/", timeout=1)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -48,7 +48,7 @@ class RemoteNode(BaseNode):
     def set_successor(self, node: BaseNode):
         try:
             response = self._manager.put(
-                "/chord/successor/", data=node.serialize())
+                "/chord/successor/", data=node.serialize(), timeout=1)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -57,7 +57,7 @@ class RemoteNode(BaseNode):
 
     def predecessor(self):
         try:
-            response = self._manager.get("/chord/predecessor/")
+            response = self._manager.get("/chord/predecessor/", timeout=1)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -70,7 +70,7 @@ class RemoteNode(BaseNode):
     def set_predecessor(self, node: BaseNode):
         try:
             response = self._manager.put(
-                "/chord/predecessor/", data=node.serialize())
+                "/chord/predecessor/", data=node.serialize(), timeout=1)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -80,7 +80,7 @@ class RemoteNode(BaseNode):
     def closest_preceding_finger(self, id: int):
         try:
             response = self._manager.get(
-                f"/chord/fingers/closest_preceding/{id}")
+                f"/chord/fingers/closest_preceding/{id}", timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -92,7 +92,7 @@ class RemoteNode(BaseNode):
 
     def find_successor(self, id: int):
         try:
-            response = self._manager.get(f"/chord/successor/{id}")
+            response = self._manager.get(f"/chord/successor/{id}", timeout=3)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -105,7 +105,7 @@ class RemoteNode(BaseNode):
     def notify(self, node: BaseNode):
         try:
             response = self._manager.put(
-                "/chord/notify/", data=node.serialize())
+                "/chord/notify/", data=node.serialize(), timeout=1)
         except Exception as e:
             print("ERROR:", e)
         else:
@@ -114,7 +114,7 @@ class RemoteNode(BaseNode):
 
     def heart(self):
         try:
-            response = self._manager.get("/chord/heart/")
+            response = self._manager.get("/chord/heart/", timeout=1)
         except Exception as e:
             print("ERROR:", e)
         else:
