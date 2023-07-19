@@ -107,16 +107,16 @@ class DataBaseClient:
         # Crear el chat si no existe y luego agregarselo a la tabla
         self.add_chat(source, destiny)
         idChat = self.search_chat_id(source, destiny)
-        if id == -1:
-            id_ = int(time.time())
-        else:
-            id_ = id
-        if self.contain_messages(id_,source,destiny,value_):
-            return False
+        # if id == -1:
+        #     id_ = int(time.time())
+        # else:
+        #     id_ = id
+        # if self.contain_messages(id_,source,destiny,value_):
+        #     return False
         try:
             with self.session:
                 messages = Message(
-                        message_id= id_ ,
+                        #message_id= id_ ,
                         user_id_from=source,
                         user_id_to=destiny,
                         chat_id=idChat,
