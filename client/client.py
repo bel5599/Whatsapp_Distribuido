@@ -132,6 +132,9 @@ def messages(nickname: str, request: Request):  # usuario de la conversacion con
     # Si no encontro ningun contacto con ese nombre
     if nickname_other_user is None:
         nickname_other_user = nickname
+        name = client.get_name(nickname)
+    else:
+        name = nickname    
 
     mynickname = client.user['nickname']
     # Obtengo los sms de mi basedatos
@@ -144,7 +147,7 @@ def messages(nickname: str, request: Request):  # usuario de la conversacion con
             messages_format.append('me' + ": " + message[1])
         else:
             messages_format.append(
-                nickname_other_user + ": " + message[1])
+                name + ": " + message[1])
     return messages_format
 
 
