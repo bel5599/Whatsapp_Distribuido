@@ -133,7 +133,10 @@ def messages(nickname: str, request: Request):  # usuario de la conversacion con
     if nickname_other_user is None:
         nickname_other_user = nickname
         name = client.get_name(nickname)
-    else:
+        # Si name is None entonces no tienes ese contacto
+        if name is None:
+            name = nickname
+    else: #entonces si ese contacto existe es el nickname no el name
         name = nickname    
 
     mynickname = client.user['nickname']
