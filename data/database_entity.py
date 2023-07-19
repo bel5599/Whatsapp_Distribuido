@@ -2,12 +2,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from typing import Union
 from .model_entity import *
-#from model_entity import User, Messenge
+# from model_entity import User, Messenge
 import time
+
 
 class DataBaseUser:
     def __init__(self, name: str = 'user_data'):
-        engine = create_engine('sqlite:///'+name+'.sqlite',connect_args={"check_same_thread": False})
+        engine = create_engine('sqlite:///'+name+'.sqlite',
+                               connect_args={"check_same_thread": False})
         Session = sessionmaker(bind=engine)
         self.session = Session()
         Base.metadata.create_all(engine)
@@ -39,7 +41,6 @@ class DataBaseUser:
                 self.session.commit()
                 return True
         except:
-            print("Buscar error en la base datos")
             return False
 
     def contain_user(self, nickname_: str) -> bool:
@@ -88,28 +89,30 @@ class DataBaseUser:
             return result
         except:
             return result
-    def contain_messages(self, id,source: str, destiny: str, value: str) -> bool:
-        contain = self.session.query(Message).filter(Message.message_id==id, Message.user_id_from ==source, Message.user_id_to ==destiny,Message.value ==value ).first()
+
+    def contain_messages(self, id, source: str, destiny: str, value: str) -> bool:
+        contain = self.session.query(Message).filter(Message.message_id == id, Message.user_id_from ==
+                                                     source, Message.user_id_to == destiny, Message.value == value).first()
         return contain is not None
 
-    def add_messages(self, source: str, destiny: str, value_: str,id =-1) -> bool:
+    def add_messages(self, source: str, destiny: str, value_: str, id=-1) -> bool:
         # Crear el chat si no existe y luego agregarselo a la tabla
-                # Crear el chat si no existe y luego agregarselo a la tabla
+        # Crear el chat si no existe y luego agregarselo a la tabla
         if id == -1:
             id_ = int(time.time())
         else:
             id_ = id
-         
-        if self.contain_messages(id_,source,destiny,value_):
+
+        if self.contain_messages(id_, source, destiny, value_):
             return False
         try:
             with self.session:
                 messages = Message(
-                        message_id= id_ ,
-                        user_id_from=source,
-                        user_id_to=destiny,
-                        value=value_,)
-                #if messages is Message:
+                    message_id=id_,
+                    user_id_from=source,
+                    user_id_to=destiny,
+                    value=value_,)
+                # if messages is Message:
                 self.session.add_all([messages])
                 self.session.commit()
                 return True
@@ -136,7 +139,7 @@ class DataBaseUser:
                     Message.user_id_from == me).all()
             else:
                 query = self.session.query(Message).filter(
-                    Message.user_id_from == me , Message.user_id_to == user).all()
+                    Message.user_id_from == me, Message.user_id_to == user).all()
             for q in query:
                 result.append((q.user_id_from, q.value))
             return result
@@ -149,8 +152,8 @@ class DataBaseUser:
         result = []
         try:
             query = self.session.query(Message).filter(
-                    Message.user_id_to == me).all()
-            
+                Message.user_id_to == me).all()
+
             for q in query:
                 result.append((q.user_id_from, q.value))
             return result
@@ -179,7 +182,7 @@ class DataBaseUser:
         except:
             return False
 
-    def clear(self)->bool:
+    def clear(self) -> bool:
         try:
             messages = self.session.query(Message).all()
             users = self.session.query(User).all()
@@ -191,5 +194,4 @@ class DataBaseUser:
                 self.session.commit()
             return True
         except:
-            return False    
-   
+            return False

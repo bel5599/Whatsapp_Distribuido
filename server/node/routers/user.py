@@ -18,7 +18,6 @@ def add_user(model: UserModel, request: Request):
         raise HTTPException(
             status_code=500, detail="add user failed!")
     else:
-        print("Soy router user " + str(result))
         return {"success": result}
 
 

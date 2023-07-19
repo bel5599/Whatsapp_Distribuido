@@ -97,18 +97,13 @@ class EntityNode(ChordNode, BaseEntityNode):
         db = self._get_database(database_id)
         if db:
             success = db.add_user(nickname, password, ip, port)
-            print('soy seccess del original con id' +
-                  str(database_id) + str(success))
             if success and database_id == -1:
                 # replicate
                 for successor in self._get_successors():
                     if successor:
-                        print(successor)
                         successor.add_user(
                             nickname, password, ip, port, self.id)
-            print("soy salida" + str(success))
             return success
-        print("No retorne lo que deberia ser")
         return False
 
     def get_pasword(self, nickname: str, database_id: int):
